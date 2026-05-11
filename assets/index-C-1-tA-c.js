@@ -243,7 +243,7 @@
         </p>
       </div>
     </div>
-  `,document.getElementById(`login-btn`)?.addEventListener(`click`,async()=>{let e=document.getElementById(`email`)?.value?.trim(),t=document.getElementById(`password`)?.value;if(!e||!t){h(`Please fill in all fields`);return}let n=document.getElementById(`login-btn`);n.disabled=!0,n.textContent=`Signing in…`;try{let res=await i.post(`/auth/login`,{email:e,password:t});localStorage.setItem(`d8_token`,res.token);a=res.user;u();window.location.hash=`#/dashboard`}catch(e){h(e.message||`Login failed`),n.disabled=!1,n.textContent=`Sign In →`}}),document.getElementById(`password`)?.addEventListener(`keydown`,e=>{e.key===`Enter`&&document.getElementById(`login-btn`)?.click()})}function ae(e){e.innerHTML=`
+  `,document.getElementById(`login-btn`)?.addEventListener(`click`,async()=>{let e=document.getElementById(`email`)?.value?.trim(),t=document.getElementById(`password`)?.value;if(!e||!t){h(`Please fill in all fields`);return}let n=document.getElementById(`login-btn`);n.disabled=!0,n.textContent=`Signing in…`;try{let n=await i.post(`/auth/login`,{email:e,password:t});localStorage.setItem(`d8_token`,n.token);a=n.user;u();window.location.hash=`#/dashboard`}catch(e){h(e.message||`Login failed`),n.disabled=!1,n.textContent=`Sign In →`}}),document.getElementById(`password`)?.addEventListener(`keydown`,e=>{e.key===`Enter`&&document.getElementById(`login-btn`)?.click()})}function ae(e){e.innerHTML=`
     <div class="auth-page">
       <div class="auth-card">
         <div class="auth-logo">
@@ -292,7 +292,7 @@
         </p>
       </div>
     </div>
-  `,document.getElementById(`register-btn`)?.addEventListener(`click`,async()=>{let e=document.getElementById(`name`)?.value?.trim(),t=document.getElementById(`email`)?.value?.trim(),n=document.getElementById(`password`)?.value;if(!e||!t||!n){h(`Please fill in all fields`);return}if(n.length<6){h(`Password must be at least 6 characters`);return}let r=document.getElementById(`register-btn`);r.disabled=!0,r.textContent=`Creating account…`;try{let res=await i.post(`/auth/register`,{name:e,email:t,password:n});localStorage.setItem(`d8_token`,res.token);a=res.user;u();window.location.hash=`#/dashboard`}catch(e){h(e.message||`Registration failed`),r.disabled=!1,r.textContent=`Create Free Account →`}})}function g(e=``){let t=s()?.membership?.plan||`free`,n=(t,n,r,i)=>`
+  `,document.getElementById(`register-btn`)?.addEventListener(`click`,async()=>{let e=document.getElementById(`name`)?.value?.trim(),t=document.getElementById(`email`)?.value?.trim(),n=document.getElementById(`password`)?.value;if(!e||!t||!n){h(`Please fill in all fields`);return}if(n.length<6){h(`Password must be at least 6 characters`);return}let r=document.getElementById(`register-btn`);r.disabled=!0,r.textContent=`Creating account…`;try{let r=await i.post(`/auth/register`,{name:e,email:t,password:n});localStorage.setItem(`d8_token`,r.token);a=r.user;u();window.location.hash=`#/dashboard`}catch(e){h(e.message||`Registration failed`),r.disabled=!1,r.textContent=`Create Free Account →`}})}function g(e=``){let t=s()?.membership?.plan||`free`,n=(t,n,r,i)=>`
     <a href="${t}" class="sidebar-link ${e===t?`active`:``}">
       <span class="icon">${n}</span>
       ${r}
