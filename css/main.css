@@ -487,7 +487,6 @@ h1,h2,h3,h4,h5 { font-family:'Bebas Neue',cursive; letter-spacing:1px; }
   .sidebar { transform: translateX(-100%); }
   [dir="rtl"] .sidebar { transform: translateX(100%); }
   .sidebar.open { transform: translateX(0) !important; }
-  .sidebar-close-btn { display: flex !important; }
   .main { margin-left: 0 !important; margin-right: 0 !important; }
   .tool-page-grid { grid-template-columns: 1fr; }
   .mobile-tool-tabs { display: flex !important; }
