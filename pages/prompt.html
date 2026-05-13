@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Prompt Writer — Double Eight AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<style>
+.platform-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:.6rem;margin-bottom:1.25rem;}
+.platform-btn{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:.65rem .5rem;text-align:center;cursor:pointer;transition:.2s;}
+.platform-btn:hover{border-color:var(--border-gold);}
+.platform-btn.selected{background:var(--gold-dim);border-color:var(--gold);}
+.platform-btn .p-icon{font-size:1.2rem;margin-bottom:.3rem;}
+.platform-btn .p-name{font-size:.72rem;color:var(--text2);font-weight:500;}
+</style>
+</head>
+<body>
+<div class="app-grid-bg"></div><div class="page-particles"></div>
+<div class="app">
+  <aside class="sidebar"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="hamburger">☰</button>
+      <span class="topbar-title" id="page-title">PROMPT WRITER</span>
+      <div class="topbar-right"><span id="sub-label" style="font-size:.8rem;color:var(--text3)">Optimize prompts for any AI model</span></div>
+    </div>
+    <div class="mobile-tool-tabs">
+      <button class="mob-tool-tab active" id="mtab-form" onclick="showMobToolTab('form')">📝 Form</button>
+      <button class="mob-tool-tab" id="mtab-result" onclick="showMobToolTab('result')">✦ Result</button>
+      <button class="mob-tool-tab" id="mtab-history" onclick="showMobToolTab('history')">🕐 History</button>
+    </div>
+    <div class="page-content">
+      <div class="tool-page-grid" style="grid-template-columns:460px 1fr">
+        <div id="panel-form" class="card">
+          <h3 style="font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;margin-bottom:1rem;color:var(--gold)" id="ai-select-lbl">✦ SELECT TARGET AI</h3>
+          <div class="platform-grid" id="platform-grid">
+            <div class="platform-btn selected" data-platform="chatgpt" onclick="selectPlatform(this)"><div class="p-icon">🟢</div><div class="p-name">ChatGPT</div></div>
+            <div class="platform-btn" data-platform="claude" onclick="selectPlatform(this)"><div class="p-icon">🟠</div><div class="p-name">Claude</div></div>
+            <div class="platform-btn" data-platform="grok" onclick="selectPlatform(this)"><div class="p-icon">𝕏</div><div class="p-name">Grok</div></div>
+            <div class="platform-btn" data-platform="gemini" onclick="selectPlatform(this)"><div class="p-icon">♊</div><div class="p-name">Gemini</div></div>
+            <div class="platform-btn" data-platform="midjourney" onclick="selectPlatform(this)"><div class="p-icon">🎨</div><div class="p-name">Midjourney</div></div>
+            <div class="platform-btn" data-platform="dalle" onclick="selectPlatform(this)"><div class="p-icon">🖼</div><div class="p-name">DALL·E</div></div>
+            <div class="platform-btn" data-platform="runway" onclick="selectPlatform(this)"><div class="p-icon">🎬</div><div class="p-name">Runway</div></div>
+            <div class="platform-btn" data-platform="perplexity" onclick="selectPlatform(this)"><div class="p-icon">🔍</div><div class="p-name">Perplexity</div></div>
+            <div class="platform-btn" data-platform="llama" onclick="selectPlatform(this)"><div class="p-icon">🦙</div><div class="p-name">Llama</div></div>
+            <div class="platform-btn" data-platform="general" onclick="selectPlatform(this)"><div class="p-icon">🤖</div><div class="p-name">Universal</div></div>
+          </div>
+          <div class="form-group"><label class="form-label" id="lbl-type">Prompt Type</label>
+            <select class="form-select" id="p-type">
+              <option value="business">Business &amp; Entrepreneurship</option>
+              <option value="marketing">Marketing &amp; Copywriting</option>
+              <option value="content">Content Creation</option>
+              <option value="coding">Coding &amp; Development</option>
+              <option value="analysis">Data Analysis &amp; Research</option>
+              <option value="creative">Creative Writing</option>
+              <option value="image">Image Generation</option>
+              <option value="custom">Custom / Other</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label" id="lbl-goal">What do you want to achieve? *</label>
+            <textarea class="form-textarea" id="p-goal" placeholder="Describe your goal in plain English. e.g. Write a cold email for a SaaS product targeting HR managers" style="min-height:90px"></textarea>
+          </div>
+          <div class="form-group"><label class="form-label" id="lbl-ctx">Additional Context</label>
+            <textarea class="form-textarea" id="p-context" placeholder="Any extra details, constraints, tone, format requirements..." style="min-height:60px"></textarea>
+          </div>
+          <button class="btn btn-primary" style="width:100%" id="gen-btn" onclick="generatePrompt()">
+            <span class="loader" id="p-loader" style="display:none"></span>
+            <span class="gen-btn-text" id="gen-btn-txt">✦ Generate Optimized Prompt</span>
+          </button>
+        </div>
+        <div>
+          <div id="panel-result" class="result-panel" style="display:none">
+            <button class="float-close-btn" onclick="closeResult()">✕</button>
+            <h4 id="result-title">Optimized Prompt</h4>
+            <div class="result-content" id="p-content"></div>
+            <div class="result-actions">
+              <button class="btn btn-primary btn-sm" onclick="copyText(window._pResult)">⎘ Copy Prompt</button>
+              <button class="btn btn-secondary btn-sm" onclick="closeResult()">← New</button>
+            </div>
+          </div>
+          <div id="panel-history">
+            <div class="section-hdr" style="margin-bottom:1rem"><h3 id="prev-title" style="font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px">RECENT PROMPTS</h3></div>
+            <div id="p-history" class="vault-grid">
+              <div class="empty-state"><div class="empty-icon">✦</div><p id="no-prev-txt">No prompts generated yet</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../js/core.js"></script>
+<script>
+Auth.check(); buildLayout('prompt');
+const isAr = () => localStorage.getItem('d8_lang')==='ar';
+function applyTranslations() {
+  document.getElementById('page-title').textContent = t('prompt.title');
+  document.getElementById('sub-label').textContent = isAr()?'تحسين البرومبت لأي نموذج ذكاء اصطناعي':'Optimize prompts for any AI model';
+  document.getElementById('ai-select-lbl').textContent = isAr()?'✦ اختر نموذج الذكاء الاصطناعي':'✦ SELECT TARGET AI';
+  document.getElementById('lbl-type').textContent = isAr()?'نوع البرومبت':'Prompt Type';
+  document.getElementById('lbl-goal').textContent = isAr()?'ماذا تريد أن تحقق؟ *':'What do you want to achieve? *';
+  document.getElementById('lbl-ctx').textContent = isAr()?'سياق إضافي':'Additional Context';
+  document.getElementById('gen-btn-txt').textContent = isAr()?'✦ إنشاء برومبت محسّن':'✦ Generate Optimized Prompt';
+  document.getElementById('result-title').textContent = isAr()?'البرومبت المحسّن':'Optimized Prompt';
+  document.getElementById('prev-title').textContent = isAr()?'البرومبتات الأخيرة':'RECENT PROMPTS';
+  document.getElementById('no-prev-txt').textContent = isAr()?'لا توجد برومبتات بعد':'No prompts generated yet';
+}
+applyTranslations();
+
+let selectedPlatform = 'chatgpt';
+function selectPlatform(el) {
+  document.querySelectorAll('.platform-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected'); selectedPlatform=el.dataset.platform;
+}
+function showMobToolTab(tab) {
+  document.querySelectorAll('.mob-tool-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('mtab-'+tab).classList.add('active');
+  document.getElementById('panel-form').style.display=tab==='form'?'block':'none';
+  document.getElementById('panel-result').style.display=tab==='result'?'block':'none';
+  document.getElementById('panel-history').style.display=tab==='history'?'block':'none';
+}
+function closeResult() {
+  document.getElementById('panel-result').style.display='none';
+  document.getElementById('panel-history').style.display='block';
+}
+async function generatePrompt() {
+  const goal=document.getElementById('p-goal').value.trim();
+  if(!goal){Toast.show(t('msg.fill_required'),'error');return;}
+  const btn=document.getElementById('gen-btn'),loader=document.getElementById('p-loader'),txt=document.getElementById('gen-btn-txt');
+  btn.disabled=true;loader.style.display='inline-block';txt.textContent=t('btn.generating');
+  try {
+    const data=await api.post('/prompt-writer/generate',{platform:selectedPlatform,type:document.getElementById('p-type').value,goal,context:document.getElementById('p-context').value});
+    if(data?.error) throw new Error(data.error);
+    window._pResult=data.prompt||data.content||(data.report?.content);
+    document.getElementById('p-content').innerHTML=renderMarkdown(window._pResult);
+    document.getElementById('panel-result').style.display='block';
+    document.getElementById('panel-history').style.display='none';
+    if(window.innerWidth<900) showMobToolTab('result');
+    Toast.show(isAr()?'تم إنشاء البرومبت!':'Prompt generated!','success');
+  } catch(e){Toast.show(e.message,'error');}
+  finally{btn.disabled=false;loader.style.display='none';txt.textContent=isAr()?'✦ إنشاء برومبت محسّن':'✦ Generate Optimized Prompt';}
+}
+async function loadHistory() {
+  const d=await api.get('/prompt-writer/history');
+  if(!d?.history?.length&&!d?.reports?.length) return;
+  const items=d.history||d.reports||[];
+  if(!items.length) return;
+  document.getElementById('p-history').innerHTML=items.slice(0,8).map(r=>`<div class="vault-item"><div class="vault-item-header"><div class="vault-item-icon">✦</div><div><div class="vault-item-title">${r.title||r.goal||'Prompt'}</div><div class="vault-item-meta">${timeAgo(r.createdAt)}</div></div></div></div>`).join('');
+}
+loadHistory();
+</script>
+</body>
+</html>

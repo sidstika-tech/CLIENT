@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Double Eight AI — Business Intelligence Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/main.css">
+<style>
+.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#080810;position:relative;overflow:hidden;}
+.auth-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(245,158,11,.12) 0%,transparent 70%),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(245,158,11,.06) 0%,transparent 60%);pointer-events:none;}
+.auth-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(245,158,11,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,.04) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;}
+.auth-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.auth-particles::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:var(--gold);filter:blur(120px);opacity:.05;top:-200px;left:-100px;animation:float-orb 10s ease-in-out infinite alternate;}
+.auth-particles::after{content:'';position:absolute;width:300px;height:300px;border-radius:50%;background:#8b5cf6;filter:blur(80px);opacity:.04;bottom:-100px;right:-50px;animation:float-orb 14s ease-in-out infinite alternate-reverse;}
+@keyframes float-orb{from{transform:translate(0,0)}to{transform:translate(30px,20px)}}
+.auth-wrap{position:relative;z-index:1;width:100%;max-width:460px;padding:2rem;}
+.auth-logo{text-align:center;margin-bottom:2.5rem;}
+.auth-logo .logo-mark{width:56px;height:56px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-family:'Bebas Neue',cursive;font-size:28px;color:#080810;margin-bottom:.75rem;}
+.auth-logo h1{font-family:'Bebas Neue',cursive;font-size:2.2rem;color:#fff;letter-spacing:2px;margin:0;}
+.auth-logo p{color:rgba(255,255,255,.4);font-size:.85rem;margin:.25rem 0 0;font-family:'Outfit',sans-serif;}
+.auth-card{background:rgba(255,255,255,.03);border:1px solid rgba(245,158,11,.15);border-radius:20px;padding:2.5rem;backdrop-filter:blur(10px);}
+.auth-tabs{display:flex;background:rgba(255,255,255,.04);border-radius:10px;padding:4px;margin-bottom:2rem;gap:4px;}
+.auth-tab{flex:1;padding:.6rem;text-align:center;border-radius:7px;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:500;cursor:pointer;transition:.2s;color:rgba(255,255,255,.4);border:none;background:none;}
+.auth-tab.active{background:rgba(245,158,11,.15);color:#f59e0b;}
+.auth-form{display:none;}
+.auth-form.active{display:block;}
+.form-group{margin-bottom:1.25rem;}
+.form-label{display:block;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:500;color:rgba(255,255,255,.5);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.06em;}
+.form-input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:.8rem 1rem;color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;transition:.2s;box-sizing:border-box;}
+.form-input:focus{outline:none;border-color:rgba(245,158,11,.5);background:rgba(245,158,11,.05);}
+.btn-auth{width:100%;padding:.9rem;background:linear-gradient(135deg,#f59e0b,#d97706);border:none;border-radius:10px;color:#080810;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s;margin-top:.5rem;}
+.btn-auth:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(245,158,11,.3);}
+.btn-auth:disabled{opacity:.65;cursor:not-allowed;transform:none;}
+.auth-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:.75rem 1rem;color:#f87171;font-family:'Outfit',sans-serif;font-size:.85rem;margin-bottom:1rem;display:none;}
+.auth-divider{text-align:center;color:rgba(255,255,255,.2);font-size:.8rem;font-family:'Outfit',sans-serif;margin:1.5rem 0;}
+.auth-features{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-top:2rem;}
+.auth-feat{text-align:center;padding:.75rem .5rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;}
+.auth-feat .icon{font-size:1.3rem;margin-bottom:.3rem;}
+.auth-feat span{display:block;font-family:'Outfit',sans-serif;font-size:.7rem;color:rgba(255,255,255,.35);}
+.lang-switch{display:flex;justify-content:center;gap:.5rem;margin-bottom:1.5rem;}
+.lang-switch button{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:.35rem .75rem;font-size:.78rem;color:rgba(255,255,255,.5);cursor:pointer;transition:.2s;font-family:'Outfit',sans-serif;}
+.lang-switch button.active{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.4);color:#f59e0b;}
+</style>
+</head>
+<body>
+<div class="auth-page">
+  <div class="auth-bg"></div>
+  <div class="auth-grid"></div>
+  <div class="auth-particles"></div>
+  <div class="auth-wrap">
+    <div class="lang-switch">
+      <button id="lb-en" class="active" onclick="setAuthLang('en')">🇬🇧 English</button>
+      <button id="lb-ar" onclick="setAuthLang('ar')">🇸🇦 العربية</button>
+    </div>
+    <div class="auth-logo">
+      <div class="logo-mark">D8</div>
+      <h1>DOUBLE EIGHT AI</h1>
+      <p id="auth-tagline">Business Intelligence Platform</p>
+    </div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+        <button class="auth-tab" id="tab-register" onclick="switchTab('register')">Create Account</button>
+      </div>
+      <div id="auth-error" class="auth-error"></div>
+      <form class="auth-form active" id="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label" id="lbl-email">Email Address</label>
+          <input type="email" class="form-input" id="login-email" placeholder="you@company.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" id="lbl-pw">Password</label>
+          <input type="password" class="form-input" id="login-pass" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-auth" id="login-btn">Sign In →</button>
+      </form>
+      <form class="auth-form" id="register-form" onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label class="form-label" id="lbl-name">Full Name</label>
+          <input type="text" class="form-input" id="reg-name" placeholder="Your Name" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" id="lbl-remail">Email Address</label>
+          <input type="email" class="form-input" id="reg-email" placeholder="you@company.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" id="lbl-rpw">Password</label>
+          <input type="password" class="form-input" id="reg-pass" placeholder="Min 6 characters" required minlength="6">
+        </div>
+        <button type="submit" class="btn-auth" id="reg-btn">Create Account →</button>
+      </form>
+      <div class="auth-divider" id="auth-feat-label">17 AI-powered business tools</div>
+      <div class="auth-features">
+        <div class="auth-feat"><div class="icon">⚡</div><span id="feat1">Instant Generation</span></div>
+        <div class="auth-feat"><div class="icon">◎</div><span id="feat2">AI Advisor</span></div>
+        <div class="auth-feat"><div class="icon">▣</div><span id="feat3">Export Reports</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const API = 'https://api.doubleeight.online/api';
+const AUTH_STRINGS = {
+  en: {
+    signin:'Sign In', create:'Create Account', email:'Email Address', pw:'Password',
+    name:'Full Name', signin_btn:'Sign In →', create_btn:'Create Account →',
+    tagline:'Business Intelligence Platform', feat_label:'17 AI-powered business tools',
+    feat1:'Instant Generation', feat2:'AI Advisor', feat3:'Export Reports',
+    signing:'Signing in...', creating:'Creating...'
+  },
+  ar: {
+    signin:'تسجيل الدخول', create:'إنشاء حساب', email:'البريد الإلكتروني', pw:'كلمة المرور',
+    name:'الاسم الكامل', signin_btn:'تسجيل الدخول →', create_btn:'إنشاء حساب →',
+    tagline:'منصة الذكاء الاصطناعي للأعمال', feat_label:'17 أداة ذكاء اصطناعي للأعمال',
+    feat1:'توليد فوري', feat2:'مستشار ذكي', feat3:'تصدير التقارير',
+    signing:'جارٍ تسجيل الدخول...', creating:'جارٍ الإنشاء...'
+  }
+};
+let authLang = localStorage.getItem('d8_lang') || 'en';
+
+function setAuthLang(lang) {
+  authLang = lang;
+  localStorage.setItem('d8_lang', lang);
+  const s = AUTH_STRINGS[lang];
+  document.getElementById('html-root') && document.getElementById('html-root').setAttribute('dir', lang==='ar'?'rtl':'ltr');
+  document.documentElement.setAttribute('dir', lang==='ar'?'rtl':'ltr');
+  document.documentElement.setAttribute('lang', lang);
+  document.getElementById('lb-en').classList.toggle('active', lang==='en');
+  document.getElementById('lb-ar').classList.toggle('active', lang==='ar');
+  document.getElementById('tab-login').textContent = s.signin;
+  document.getElementById('tab-register').textContent = s.create;
+  document.getElementById('lbl-email').textContent = s.email;
+  document.getElementById('lbl-pw').textContent = s.pw;
+  document.getElementById('lbl-name').textContent = s.name;
+  document.getElementById('lbl-remail').textContent = s.email;
+  document.getElementById('lbl-rpw').textContent = s.pw;
+  document.getElementById('login-btn').textContent = s.signin_btn;
+  document.getElementById('reg-btn').textContent = s.create_btn;
+  document.getElementById('auth-tagline').textContent = s.tagline;
+  document.getElementById('auth-feat-label').textContent = s.feat_label;
+  document.getElementById('feat1').textContent = s.feat1;
+  document.getElementById('feat2').textContent = s.feat2;
+  document.getElementById('feat3').textContent = s.feat3;
+}
+function switchTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (tab==='login'&&i===0)||(tab==='register'&&i===1)));
+  document.getElementById('login-form').classList.toggle('active', tab==='login');
+  document.getElementById('register-form').classList.toggle('active', tab==='register');
+  document.getElementById('auth-error').style.display='none';
+}
+function showError(msg) { const el=document.getElementById('auth-error'); el.textContent=msg; el.style.display='block'; }
+async function handleLogin(e) {
+  e.preventDefault();
+  const btn=document.getElementById('login-btn');
+  btn.textContent=AUTH_STRINGS[authLang].signing; btn.disabled=true;
+  try {
+    const r = await fetch(`${API}/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:document.getElementById('login-email').value,password:document.getElementById('login-pass').value})});
+    const d = await r.json();
+    if(!r.ok) throw new Error(d.error||'Login failed');
+    localStorage.setItem('d8_token',d.token);
+    localStorage.setItem('d8_user',JSON.stringify(d.user));
+    window.location.href='pages/dashboard.html';
+  } catch(err){ showError(err.message); }
+  finally{ btn.textContent=AUTH_STRINGS[authLang].signin_btn; btn.disabled=false; }
+}
+async function handleRegister(e) {
+  e.preventDefault();
+  const btn=document.getElementById('reg-btn');
+  btn.textContent=AUTH_STRINGS[authLang].creating; btn.disabled=true;
+  try {
+    const r = await fetch(`${API}/auth/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('reg-name').value,email:document.getElementById('reg-email').value,password:document.getElementById('reg-pass').value})});
+    const d = await r.json();
+    if(!r.ok) throw new Error(d.error||'Registration failed');
+    localStorage.setItem('d8_token',d.token);
+    localStorage.setItem('d8_user',JSON.stringify(d.user));
+    window.location.href='pages/dashboard.html';
+  } catch(err){ showError(err.message); }
+  finally{ btn.textContent=AUTH_STRINGS[authLang].create_btn; btn.disabled=false; }
+}
+if(localStorage.getItem('d8_token')) window.location.href='pages/dashboard.html';
+setAuthLang(authLang);
+</script>
+</body>
+</html>
