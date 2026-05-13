@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI Advisor — Double Eight AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<style>
+.chat-layout{display:grid;grid-template-columns:260px 1fr;height:calc(100vh - 58px);}
+.sessions-panel{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:.3s;}
+.sessions-header{padding:1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.sessions-header h3{font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px;}
+.sessions-list{flex:1;overflow-y:auto;padding:.5rem;}
+.session-item{padding:.7rem .85rem;border-radius:8px;cursor:pointer;transition:.15s;border:1px solid transparent;}
+.session-item:hover{background:var(--surface);border-color:var(--border);}
+.session-item.active{background:var(--gold-dim);border-color:var(--border-gold);}
+.session-title{font-size:.83rem;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.session-date{font-size:.72rem;color:var(--text3);margin-top:.2rem;}
+.chat-area{display:flex;flex-direction:column;overflow:hidden;position:relative;}
+.chat-topbar{padding:.75rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem;flex-shrink:0;}
+.chat-topbar h4{font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px;}
+.chip{background:var(--gold-dim);border:1px solid var(--border-gold);color:var(--gold);font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em;}
+.starters{display:flex;flex-wrap:wrap;gap:.6rem;padding:1.5rem;align-self:center;max-width:680px;width:100%;margin:auto;}
+.starter-btn{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.65rem 1rem;font-size:.82rem;color:var(--text2);cursor:pointer;transition:.15s;text-align:left;}
+.starter-btn:hover{border-color:var(--border-gold);color:var(--text);}
+
+/* mobile toggle bar */
+.mobile-chat-tabs{display:none;background:var(--bg2);border-bottom:1px solid var(--border);padding:.5rem 1rem;gap:.5rem;}
+.mob-tab{flex:1;padding:.5rem;border-radius:8px;font-size:.82rem;font-weight:600;border:1px solid var(--border);color:var(--text3);background:none;cursor:pointer;transition:.15s;font-family:'Outfit',sans-serif;}
+.mob-tab.active{background:var(--gold-dim);border-color:var(--border-gold);color:var(--gold);}
+
+/* sidebar overlay for mobile */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99;}
+.sidebar-overlay.show{display:block;}
+.sidebar-close-btn{display:none;position:absolute;top:1rem;right:-44px;background:var(--bg2);border:1px solid var(--border);width:36px;height:36px;border-radius:9px;color:var(--text);font-size:1.1rem;cursor:pointer;align-items:center;justify-content:center;z-index:101;}
+
+@media(max-width:900px){
+  .chat-layout{grid-template-columns:1fr;height:auto;flex-direction:column;}
+  .sessions-panel{display:none;position:fixed;top:0;left:0;width:80%;max-width:300px;height:100vh;z-index:100;border-right:1px solid var(--border-gold);}
+  .sessions-panel.mob-show{display:flex;}
+  .sidebar-close-btn{display:flex;}
+  .mobile-chat-tabs{display:flex;}
+  .chat-area{height:calc(100vh - 58px - 48px);}
+}
+</style>
+</head>
+<body>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeHistoryPanel()"></div>
+<div class="app">
+  <aside class="sidebar"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button onclick="document.querySelector('.sidebar').classList.toggle('open');document.getElementById('nav-overlay')?.classList.toggle('show',document.querySelector('.sidebar').classList.contains('open'))" class="hamburger">☰</button>
+      <span class="topbar-title">AI ADVISOR</span>
+      <div class="topbar-right">
+        <span class="chip" style="display:none" id="mob-chip-hide">◎ Llama 3.3 70B</span>
+        <span class="chip" id="desk-chip">◎ Powered by Llama 3.3 70B</span>
+        <button class="btn btn-secondary btn-sm" onclick="newSession()">+ New Chat</button>
+      </div>
+    </div>
+
+    <!-- mobile tab bar -->
+    <div class="mobile-chat-tabs">
+      <button class="mob-tab active" id="tab-chat" onclick="showMobTab('chat')">💬 Chat</button>
+      <button class="mob-tab" id="tab-history" onclick="showMobTab('history')">🕐 History</button>
+    </div>
+
+    <div class="chat-layout">
+      <!-- sessions panel -->
+      <div class="sessions-panel" id="sessions-panel">
+        <button class="sidebar-close-btn" onclick="closeHistoryPanel()" title="Close">✕</button>
+        <div class="sessions-header">
+          <h3>HISTORY</h3>
+          <button class="btn btn-secondary btn-sm" onclick="newSession()">+</button>
+        </div>
+        <div class="sessions-list" id="sessions-list">
+          <div style="padding:1rem;font-size:.8rem;color:var(--text3)">Loading...</div>
+        </div>
+      </div>
+
+      <!-- chat area -->
+      <div class="chat-area" id="chat-area">
+        <div class="chat-topbar">
+          <div style="width:32px;height:32px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#080810;font-size:.9rem;flex-shrink:0">D8</div>
+          <div>
+            <h4>DOUBLE EIGHT ADVISOR</h4>
+            <div style="font-size:.72rem;color:var(--text3)">Expert AI for entrepreneurs & founders</div>
+          </div>
+          <button class="btn btn-danger btn-sm" style="margin-left:auto;white-space:nowrap" onclick="clearSession()">Clear</button>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+          <div class="starters" id="starters">
+            <div style="width:100%;text-align:center;margin-bottom:.75rem">
+              <div style="font-family:'Bebas Neue',cursive;font-size:1.6rem;color:var(--gold);letter-spacing:1px">WHAT CAN I HELP YOU BUILD?</div>
+              <div style="font-size:.85rem;color:var(--text3)">Ask anything about business, strategy, or entrepreneurship</div>
+            </div>
+            <button class="starter-btn" onclick="sendStarter(this)">📋 Create a business plan for a SaaS startup</button>
+            <button class="starter-btn" onclick="sendStarter(this)">📊 Analyze my market and find opportunities</button>
+            <button class="starter-btn" onclick="sendStarter(this)">💰 How should I price my product?</button>
+            <button class="starter-btn" onclick="sendStarter(this)">🎯 Review my pitch deck and give feedback</button>
+            <button class="starter-btn" onclick="sendStarter(this)">📢 Build a full marketing strategy for me</button>
+            <button class="starter-btn" onclick="sendStarter(this)">🚀 Create a 30-day launch roadmap</button>
+            <button class="starter-btn" onclick="sendStarter(this)">⚔ Who are my main competitors and how do I beat them?</button>
+            <button class="starter-btn" onclick="sendStarter(this)">💡 I have an idea, is it viable?</button>
+          </div>
+        </div>
+        <div class="chat-input-wrap">
+          <div class="chat-input-row">
+            <textarea class="chat-textarea" id="chat-input" placeholder="Ask anything — business plans, strategy, pricing, marketing..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+            <button class="chat-send" onclick="sendMessage()" id="send-btn" title="Send">→</button>
+          </div>
+          <div style="text-align:center;font-size:.72rem;color:var(--text3);margin-top:.5rem">Double Eight AI · Expert Business Advisor</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- nav sidebar overlay -->
+
+<script src="../js/core.js"></script>
+<script>
+Auth.check();
+buildLayout('chat');
+applyLang(getLang());
+
+let currentSessionId = null;
+let isStreaming = false;
+let messages = [];
+
+// ── MOBILE TABS ───────────────────────────────────────────────────────────
+function showMobTab(tab) {
+  document.getElementById('tab-chat').classList.toggle('active', tab==='chat');
+  document.getElementById('tab-history').classList.toggle('active', tab==='history');
+  if(tab==='history') {
+    document.getElementById('sessions-panel').classList.add('mob-show');
+    document.getElementById('sidebar-overlay').classList.add('show');
+  } else {
+    closeHistoryPanel();
+  }
+}
+function closeHistoryPanel() {
+  document.getElementById('sessions-panel').classList.remove('mob-show');
+  document.getElementById('sidebar-overlay').classList.remove('show');
+  document.getElementById('tab-chat').classList.add('active');
+  document.getElementById('tab-history').classList.remove('active');
+}
+
+// ── SESSIONS ─────────────────────────────────────────────────────────────
+async function loadSessions() {
+  const data = await api.get('/chat/sessions');
+  const list = document.getElementById('sessions-list');
+  if(!data?.sessions?.length) {
+    list.innerHTML='<div style="padding:1rem;font-size:.8rem;color:var(--text3)">No history yet. Start a conversation!</div>';
+    return;
+  }
+  list.innerHTML = data.sessions.map(s=>`
+    <div class="session-item ${s._id===currentSessionId?'active':''}" onclick="loadSession('${s._id}');closeHistoryPanel()">
+      <div class="session-title">${s.title||'New Conversation'}</div>
+      <div class="session-date">${timeAgo(s.updatedAt)}</div>
+    </div>
+  `).join('');
+}
+
+async function loadSession(id) {
+  const data = await api.get(`/chat/sessions/${id}`);
+  if(!data?.session) return;
+  currentSessionId = id;
+  messages = data.session.messages || [];
+  const container = document.getElementById('chat-messages');
+  container.innerHTML = '';
+  messages.forEach(m => appendMessage(m.role, m.content));
+  container.scrollTop = container.scrollHeight;
+  loadSessions();
+}
+
+function appendMessage(role, content, streaming=false) {
+  const container = document.getElementById('chat-messages');
+  const id = 'msg-'+Date.now()+Math.random();
+  const div = document.createElement('div');
+  div.className = `chat-msg ${role}`;
+  div.id = id;
+  const avatar = role==='user'
+    ? `<div class="chat-avatar user">U</div>`
+    : `<div class="chat-avatar ai">D8</div>`;
+  div.innerHTML = `${avatar}<div class="chat-bubble" id="bubble-${id}">${role==='assistant'&&streaming?'<div class="typing-dots"><span></span><span></span><span></span></div>':renderMarkdown(content)}</div>`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+  return id;
+}
+
+function updateBubble(msgId, content) {
+  const bubble = document.getElementById(`bubble-${msgId}`);
+  if(bubble) bubble.innerHTML = renderMarkdown(content);
+  const container = document.getElementById('chat-messages');
+  container.scrollTop = container.scrollHeight;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if(!text || isStreaming) return;
+
+  // hide starters
+  const starters = document.getElementById('starters');
+  if(starters) starters.remove();
+
+  input.value=''; input.style.height='auto';
+  isStreaming=true;
+  const sendBtn = document.getElementById('send-btn');
+  sendBtn.innerHTML='<div class="typing-dots" style="padding:0"><span></span><span></span><span></span></div>';
+  sendBtn.disabled=true;
+
+  appendMessage('user', text);
+  messages.push({role:'user',content:text});
+  const aiMsgId = appendMessage('assistant','',true);
+  let fullResponse='';
+
+  try {
+    const body = { message:text, sessionId:currentSessionId };
+    const r = await fetch(`${API}/chat/message`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${Auth.token()}`},body:JSON.stringify(body)});
+    if(!r.ok) throw new Error('Server error');
+    const reader = r.body.getReader();
+    const dec = new TextDecoder();
+    let buf='';
+    while(true) {
+      const {done,value} = await reader.read();
+      if(done) break;
+      buf += dec.decode(value,{stream:true});
+      const lines = buf.split('\n'); buf=lines.pop();
+      for(const line of lines) {
+        if(!line.startsWith('data:')) continue;
+        try {
+          const d = JSON.parse(line.slice(5).trim());
+          if(d.chunk) { fullResponse+=d.chunk; updateBubble(aiMsgId,fullResponse); }
+          if(d.sessionId) currentSessionId=d.sessionId;
+          if(d.done) loadSessions();
+        } catch{}
+      }
+    }
+    if(fullResponse) messages.push({role:'assistant',content:fullResponse});
+  } catch(err) {
+    updateBubble(aiMsgId,'Sorry, something went wrong. Please try again.');
+    Toast.show('Failed to send message','error');
+  } finally {
+    isStreaming=false;
+    sendBtn.innerHTML='→';
+    sendBtn.disabled=false;
+  }
+}
+
+function sendStarter(btn) {
+  document.getElementById('chat-input').value = btn.textContent.replace(/^[^\w]*/,'').trim();
+  sendMessage();
+}
+function handleKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();} }
+function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
+function newSession() { currentSessionId=null; messages=[]; window.location.reload(); }
+function clearSession() { if(confirm('Clear this conversation?')) { currentSessionId=null; messages=[]; window.location.reload(); } }
+
+loadSessions();
+</script>
+</body>
+</html>

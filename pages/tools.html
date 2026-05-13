@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI Tools — Double Eight AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<style>
+.cat-filters{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+.cat-btn{padding:.4rem 1rem;border-radius:20px;font-size:.8rem;font-weight:500;border:1px solid var(--border);color:var(--text3);transition:.15s;cursor:pointer;}
+.cat-btn.active{background:var(--gold-dim);border-color:var(--border-gold);color:var(--gold);}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar"></aside>
+  <div class="main">
+    <div class="topbar">
+      <span class="topbar-title">AI TOOLS HUB</span>
+      <div class="topbar-right">
+        <span style="font-size:.8rem;color:var(--text3)">17 AI-powered tools</span>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="cat-filters">
+        <button class="cat-btn active" onclick="filterCat('all',this)">All Tools</button>
+        <button class="cat-btn" onclick="filterCat('brand',this)">Brand & Identity</button>
+        <button class="cat-btn" onclick="filterCat('plan',this)">Planning & Strategy</button>
+        <button class="cat-btn" onclick="filterCat('legal',this)">Legal & Finance</button>
+        <button class="cat-btn" onclick="filterCat('mkt',this)">Marketing</button>
+        <button class="cat-btn" onclick="filterCat('sales',this)">Sales & Copy</button>
+      </div>
+      <div class="tools-grid" id="tools-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOOL MODAL -->
+<div class="modal-overlay" id="tool-modal">
+  <div class="modal" style="max-width:680px">
+    <div class="modal-header">
+      <span id="modal-icon" style="font-size:1.5rem"></span>
+      <div>
+        <div class="modal-title" id="modal-title"></div>
+        <div style="font-size:.8rem;color:var(--text3);margin-top:.1rem" id="modal-desc"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal('tool-modal')" style="position:sticky;top:0;flex-shrink:0">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="modal-form"></div>
+      <div id="modal-result" style="display:none" class="result-panel">
+        <h4>Generated Result</h4>
+        <div class="result-content" id="modal-result-content"></div>
+        <div class="result-actions">
+          <button class="btn btn-secondary btn-sm" onclick="copyText(window._lastResult)">Copy Text</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportReport(window._lastReportId,'docx')">↓ DOCX</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportReport(window._lastReportId,'pdf')">↓ PDF</button>
+          <button class="btn btn-secondary btn-sm" onclick="resetModal()">← New</button>
+          <button class="btn btn-danger btn-sm" onclick="closeModal('tool-modal')" style="margin-left:auto">✕ Close</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" id="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('tool-modal')">Cancel</button>
+      <button class="btn btn-primary" id="generate-btn" onclick="generateTool()"><span class="loader" id="gen-loader" style="display:none"></span> <span id="gen-btn-text">⚡ Generate</span></button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/core.js"></script>
+<script>
+Auth.check(); applyLang(getLang());
+buildLayout('tools');
+
+const TOOLS = [
+  { id:'brand_kit', icon:'🎨', name:'Brand Kit', desc:'Complete brand identity: colors, typography, voice, logo concepts & guidelines.', cat:'brand', tag:'Brand', tagClass:'tag-brand', fields:[
+    {id:'businessName',label:'Business Name',type:'text',placeholder:'e.g. Nexus Capital',required:true},
+    {id:'industry',label:'Industry',type:'text',placeholder:'e.g. FinTech, Health, E-commerce',required:true},
+    {id:'values',label:'Brand Values',type:'text',placeholder:'e.g. Innovation, Trust, Simplicity'},
+    {id:'targetAudience',label:'Target Audience',type:'text',placeholder:'e.g. Millennial entrepreneurs'},
+    {id:'style',label:'Style Preference',type:'text',placeholder:'e.g. Modern & Minimalist'},
+  ]},
+  { id:'business_name', icon:'💡', name:'Business Name Ideas', desc:'10 creative, market-ready business names with domain suggestions & taglines.', cat:'brand', tag:'Brand', tagClass:'tag-brand', fields:[
+    {id:'industry',label:'Industry',type:'text',placeholder:'e.g. Sustainable Fashion',required:true},
+    {id:'description',label:'What does it do?',type:'textarea',placeholder:'Brief description of your business idea',required:true},
+    {id:'style',label:'Naming Style',type:'text',placeholder:'e.g. Short, Modern, Tech-sounding'},
+    {id:'targetMarket',label:'Target Market',type:'text',placeholder:'e.g. US market, Global, MENA'},
+  ]},
+  { id:'slogan', icon:'✍', name:'Slogan & Tagline', desc:'15 powerful taglines grouped by style with A/B testing framework.', cat:'brand', tag:'Brand', tagClass:'tag-brand', fields:[
+    {id:'businessName',label:'Business Name',type:'text',required:true},
+    {id:'industry',label:'Industry',type:'text',required:true},
+    {id:'coreValue',label:'Core Value',type:'text',placeholder:'e.g. Speed, Quality, Trust'},
+    {id:'tone',label:'Tone',type:'select',options:['Professional','Bold & Edgy','Friendly','Luxury','Humorous','Inspirational']},
+  ]},
+  { id:'business_plan', icon:'📋', name:'Business Plan', desc:'Full investor-ready business plan with financial projections, market analysis & 12-month roadmap.', cat:'plan', tag:'Strategy', tagClass:'tag-plan', fields:[
+    {id:'businessName',label:'Business Name',type:'text',required:true},
+    {id:'industry',label:'Industry',type:'text',required:true},
+    {id:'businessModel',label:'Business Model',type:'text',placeholder:'e.g. SaaS, E-commerce, Service',required:true},
+    {id:'targetMarket',label:'Target Market',type:'text',required:true},
+    {id:'investment',label:'Initial Investment',type:'text',placeholder:'e.g. $50,000'},
+    {id:'goals',label:'Key Goals',type:'textarea',placeholder:'What do you want to achieve in 12 months?',required:true},
+    {id:'location',label:'Location',type:'text',placeholder:'e.g. Dubai, UAE / Remote'},
+  ]},
+  { id:'competitor_matrix', icon:'⚔', name:'Competitor Analysis', desc:'Deep competitive intelligence matrix with gap analysis and battle plan.', cat:'plan', tag:'Strategy', tagClass:'tag-plan', fields:[
+    {id:'businessName',label:'Your Business',type:'text',required:true},
+    {id:'industry',label:'Industry',type:'text',required:true},
+    {id:'uniqueAngle',label:'Your Unique Angle',type:'text',placeholder:'What makes you different?'},
+    {id:'region',label:'Market Region',type:'text',placeholder:'e.g. Global, MENA, US'},
+  ]},
+  { id:'pricing_calculator', icon:'💰', name:'Pricing Strategy', desc:'Complete pricing model analysis with break-even, revenue projections & psychology tips.', cat:'plan', tag:'Strategy', tagClass:'tag-plan', fields:[
+    {id:'businessName',label:'Business Name',type:'text',required:true},
+    {id:'product',label:'Product / Service',type:'text',required:true},
+    {id:'industry',label:'Industry',type:'text',required:true},
+    {id:'monthlyCosts',label:'Monthly Costs ($)',type:'text',placeholder:'e.g. 5000'},
+    {id:'targetMargin',label:'Target Profit Margin',type:'text',placeholder:'e.g. 40%'},
+    {id:'competitorPricing',label:'Competitor Price Range',type:'text',placeholder:'e.g. $50–$200/mo'},
+  ]},
+  { id:'launch_roadmap', icon:'🚀', name:'30-Day Launch Roadmap', desc:'Day-by-day launch plan with specific tasks, tools, and success metrics.', cat:'plan', tag:'Strategy', tagClass:'tag-plan', fields:[
+    {id:'businessName',label:'Business Name',type:'text',required:true},
+    {id:'industry',label:'Industry',type:'text',required:true},
+    {id:'budget',label:'Launch Budget',type:'text',placeholder:'e.g. $500, $5,000'},
+    {id:'teamSize',label:'Team Size',type:'text',placeholder:'e.g. Solo, 2 people'},
+    {id:'currentStatus',label:'Current Status',type:'text',placeholder:'e.g. Idea stage, MVP ready'},
+    {id:'goal',label:'30-Day Goal',type:'text',placeholder:'e.g. Get first 10 paying customers'},
+  ]},
+  { id:'budget_estimator', icon:'💵', name:'Budget Estimator', desc:'6-month startup budget with cash flow projection, burn rate, and funding sources.', cat:'legal', tag:'Finance', tagClass:'tag-legal', fields:[
+    {id:'businessType',label:'Business Type',type:'text',required:true},
+    {id:'industry',label:'Industry',type:'text',required:true},
+    {id:'location',label:'Location',type:'text',placeholder:'e.g. Remote, Dubai, New York'},
+    {id:'teamSize',label:'Team Size',type:'text',placeholder:'e.g. 1, 5, 10'},
+    {id:'revenueModel',label:'Revenue Model',type:'text',placeholder:'e.g. Subscription, One-time, Commission'},
+    {id:'targetRevenue',label:'Target Revenue (Month 6)',type:'text',placeholder:'e.g. $20,000/month'},
+  ]},
+  { id:'contract', icon:'📄', name:'Contract Agreement', desc:'Legally-sound contract templates: Service Agreement, NDA, Partnership, Freelance.', cat:'legal', tag:'Legal', tagClass:'tag-legal', fields:[
+    {id:'contractType',label:'Contract Type',type:'select',options:['Service Agreement','NDA (Non-Disclosure)','Partnership Agreement','Freelance Contract','Consulting Agreement','Employment Contract']},
+    {id:'partyA',label:'Party A (Provider/Company)',type:'text',placeholder:'Your company name',required:true},
+    {id:'partyB',label:'Party B (Client/Other Party)',type:'text',placeholder:'Client name',required:true},
+    {id:'service',label:'Service / Subject',type:'text',placeholder:'e.g. Web development services',required:true},
+    {id:'payment',label:'Payment Terms',type:'text',placeholder:'e.g. $5,000 on completion'},
+    {id:'duration',label:'Duration',type:'text',placeholder:'e.g. 3 months, Project-based'},
+    {id:'jurisdiction',label:'Jurisdiction',type:'text',placeholder:'e.g. UAE, New York, UK'},
+  ]},
+  { id:'pitch_deck', icon:'🎯', name:'Investor Pitch Deck', desc:'13-slide pitch deck script with speaker notes, visuals guide & funding ask.', cat:'legal', tag:'Finance', tagClass:'tag-legal', fields:[
+    {id:'businessName',label:'Business Name',type:'text',required:true},
+    {id:'industry',label:'Industry',type:'text',required:true},
+    {id:'problem',label:'The Problem You Solve',type:'textarea',placeholder:'What painful problem exists?',required:true},
+    {id:'solution',label:'Your Solution',type:'textarea',placeholder:'How do you solve it?',required:true},
+    {id:'traction',label:'Current Traction',type:'text',placeholder:'e.g. 500 users, $10K MRR, 3 pilots'},
+    {id:'fundingAsk',label:'Funding Ask',type:'text',placeholder:'e.g. $500,000 seed'},
+    {id:'useOfFunds',label:'Use of Funds',type:'text',placeholder:'e.g. 40% product, 40% marketing, 20% ops'},
+  ]},
+  { id:'ad_copy', icon:'📢', name:'Multi-Platform Ad Copy', desc:'Complete ad campaigns for Facebook, Google, TikTok, Instagram & LinkedIn.', cat:'mkt', tag:'Marketing', tagClass:'tag-mkt', fields:[
+    {id:'businessName',label:'Business Name',type:'text',required:true},
+    {id:'product',label:'Product / Service',type:'text',required:true},
+    {id:'targetAudience',label:'Target Audience',type:'text',required:true},
+    {id:'keyBenefit',label:'Key Benefit / USP',type:'text',required:true},
+    {id:'goal',label:'Campaign Goal',type:'select',options:['Lead Generation','Sales / Conversions','Brand Awareness','App Downloads','Event Registration']},
+  ]},
+  { id:'seo_keywords', icon:'🔍', name:'SEO Keyword Map', desc:'Full keyword strategy with 60+ keywords, content clusters & 90-day roadmap.', cat:'mkt', tag:'Marketing', tagClass:'tag-mkt', fields:[
+    {id:'businessName',label:'Business Name',type:'text',required:true},
+    {id:'industry',label:'Industry / Niche',type:'text',required:true},
+    {id:'website',label:'Website URL',type:'text',placeholder:'e.g. mysite.com'},
+    {id:'location',label:'Target Location',type:'text',placeholder:'e.g. Dubai, Global, US'},
+    {id:'competitors',label:'Known Competitors',type:'text',placeholder:'e.g. competitor1.com, competitor2.com'},
+  ]},
+  { id:'content_calendar', icon:'📅', name:'30-Day Content Calendar', desc:'Daily social content for all platforms with captions, hashtags & posting times.', cat:'mkt', tag:'Marketing', tagClass:'tag-mkt', fields:[
+    {id:'businessName',label:'Business Name',type:'text',required:true},
+    {id:'industry',label:'Industry',type:'text',required:true},
+    {id:'platforms',label:'Platforms',type:'text',placeholder:'e.g. Instagram, TikTok, LinkedIn'},
+    {id:'brandVoice',label:'Brand Voice',type:'text',placeholder:'e.g. Bold, Friendly, Professional'},
+    {id:'goals',label:'Content Goals',type:'text',placeholder:'e.g. Brand awareness, Lead generation'},
+  ]},
+  { id:'market_study', icon:'📊', name:'Market Study', desc:'Deep audience analysis with demographics, psychographics & buying journey map.', cat:'mkt', tag:'Marketing', tagClass:'tag-mkt', fields:[
+    {id:'niche',label:'Industry / Niche',type:'text',required:true},
+    {id:'product',label:'Product / Service',type:'text',placeholder:'What are you selling?'},
+    {id:'region',label:'Target Region',type:'text',placeholder:'e.g. MENA, US, Europe'},
+    {id:'budget',label:'Marketing Budget',type:'text',placeholder:'e.g. $2,000/month'},
+  ]},
+  { id:'cold_email', icon:'📧', name:'Cold Email Sequence', desc:'5-email drip sequence + LinkedIn messages + cold call script + objection handler.', cat:'sales', tag:'Sales', tagClass:'tag-sales', fields:[
+    {id:'senderBusiness',label:'Your Business',type:'text',required:true},
+    {id:'targetProspect',label:'Target Prospect',type:'text',placeholder:'e.g. SaaS founders, Real estate agents',required:true},
+    {id:'industry',label:'Prospect Industry',type:'text',required:true},
+    {id:'valueProp',label:'Value Proposition',type:'textarea',placeholder:'Why should they care?',required:true},
+    {id:'goal',label:'Goal of Outreach',type:'text',placeholder:'e.g. Book a 15-min discovery call'},
+    {id:'tone',label:'Tone',type:'select',options:['Professional & Warm','Direct & Bold','Consultative','Casual & Friendly']},
+  ]},
+  { id:'website_copy', icon:'🌐', name:'Website Copy', desc:'Full copy for homepage, about, services & contact pages — conversion-optimized.', cat:'sales', tag:'Sales', tagClass:'tag-sales', fields:[
+    {id:'businessName',label:'Business Name',type:'text',required:true},
+    {id:'industry',label:'Industry',type:'text',required:true},
+    {id:'offer',label:'Primary Offer',type:'text',placeholder:'What do you sell?',required:true},
+    {id:'targetCustomer',label:'Target Customer',type:'text',required:true},
+    {id:'usp',label:'Unique Selling Point',type:'text',placeholder:'What makes you the best choice?'},
+    {id:'tone',label:'Tone',type:'select',options:['Professional','Conversational','Luxury & Premium','Bold & Disruptive','Friendly & Approachable']},
+  ]},
+  { id:'sales_script', icon:'🎤', name:'Sales Script', desc:'Complete word-for-word sales script with objection handling and 5 closing techniques.', cat:'sales', tag:'Sales', tagClass:'tag-sales', fields:[
+    {id:'businessName',label:'Business Name',type:'text',required:true},
+    {id:'product',label:'Product / Service',type:'text',required:true},
+    {id:'price',label:'Price Point',type:'text',placeholder:'e.g. $299/month'},
+    {id:'channel',label:'Sales Channel',type:'select',options:['Phone / Video call','In-Person Meeting','Demo Call','Chat / Messaging']},
+    {id:'targetClient',label:'Target Client Profile',type:'text',required:true},
+    {id:'objections',label:'Common Objections',type:'text',placeholder:'e.g. Too expensive, Need to think about it'},
+  ]},
+];
+
+let currentTool = null;
+
+function filterCat(cat, btn) {
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTools(cat);
+}
+
+function renderTools(cat='all') {
+  const filtered = cat==='all' ? TOOLS : TOOLS.filter(t=>t.cat===cat);
+  document.getElementById('tools-grid').innerHTML = filtered.map(t=>`
+    <div class="tool-card" onclick="openTool('${t.id}')">
+      <div class="tool-icon">${t.icon}</div>
+      <div class="tool-name">${t.name}</div>
+      <div class="tool-desc">${t.desc}</div>
+      <span class="tool-tag ${t.tagClass}">${t.tag}</span>
+    </div>
+  `).join('');
+}
+
+function openTool(toolId) {
+  const tool = TOOLS.find(t=>t.id===toolId);
+  if(!tool) return;
+  currentTool = tool;
+  document.getElementById('modal-icon').textContent = tool.icon;
+  document.getElementById('modal-title').textContent = tool.name;
+  document.getElementById('modal-desc').textContent = tool.desc;
+  document.getElementById('modal-result').style.display='none';
+  document.getElementById('modal-footer').style.display='flex';
+  document.getElementById('modal-form').innerHTML = tool.fields.map(f=>{
+    if(f.type==='select') return `<div class="form-group"><label class="form-label">${f.label}</label><select class="form-select" id="f_${f.id}">${f.options.map(o=>`<option value="${o}">${o}</option>`).join('')}</select></div>`;
+    if(f.type==='textarea') return `<div class="form-group"><label class="form-label">${f.label}${f.required?'*':''}</label><textarea class="form-textarea" id="f_${f.id}" placeholder="${f.placeholder||''}" ${f.required?'required':''}></textarea></div>`;
+    return `<div class="form-group"><label class="form-label">${f.label}${f.required?'*':''}</label><input type="${f.type||'text'}" class="form-input" id="f_${f.id}" placeholder="${f.placeholder||''}" ${f.required?'required':''}></div>`;
+  }).join('');
+  openModal('tool-modal');
+}
+
+async function generateTool() {
+  if(!currentTool) return;
+  const inputs = {};
+  let valid = true;
+  currentTool.fields.forEach(f=>{
+    const el = document.getElementById(`f_${f.id}`);
+    if(el) {
+      inputs[f.id] = el.value.trim();
+      if(f.required && !inputs[f.id]) { el.style.borderColor='var(--red)'; valid=false; }
+      else { el.style.borderColor=''; }
+    }
+  });
+  if(!valid) { Toast.show('Please fill in all required fields','error'); return; }
+
+  const btn = document.getElementById('generate-btn');
+  const loader = document.getElementById('gen-loader');
+  const btnText = document.getElementById('gen-btn-text');
+  btn.disabled=true; loader.style.display='inline-block'; btnText.textContent='Generating...';
+
+  try {
+    const data = await api.post('/tools/generate', { toolType: currentTool.id, inputs });
+    if(data?.error) throw new Error(data.error);
+    if(!data?.report) throw new Error('No result returned');
+    window._lastResult = data.report.content;
+    window._lastReportId = data.report._id;
+    document.getElementById('modal-result-content').innerHTML = renderMarkdown(data.report.content);
+    document.getElementById('modal-result').style.display='block';
+    document.getElementById('modal-footer').style.display='none';
+    Toast.show('Report generated successfully!', 'success');
+  } catch(err) {
+    Toast.show(err.message||'Generation failed', 'error');
+  } finally {
+    btn.disabled=false; loader.style.display='none'; btnText.textContent='⚡ Generate';
+  }
+}
+
+function resetModal() {
+  document.getElementById('modal-result').style.display='none';
+  document.getElementById('modal-footer').style.display='flex';
+}
+
+renderTools();
+
+// Check URL param
+const urlTool = new URLSearchParams(window.location.search).get('tool');
+if(urlTool) setTimeout(()=>openTool(urlTool),100);
+</script>
+</body>
+</html>

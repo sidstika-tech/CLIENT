@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dashboard — Double Eight AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<style>
+.welcome-banner{background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(245,158,11,0.03));border:1px solid var(--border-gold);border-radius:var(--radius-lg);padding:1.75rem 2rem;margin-bottom:1.75rem;display:flex;align-items:center;gap:1.5rem;}
+.welcome-text h2{font-family:'Bebas Neue',cursive;font-size:1.8rem;letter-spacing:1px;color:var(--text);margin-bottom:.2rem;}
+.welcome-text p{font-size:.9rem;color:var(--text2);}
+.welcome-icon{font-size:2.5rem;flex-shrink:0;}
+.quick-actions{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:1.75rem;}
+.quick-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;cursor:pointer;transition:.2s;}
+.quick-btn:hover{border-color:var(--border-gold);transform:translateY(-2px);}
+.quick-btn .q-icon{font-size:1.5rem;margin-bottom:.6rem;}
+.quick-btn .q-label{font-size:.85rem;font-weight:500;color:var(--text);}
+.quick-btn .q-sub{font-size:.75rem;color:var(--text3);margin-top:.2rem;}
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.section-hdr h3{font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;color:var(--text);}
+.recent-list{display:flex;flex-direction:column;gap:.6rem;}
+.recent-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;cursor:pointer;transition:.15s;}
+.recent-item:hover{border-color:var(--border-gold);}
+.recent-icon{font-size:1.1rem;flex-shrink:0;width:36px;height:36px;background:var(--surface2);border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.recent-title{font-size:.88rem;font-weight:500;color:var(--text);}
+.recent-meta{font-size:.75rem;color:var(--text3);margin-top:.15rem;}
+.recent-time{margin-left:auto;font-size:.75rem;color:var(--text3);white-space:nowrap;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;}
+@media(max-width:800px){.two-col{grid-template-columns:1fr;}}
+.usage-bar-wrap{display:flex;flex-direction:column;gap:.75rem;}
+.usage-row{display:flex;flex-direction:column;gap:.3rem;}
+.usage-label{display:flex;justify-content:space-between;font-size:.8rem;color:var(--text2);}
+.usage-pct{font-size:.75rem;color:var(--text3);}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="hamburger" onclick="document.querySelector('.sidebar').classList.toggle('open');document.getElementById('nav-overlay')?.classList.toggle('show',document.querySelector('.sidebar').classList.contains('open'))">☰</button>
+      <span class="topbar-title">DASHBOARD</span>
+      <div class="topbar-right">
+        <span id="top-date" style="font-size:.8rem;color:var(--text3)"></span>
+        <button class="btn-new" onclick="window.location.href='tools.html'">+ New Report</button>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="welcome-banner">
+        <div class="welcome-icon">⚡</div>
+        <div class="welcome-text">
+          <h2 id="welcome-msg">Welcome back!</h2>
+          <p>Your AI business intelligence platform is ready. What are we building today?</p>
+        </div>
+        <button class="btn btn-primary" style="margin-left:auto;white-space:nowrap" onclick="window.location.href='chat.html'">◎ Ask AI Advisor</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Reports Generated</div>
+          <div class="stat-value" id="stat-reports">—</div>
+          <div class="stat-sub">Total all-time</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">AI Chats</div>
+          <div class="stat-value" id="stat-chats">—</div>
+          <div class="stat-sub">Sessions total</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Market Research</div>
+          <div class="stat-value" id="stat-research">—</div>
+          <div class="stat-sub">Reports done</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Current Plan</div>
+          <div class="stat-value" id="stat-plan" style="font-size:1.5rem;text-transform:uppercase">—</div>
+          <div class="stat-sub"><a onclick="window.location.href='billing.html'" style="color:var(--gold);cursor:pointer">Upgrade →</a></div>
+        </div>
+      </div>
+
+      <div class="quick-actions" id="quick-actions">
+        <div class="quick-btn" onclick="window.location.href='chat.html'"><div class="q-icon">◎</div><div class="q-label">AI Advisor</div><div class="q-sub">Ask anything</div></div>
+        <div class="quick-btn" onclick="openTool('business_plan')"><div class="q-icon">📋</div><div class="q-label">Business Plan</div><div class="q-sub">Investor-ready</div></div>
+        <div class="quick-btn" onclick="window.location.href='market.html'"><div class="q-icon">◉</div><div class="q-label">Market Research</div><div class="q-sub">Deep insights</div></div>
+        <div class="quick-btn" onclick="window.location.href='marketing.html'"><div class="q-icon">◈</div><div class="q-label">Marketing Plan</div><div class="q-sub">Full strategy</div></div>
+        <div class="quick-btn" onclick="openTool('pitch_deck')"><div class="q-icon">🎯</div><div class="q-label">Pitch Deck</div><div class="q-sub">Raise capital</div></div>
+        <div class="quick-btn" onclick="window.location.href='tools.html'"><div class="q-icon">◫</div><div class="q-label">All 17 Tools</div><div class="q-sub">See full toolkit</div></div>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <div class="section-hdr">
+            <h3>Recent Reports</h3>
+            <button class="btn btn-secondary btn-sm" onclick="window.location.href='vault.html'">View All →</button>
+          </div>
+          <div class="recent-list" id="recent-list">
+            <div class="empty-state"><div class="empty-icon">▣</div><p>No reports yet.<br>Generate your first one!</p></div>
+          </div>
+        </div>
+        <div>
+          <div class="section-hdr"><h3>Usage Overview</h3></div>
+          <div class="card">
+            <div class="usage-bar-wrap" id="usage-bars">
+              <div style="color:var(--text3);font-size:.85rem;text-align:center;padding:1rem">Loading usage data...</div>
+            </div>
+          </div>
+          <div class="card card-gold" style="margin-top:1rem">
+            <div style="font-family:'Bebas Neue',cursive;font-size:1.1rem;color:var(--gold);margin-bottom:.5rem;letter-spacing:1px">◎ AI ADVISOR TIP</div>
+            <div id="tip-text" style="font-size:.85rem;color:var(--text2);line-height:1.65">Loading AI tip...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../js/core.js"></script>
+<script>
+Auth.check(); applyLang(getLang());
+buildLayout('dashboard');
+document.getElementById('top-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+
+const TOOL_ICONS = {business_plan:'📋',market_research:'◉',marketing_strategy:'◈',brand_kit:'🎨',business_name:'💡',slogan:'✍',competitor_matrix:'⚔',pricing_calculator:'💰',launch_roadmap:'🚀',contract:'📄',budget_estimator:'💵',pitch_deck:'🎯',ad_copy:'📢',seo_keywords:'🔍',content_calendar:'📅',market_study:'📊',cold_email:'📧',website_copy:'🌐',sales_script:'🎤',prompt_writer:'✦'};
+
+async function loadDashboard() {
+  const u = await api.get('/auth/me');
+  if(!u?.user) return;
+  const user = u.user;
+  Auth.setUser(user);
+  document.getElementById('welcome-msg').textContent = `Welcome back, ${user.name?.split(' ')[0] || 'there'}!`;
+  document.getElementById('stat-reports').textContent = user.usage?.reportsGenerated || 0;
+  document.getElementById('stat-chats').textContent = user.usage?.chatMessages || 0;
+  document.getElementById('stat-research').textContent = user.usage?.marketResearch || 0;
+  document.getElementById('stat-plan').textContent = user.membership?.plan || 'Free';
+
+  // Usage bars
+  const LIMITS = {free:{chat:20,reports:3,research:2,marketing:2},starter:{chat:200,reports:20,research:15,marketing:15},pro:{chat:1000,reports:100,research:75,marketing:75},enterprise:{chat:-1,reports:-1,research:-1,marketing:-1}};
+  const plan = user.membership?.plan || 'free';
+  const limits = LIMITS[plan] || LIMITS.free;
+  const usage = user.usage || {};
+  const items = [{label:'AI Chats',used:usage.chatMessages||0,max:limits.chat},{label:'Reports',used:usage.reportsGenerated||0,max:limits.reports},{label:'Market Research',used:usage.marketResearch||0,max:limits.research},{label:'Marketing Plans',used:usage.marketingPlans||0,max:limits.marketing}];
+  document.getElementById('usage-bars').innerHTML = items.map(it=>{
+    const pct = it.max===-1?5:Math.min(100,Math.round((it.used/it.max)*100));
+    const maxLabel = it.max===-1?'∞':it.max;
+    return `<div class="usage-row"><div class="usage-label"><span>${it.label}</span><span class="usage-pct">${it.used}/${maxLabel}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div></div>`;
+  }).join('');
+
+  // Recent reports
+  const rep = await api.get('/tools/reports');
+  const gen = await api.get('/generator/reports');
+  const all = [...(rep?.reports||[]),...(gen?.reports||[])].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,6);
+  if(all.length) {
+    document.getElementById('recent-list').innerHTML = all.map(r=>`
+      <div class="recent-item" onclick="window.location.href='vault.html'">
+        <div class="recent-icon">${TOOL_ICONS[r.type]||'📄'}</div>
+        <div><div class="recent-title">${r.title}</div><div class="recent-meta">${r.type?.replace(/_/g,' ')}</div></div>
+        <div class="recent-time">${timeAgo(r.createdAt)}</div>
+      </div>`).join('');
+  }
+
+  // AI tip
+  const tips = ['Start with a Business Plan — it sets the foundation for all other decisions.','Market Research before spending on ads. Know your customer before you spend.','Your pitch deck should answer: Problem → Solution → Market → Traction → Ask.','Use the Brand Kit tool to create a cohesive identity across all touchpoints.','Cold email works. Personalize the first line and keep it under 100 words.'];
+  document.getElementById('tip-text').textContent = tips[Math.floor(Math.random()*tips.length)];
+}
+
+function openTool(type) {
+  window.location.href = `tools.html?tool=${type}`;
+}
+
+loadDashboard();
+</script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" id="html-root">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Settings — Double Eight AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<style>
+.lang-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:4px;gap:4px;}
+.lang-btn{flex:1;padding:.55rem 1rem;border-radius:7px;font-size:.9rem;font-weight:500;cursor:pointer;border:none;background:none;color:var(--text3);transition:.2s;font-family:'Outfit',sans-serif;}
+.lang-btn.active{background:var(--gold-dim);color:var(--gold);border:1px solid var(--border-gold);}
+.saved-card{display:flex;align-items:center;gap:1rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-bottom:.75rem;}
+.card-logo{width:44px;height:28px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;}
+.card-logo.visa{background:#1a1f71;color:#fff;}
+.card-logo.mc{background:#eb001b;color:#fff;}
+.card-logo.other{background:var(--surface);color:var(--text3);border:1px solid var(--border);}
+.badge-default{background:var(--gold-dim);border:1px solid var(--border-gold);color:var(--gold);font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:20px;text-transform:uppercase;}
+[dir="rtl"] .sidebar{left:auto;right:0;border-right:none;border-left:1px solid var(--border);}
+[dir="rtl"] .main{margin-left:0;margin-right:var(--sidebar);}
+[dir="rtl"] .nav-item{border-left:none;border-right:2px solid transparent;}
+[dir="rtl"] .nav-item.active{border-right-color:var(--gold);}
+[dir="rtl"] .topbar-right{margin-right:auto;margin-left:0;}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button onclick="document.querySelector('.sidebar').classList.toggle('open')" style="background:none;border:none;color:var(--text);font-size:1.4rem;padding:.25rem .5rem;cursor:pointer;display:none" class="hamburger">☰</button>
+      <span class="topbar-title">SETTINGS</span>
+    </div>
+    <div class="page-content" style="max-width:680px">
+
+      <div class="card" style="margin-bottom:1.25rem">
+        <h3 style="font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;margin-bottom:1.25rem;color:var(--gold)">◑ PROFILE</h3>
+        <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="s-name" placeholder="Your full name"></div>
+        <button class="btn btn-primary" onclick="saveProfile()">Save Profile</button>
+      </div>
+
+      <div class="card" style="margin-bottom:1.25rem">
+        <h3 style="font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;margin-bottom:1rem;color:var(--gold)">◑ LANGUAGE</h3>
+        <div class="lang-toggle">
+          <button class="lang-btn active" id="lang-en" onclick="setLang('en')">🇬🇧 English</button>
+          <button class="lang-btn" id="lang-ar" onclick="setLang('ar')">🇸🇦 العربية</button>
+        </div>
+        <div id="lang-note" style="font-size:.78rem;color:var(--text3);margin-top:.75rem">Changes the interface language across the platform.</div>
+      </div>
+
+      <div class="card" style="margin-bottom:1.25rem">
+        <h3 style="font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;margin-bottom:1rem;color:var(--gold)">◑ PAYMENT METHODS</h3>
+        <div id="saved-cards-list"></div>
+        <button class="btn btn-secondary" style="width:100%;margin-top:.5rem" onclick="openModal('add-card-modal')">+ Add Payment Method</button>
+      </div>
+
+      <div class="card" style="margin-bottom:1.25rem">
+        <h3 style="font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;margin-bottom:1.25rem;color:var(--gold)">◑ CHANGE PASSWORD</h3>
+        <div class="form-group"><label class="form-label">Email Address</label><input type="email" class="form-input" id="s-email" disabled style="opacity:.5"></div>
+        <div class="form-group"><label class="form-label">Current Password</label><input type="password" class="form-input" id="s-oldpw" placeholder="••••••••"></div>
+        <div class="form-group"><label class="form-label">New Password</label><input type="password" class="form-input" id="s-newpw" placeholder="Min 6 characters"></div>
+        <div class="form-group"><label class="form-label">Confirm Password</label><input type="password" class="form-input" id="s-newpw2" placeholder="Repeat new password"></div>
+        <button class="btn btn-primary" onclick="changePassword()">Update Password</button>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem;background:var(--surface2);border-radius:var(--radius)">
+          <div><div style="font-size:.9rem;font-weight:500">Sign Out</div><div style="font-size:.78rem;color:var(--text3)">Sign out of your Double Eight AI account</div></div>
+          <button class="btn btn-secondary" onclick="Auth.logout()">Sign Out →</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="add-card-modal">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header">
+      <div class="modal-title">ADD PAYMENT METHOD</div>
+      <button class="modal-close" onclick="closeModal('add-card-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Cardholder Name</label><input type="text" class="form-input" id="c-name" placeholder="Name on card"></div>
+      <div class="form-group"><label class="form-label">Card Number</label><input type="text" class="form-input" id="c-num" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="form-group"><label class="form-label">Expiry</label><input type="text" class="form-input" id="c-exp" placeholder="MM/YY" maxlength="5" oninput="formatExp(this)"></div>
+        <div class="form-group"><label class="form-label">CVV</label><input type="password" class="form-input" id="c-cvv" placeholder="•••" maxlength="4"></div>
+      </div>
+      <div style="background:rgba(245,158,11,0.07);border:1px solid var(--border-gold);border-radius:9px;padding:.75rem 1rem;font-size:.78rem;color:var(--text3);display:flex;gap:.5rem">
+        <span style="color:var(--gold);flex-shrink:0">🔒</span> Card details are encrypted. We only save the last 4 digits for display.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('add-card-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCard()">Save Card</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/core.js"></script>
+<script>
+Auth.check(); buildLayout('settings');
+
+function setLang(lang) {
+  localStorage.setItem('d8_lang', lang);
+  applyLang(lang);
+  api.put('/user/profile', { settings: { language: lang } }).catch(()=>{});
+  Toast.show(lang==='ar'?'تم تغيير اللغة':'Language changed', 'success');
+}
+function applyLang(lang) {
+  const isAr = lang==='ar';
+  const root = document.getElementById('html-root');
+  root.setAttribute('dir', isAr?'rtl':'ltr');
+  root.setAttribute('lang', lang);
+  document.getElementById('lang-en').classList.toggle('active',!isAr);
+  document.getElementById('lang-ar').classList.toggle('active',isAr);
+  document.getElementById('lang-note').textContent = isAr ? 'يغير لغة الواجهة في جميع أنحاء المنصة.' : 'Changes the interface language across the platform.';
+  document.title = isAr ? 'الإعدادات — Double Eight AI' : 'Settings — Double Eight AI';
+}
+
+async function loadProfile() {
+  const d = await api.get('/user/profile');
+  if(!d?.user) return;
+  document.getElementById('s-name').value = d.user.name||'';
+  document.getElementById('s-email').value = d.user.email||'';
+  const lang = d.user.settings?.language || localStorage.getItem('d8_lang') || 'en';
+  localStorage.setItem('d8_lang', lang);
+  applyLang(lang);
+  loadCards();
+}
+async function saveProfile() {
+  const name = document.getElementById('s-name').value.trim();
+  if(!name){Toast.show('Name is required','error');return;}
+  const d = await api.put('/user/profile',{name});
+  if(d?.error){Toast.show(d.error,'error');return;}
+  Auth.setUser({...Auth.user(),name});
+  Toast.show('Profile updated!','success');
+}
+async function changePassword() {
+  const oldPw=document.getElementById('s-oldpw').value;
+  const newPw=document.getElementById('s-newpw').value;
+  const newPw2=document.getElementById('s-newpw2').value;
+  if(!oldPw||!newPw){Toast.show('Fill all fields','error');return;}
+  if(newPw!==newPw2){Toast.show('Passwords do not match','error');return;}
+  if(newPw.length<6){Toast.show('Min 6 characters','error');return;}
+  const d = await api.put('/user/password',{currentPassword:oldPw,newPassword:newPw});
+  if(d?.error){Toast.show(d.error,'error');return;}
+  ['s-oldpw','s-newpw','s-newpw2'].forEach(id=>document.getElementById(id).value='');
+  Toast.show('Password changed!','success');
+}
+
+function getSavedCards(){ try{return JSON.parse(localStorage.getItem('d8_cards')||'[]');}catch{return[];} }
+function persistCards(cards){
+  localStorage.setItem('d8_cards',JSON.stringify(cards));
+  api.put('/user/profile',{settings:{savedCards:cards.map(c=>({last4:c.last4,brand:c.brand,expiry:c.expiry,name:c.name}))}}).catch(()=>{});
+}
+function loadCards(){
+  const cards=getSavedCards();
+  const list=document.getElementById('saved-cards-list');
+  if(!cards.length){list.innerHTML='<div style="font-size:.82rem;color:var(--text3);padding:.25rem 0 .5rem">No payment methods saved yet.</div>';return;}
+  list.innerHTML=cards.map((c,i)=>`
+    <div class="saved-card">
+      <div class="card-logo ${c.brand}">${c.brand==='visa'?'VISA':c.brand==='mc'?'MC':'CARD'}</div>
+      <div style="flex:1"><div style="font-size:.88rem;font-weight:500">•••• ${c.last4}</div><div style="font-size:.73rem;color:var(--text3)">${c.name} · Exp ${c.expiry}</div></div>
+      ${i===0?'<span class="badge-default">Default</span>':`<button class="btn btn-secondary btn-sm" onclick="setDefault(${i})">Set Default</button>`}
+      <button class="btn btn-danger btn-sm" onclick="removeCard(${i})">✕</button>
+    </div>`).join('');
+}
+function saveCard(){
+  const num=document.getElementById('c-num').value.replace(/\s/g,'');
+  const name=document.getElementById('c-name').value.trim();
+  const exp=document.getElementById('c-exp').value.trim();
+  const cvv=document.getElementById('c-cvv').value.trim();
+  if(!num||!name||!exp||!cvv){Toast.show('Fill all card fields','error');return;}
+  if(num.length<15){Toast.show('Invalid card number','error');return;}
+  const cards=getSavedCards();
+  cards.push({last4:num.slice(-4),brand:num.startsWith('4')?'visa':num.startsWith('5')?'mc':'other',expiry:exp,name});
+  persistCards(cards);
+  closeModal('add-card-modal');
+  ['c-num','c-name','c-exp','c-cvv'].forEach(id=>document.getElementById(id).value='');
+  loadCards();
+  Toast.show('Card saved!','success');
+}
+function removeCard(i){const cards=getSavedCards();cards.splice(i,1);persistCards(cards);loadCards();Toast.show('Removed','info');}
+function setDefault(i){const cards=getSavedCards();const[c]=cards.splice(i,1);cards.unshift(c);persistCards(cards);loadCards();Toast.show('Default updated','success');}
+function formatCard(el){let v=el.value.replace(/\D/g,'').slice(0,16);el.value=v.replace(/(.{4})/g,'$1 ').trim();}
+function formatExp(el){let v=el.value.replace(/\D/g,'');if(v.length>=2)v=v.slice(0,2)+'/'+v.slice(2,4);el.value=v;}
+
+applyLang(localStorage.getItem('d8_lang')||'en');
+loadProfile();
+</script>
+</body>
+</html>

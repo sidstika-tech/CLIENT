@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Project Vault — Double Eight AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="hamburger" onclick="document.querySelector('.sidebar').classList.toggle('open');document.getElementById('nav-overlay')?.classList.toggle('show',document.querySelector('.sidebar').classList.contains('open'))">☰</button><span class="topbar-title">PROJECT VAULT</span>
+      <div class="topbar-right"><span id="vault-count" style="font-size:.8rem;color:var(--text3)">Loading...</span></div>
+    </div>
+    <div class="page-content">
+      <div class="vault-filters">
+        <button class="vault-filter active" onclick="filterVault('all',this)">All Reports</button>
+        <button class="vault-filter" onclick="filterVault('tools',this)">AI Tools</button>
+        <button class="vault-filter" onclick="filterVault('generator',this)">Business Plans</button>
+        <button class="vault-filter" onclick="filterVault('market',this)">Market Research</button>
+        <button class="vault-filter" onclick="filterVault('marketing',this)">Marketing</button>
+      </div>
+      <div id="vault-content" class="vault-grid">
+        <div class="empty-state"><div class="empty-icon">▣</div><p>Loading your reports...</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../js/core.js"></script>
+<script>
+Auth.check(); applyLang(getLang()); buildLayout('vault');
+const ICONS = {business_plan:'📋',market_research:'◉',marketing_strategy:'◈',brand_kit:'🎨',business_name:'💡',slogan:'✍',competitor_matrix:'⚔',pricing_calculator:'💰',launch_roadmap:'🚀',contract:'📄',budget_estimator:'💵',pitch_deck:'🎯',ad_copy:'📢',seo_keywords:'🔍',content_calendar:'📅',market_study:'📊',cold_email:'📧',website_copy:'🌐',sales_script:'🎤',prompt_writer:'✦'};
+let allReports = [];
+
+async function loadVault() {
+  const [tools, gen, mr, mkt] = await Promise.all([
+    api.get('/tools/reports'),
+    api.get('/generator/reports'),
+    api.get('/market-research/reports'),
+    api.get('/marketing/reports'),
+  ]);
+  allReports = [
+    ...(tools?.reports||[]).map(r=>({...r,source:'tools'})),
+    ...(gen?.reports||[]).map(r=>({...r,source:'generator'})),
+    ...(mr?.reports||[]).map(r=>({...r,source:'market'})),
+    ...(mkt?.reports||[]).map(r=>({...r,source:'marketing'})),
+  ].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  document.getElementById('vault-count').textContent = `${allReports.length} reports`;
+  renderVault(allReports);
+}
+
+function filterVault(type, btn) {
+  document.querySelectorAll('.vault-filter').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = type==='all' ? allReports : allReports.filter(r=>r.source===type);
+  renderVault(filtered);
+}
+
+function renderVault(reports) {
+  if(!reports.length) { document.getElementById('vault-content').innerHTML='<div class="empty-state"><div class="empty-icon">▣</div><p>No reports yet in this category</p></div>'; return; }
+  document.getElementById('vault-content').innerHTML = reports.map(r=>`
+    <div class="vault-item">
+      <div class="vault-item-header">
+        <div class="vault-item-icon">${ICONS[r.type]||'📄'}</div>
+        <div>
+          <div class="vault-item-title">${r.title}</div>
+          <div class="vault-item-meta">${r.type?.replace(/_/g,' ')} · ${timeAgo(r.createdAt)}</div>
+        </div>
+      </div>
+      <div class="vault-item-actions">
+        <button class="btn btn-secondary btn-sm" onclick="exportReport('${r._id}','pdf')">↓ PDF</button>
+        <button class="btn btn-secondary btn-sm" onclick="exportReport('${r._id}','docx')">↓ DOCX</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteReport('${r._id}','${r.source}')">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function deleteReport(id, source) {
+  if(!confirm('Delete this report?')) return;
+  const path = source==='generator' ? `/generator/reports/${id}` : `/tools/reports/${id}`;
+  const d = await api.del(path);
+  if(d?.success) { Toast.show('Deleted','success'); loadVault(); }
+  else Toast.show('Delete failed','error');
+}
+
+loadVault();
+</script>
+</body>
+</html>

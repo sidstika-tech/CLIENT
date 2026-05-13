@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Business Generator — Double Eight AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="hamburger" onclick="document.querySelector('.sidebar').classList.toggle('open');document.getElementById('nav-overlay')?.classList.toggle('show',document.querySelector('.sidebar').classList.contains('open'))">☰</button><span class="topbar-title">BUSINESS GENERATOR</span></div>
+    <div class="page-content">
+      <div class="two-col-form">
+        <div class="card">
+          <h3 style="font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;margin-bottom:1.25rem;color:var(--gold)">⚡ GENERATE BUSINESS PLAN</h3>
+          <div class="form-group"><label class="form-label">Business Name *</label><input type="text" class="form-input" id="g-name" placeholder="e.g. Nexus Capital AI"></div>
+          <div class="form-group"><label class="form-label">Industry *</label><input type="text" class="form-input" id="g-industry" placeholder="e.g. FinTech, Health, SaaS"></div>
+          <div class="form-group"><label class="form-label">Business Model *</label><input type="text" class="form-input" id="g-model" placeholder="e.g. SaaS subscription, E-commerce, Agency"></div>
+          <div class="form-group"><label class="form-label">Target Market *</label><input type="text" class="form-input" id="g-market" placeholder="e.g. SMBs in MENA, US freelancers"></div>
+          <div class="form-group"><label class="form-label">Initial Investment</label><input type="text" class="form-input" id="g-investment" placeholder="e.g. $50,000"></div>
+          <div class="form-group"><label class="form-label">Location</label><input type="text" class="form-input" id="g-location" placeholder="e.g. Dubai, Remote, New York"></div>
+          <div class="form-group"><label class="form-label">Goals *</label><textarea class="form-textarea" id="g-goals" placeholder="What do you want to achieve in 12 months?" style="min-height:70px"></textarea></div>
+          <button class="btn btn-primary" style="width:100%" onclick="doGenerate()">
+            <span class="loader" id="g-loader" style="display:none"></span> <span id="g-btn-text">⚡ Generate Full Business Plan</span>
+          </button>
+        </div>
+        <div>
+          <div id="g-result" style="display:none" class="result-panel">
+            <h4>Business Plan</h4>
+            <div class="result-content" id="g-content"></div>
+            <div class="result-actions">
+              <button class="btn btn-secondary btn-sm" onclick="copyText(window._gResult)">Copy</button>
+              <button class="btn btn-secondary btn-sm" onclick="exportReport(window._gReportId,'pdf')">↓ PDF</button>
+              <button class="btn btn-secondary btn-sm" onclick="exportReport(window._gReportId,'docx')">↓ DOCX</button>
+              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('g-result').style.display='none'">← New</button>
+            </div>
+          </div>
+          <div id="g-history-wrap">
+            <div class="section-hdr" style="margin-bottom:1rem"><h3 style="font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px">PREVIOUS PLANS</h3></div>
+            <div id="g-history" class="vault-grid">
+              <div class="empty-state"><div class="empty-icon">⚡</div><p>No plans generated yet</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../js/core.js"></script>
+<script>
+Auth.check(); applyLang(getLang()); buildLayout('generator');
+async function doGenerate() {
+  const name=document.getElementById('g-name').value.trim();
+  const industry=document.getElementById('g-industry').value.trim();
+  const model=document.getElementById('g-model').value.trim();
+  const market=document.getElementById('g-market').value.trim();
+  const goals=document.getElementById('g-goals').value.trim();
+  if(!name||!industry||!model||!market||!goals){Toast.show('Fill all required fields','error');return;}
+  const btn=document.getElementById('g-loader').closest('button');
+  document.getElementById('g-loader').style.display='inline-block';
+  document.getElementById('g-btn-text').textContent='Generating...';
+  btn.disabled=true;
+  try {
+    const data = await api.post('/generator/generate',{type:'business_plan',inputs:{businessName:name,industry,businessModel:model,targetMarket:market,investment:document.getElementById('g-investment').value,location:document.getElementById('g-location').value,goals}});
+    if(data?.error) throw new Error(data.error);
+    window._gResult=data.report.content; window._gReportId=data.report._id;
+    document.getElementById('g-content').innerHTML=renderMarkdown(data.report.content);
+    document.getElementById('g-result').style.display='block';
+    document.getElementById('g-history-wrap').style.display='none';
+    Toast.show('Business plan generated!','success');
+  } catch(e){Toast.show(e.message,'error');}
+  finally{document.getElementById('g-loader').style.display='none';document.getElementById('g-btn-text').textContent='⚡ Generate Full Business Plan';btn.disabled=false;}
+}
+async function loadHistory() {
+  const d = await api.get('/generator/reports');
+  if(!d?.reports?.length) return;
+  document.getElementById('g-history').innerHTML = d.reports.map(r=>`<div class="vault-item"><div class="vault-item-header"><div class="vault-item-icon">⚡</div><div><div class="vault-item-title">${r.title}</div><div class="vault-item-meta">${timeAgo(r.createdAt)}</div></div></div></div>`).join('');
+}
+loadHistory();
+</script>
+</body>
+</html>

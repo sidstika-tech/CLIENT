@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Market Research — Double Eight AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="hamburger" onclick="document.querySelector('.sidebar').classList.toggle('open');document.getElementById('nav-overlay')?.classList.toggle('show',document.querySelector('.sidebar').classList.contains('open'))">☰</button><span class="topbar-title">MARKET RESEARCH</span></div>
+    <div class="page-content">
+      <div class="two-col-form">
+        <div class="card">
+          <h3 style="font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;margin-bottom:1.25rem;color:var(--gold)">◉ NEW RESEARCH</h3>
+          <div class="form-group"><label class="form-label">Industry / Niche *</label><input type="text" class="form-input" id="mr-niche" placeholder="e.g. Electric Vehicles, SaaS CRM, Organic Food"></div>
+          <div class="form-group"><label class="form-label">Target Region</label><input type="text" class="form-input" id="mr-region" placeholder="e.g. Global, MENA, United States"></div>
+          <div class="form-group"><label class="form-label">Target Demographics</label><input type="text" class="form-input" id="mr-demo" placeholder="e.g. 25-45 professionals, SMBs"></div>
+          <div class="form-group"><label class="form-label">Research Focus</label>
+            <select class="form-select" id="mr-focus">
+              <option>Full market analysis</option>
+              <option>Competitor landscape</option>
+              <option>Customer behavior</option>
+              <option>Market entry strategy</option>
+              <option>Trend & opportunity analysis</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Budget Range</label><input type="text" class="form-input" id="mr-budget" placeholder="e.g. $10,000–$50,000/month"></div>
+          <button class="btn btn-primary" style="width:100%" onclick="doResearch()">
+            <span class="loader" id="mr-loader" style="display:none"></span> <span id="mr-btn-text">◉ Generate Research Report</span>
+          </button>
+        </div>
+        <div>
+          <div id="mr-result" style="display:none" class="result-panel">
+            <h4>Market Research Report</h4>
+            <div class="result-content" id="mr-content"></div>
+            <div class="result-actions">
+              <button class="btn btn-secondary btn-sm" onclick="copyText(window._mrResult)">Copy</button>
+              <button class="btn btn-secondary btn-sm" onclick="exportReport(window._mrReportId,'pdf')">↓ PDF</button>
+              <button class="btn btn-secondary btn-sm" onclick="exportReport(window._mrReportId,'docx')">↓ DOCX</button>
+            </div>
+          </div>
+          <div id="mr-history-wrap">
+            <div class="section-hdr" style="margin-bottom:1rem"><h3 style="font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px">PREVIOUS RESEARCH</h3></div>
+            <div id="mr-history" class="vault-grid">
+              <div class="empty-state"><div class="empty-icon">◉</div><p>No research reports yet</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../js/core.js"></script>
+<script>
+Auth.check(); applyLang(getLang()); buildLayout('market');
+async function doResearch() {
+  const niche = document.getElementById('mr-niche').value.trim();
+  if(!niche) { Toast.show('Please enter an industry/niche','error'); return; }
+  const btn = document.querySelector('#mr-loader').closest('button');
+  document.getElementById('mr-loader').style.display='inline-block';
+  document.getElementById('mr-btn-text').textContent='Generating...';
+  btn.disabled=true;
+  try {
+    const data = await api.post('/market-research/analyze', { inputs:{niche, region:document.getElementById('mr-region').value, demographics:document.getElementById('mr-demo').value, focus:document.getElementById('mr-focus').value, budget:document.getElementById('mr-budget').value} });
+    if(data?.error) throw new Error(data.error);
+    window._mrResult=data.report.content; window._mrReportId=data.report._id;
+    document.getElementById('mr-content').innerHTML = renderMarkdown(data.report.content);
+    document.getElementById('mr-result').style.display='block';
+    document.getElementById('mr-history-wrap').style.display='none';
+    Toast.show('Research complete!','success');
+  } catch(e){Toast.show(e.message,'error');}
+  finally{document.getElementById('mr-loader').style.display='none';document.getElementById('mr-btn-text').textContent='◉ Generate Research Report';btn.disabled=false;}
+}
+async function loadHistory() {
+  const d = await api.get('/market-research/reports');
+  if(!d?.reports?.length) return;
+  document.getElementById('mr-history').innerHTML = d.reports.map(r=>`
+    <div class="vault-item"><div class="vault-item-header"><div class="vault-item-icon">◉</div><div><div class="vault-item-title">${r.title}</div><div class="vault-item-meta">${timeAgo(r.createdAt)}</div></div></div></div>
+  `).join('');
+}
+loadHistory();
+</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Prompt Writer — Double Eight AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<style>
+.platform-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:.6rem;margin-bottom:1.25rem;}
+.platform-btn{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:.65rem .5rem;text-align:center;cursor:pointer;transition:.2s;}
+.platform-btn:hover{border-color:var(--border-gold);}
+.platform-btn.selected{background:var(--gold-dim);border-color:var(--gold);}
+.platform-btn .p-icon{font-size:1.2rem;margin-bottom:.3rem;}
+.platform-btn .p-name{font-size:.72rem;color:var(--text2);font-weight:500;}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="hamburger" onclick="document.querySelector('.sidebar').classList.toggle('open');document.getElementById('nav-overlay')?.classList.toggle('show',document.querySelector('.sidebar').classList.contains('open'))">☰</button><span class="topbar-title">PROMPT WRITER</span>
+      <div class="topbar-right"><span style="font-size:.8rem;color:var(--text3)">Optimize prompts for any AI model</span></div>
+    </div>
+    <div class="page-content">
+      <div style="display:grid;grid-template-columns:460px 1fr;gap:1.5rem;align-items:start">
+        <div class="card">
+          <h3 style="font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;margin-bottom:1rem;color:var(--gold)">✦ SELECT TARGET AI</h3>
+          <div class="platform-grid" id="platform-grid">
+            <div class="platform-btn selected" data-platform="chatgpt" onclick="selectPlatform(this)"><div class="p-icon">🟢</div><div class="p-name">ChatGPT</div></div>
+            <div class="platform-btn" data-platform="claude" onclick="selectPlatform(this)"><div class="p-icon">🟠</div><div class="p-name">Claude</div></div>
+            <div class="platform-btn" data-platform="grok" onclick="selectPlatform(this)"><div class="p-icon">𝕏</div><div class="p-name">Grok</div></div>
+            <div class="platform-btn" data-platform="gemini" onclick="selectPlatform(this)"><div class="p-icon">♊</div><div class="p-name">Gemini</div></div>
+            <div class="platform-btn" data-platform="midjourney" onclick="selectPlatform(this)"><div class="p-icon">🎨</div><div class="p-name">Midjourney</div></div>
+            <div class="platform-btn" data-platform="dalle" onclick="selectPlatform(this)"><div class="p-icon">🖼</div><div class="p-name">DALL·E</div></div>
+            <div class="platform-btn" data-platform="runway" onclick="selectPlatform(this)"><div class="p-icon">🎬</div><div class="p-name">Runway</div></div>
+            <div class="platform-btn" data-platform="perplexity" onclick="selectPlatform(this)"><div class="p-icon">🔍</div><div class="p-name">Perplexity</div></div>
+            <div class="platform-btn" data-platform="llama" onclick="selectPlatform(this)"><div class="p-icon">🦙</div><div class="p-name">Llama</div></div>
+            <div class="platform-btn" data-platform="general" onclick="selectPlatform(this)"><div class="p-icon">🤖</div><div class="p-name">Universal</div></div>
+          </div>
+          <div class="form-group"><label class="form-label">Prompt Type</label>
+            <select class="form-select" id="p-type">
+              <option value="business">Business & Entrepreneurship</option>
+              <option value="marketing">Marketing & Copywriting</option>
+              <option value="content">Content Creation</option>
+              <option value="coding">Coding & Development</option>
+              <option value="analysis">Data Analysis & Research</option>
+              <option value="creative">Creative Writing</option>
+              <option value="image">Image Generation</option>
+              <option value="custom">Custom / Other</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">What do you want to achieve? *</label>
+            <textarea class="form-textarea" id="p-goal" placeholder="Describe your goal in plain English. e.g. Write a cold email for a SaaS product targeting HR managers in enterprise companies" style="min-height:90px"></textarea>
+          </div>
+          <div class="form-group"><label class="form-label">Additional Context</label>
+            <textarea class="form-textarea" id="p-context" placeholder="Any extra details, constraints, tone, format requirements..." style="min-height:60px"></textarea>
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="generatePrompt()">
+            <span class="loader" id="p-loader" style="display:none"></span> ✦ Generate Optimized Prompt
+          </button>
+        </div>
+        <div>
+          <div id="p-result" style="display:none" class="result-panel">
+            <h4>Optimized Prompt</h4>
+            <div class="result-content" id="p-content"></div>
+            <div class="result-actions">
+              <button class="btn btn-primary btn-sm" onclick="copyText(window._pResult)">⎘ Copy Prompt</button>
+              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('p-result').style.display='none'">← New</button>
+            </div>
+          </div>
+          <div id="p-history-wrap">
+            <div class="section-hdr" style="margin-bottom:1rem"><h3 style="font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px">RECENT PROMPTS</h3></div>
+            <div id="p-history" class="vault-grid">
+              <div class="empty-state"><div class="empty-icon">✦</div><p>No prompts generated yet</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../js/core.js"></script>
+<script>
+Auth.check(); applyLang(getLang()); buildLayout('prompt');
+let selectedPlatform = 'chatgpt';
+function selectPlatform(el) {
+  document.querySelectorAll('.platform-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPlatform = el.dataset.platform;
+}
+async function generatePrompt() {
+  const goal = document.getElementById('p-goal').value.trim();
+  if(!goal) { Toast.show('Please describe your goal','error'); return; }
+  const btn = document.getElementById('p-loader').closest('button');
+  document.getElementById('p-loader').style.display='inline-block'; btn.disabled=true;
+  try {
+    const data = await api.post('/prompt-writer/generate', { platform:selectedPlatform, type:document.getElementById('p-type').value, goal, context:document.getElementById('p-context').value });
+    if(data?.error) throw new Error(data.error);
+    window._pResult = data.prompt || data.content || (data.report?.content);
+    document.getElementById('p-content').innerHTML = renderMarkdown(window._pResult);
+    document.getElementById('p-result').style.display='block';
+    document.getElementById('p-history-wrap').style.display='none';
+    Toast.show('Prompt generated!','success');
+  } catch(e){Toast.show(e.message,'error');}
+  finally{document.getElementById('p-loader').style.display='none';btn.disabled=false;}
+}
+async function loadHistory() {
+  const d = await api.get('/prompt-writer/history');
+  if(!d?.history?.length && !d?.reports?.length) return;
+  const items = d.history || d.reports || [];
+  if(!items.length) return;
+  document.getElementById('p-history').innerHTML = items.slice(0,8).map(r=>`<div class="vault-item"><div class="vault-item-header"><div class="vault-item-icon">✦</div><div><div class="vault-item-title">${r.title||r.goal||'Prompt'}</div><div class="vault-item-meta">${timeAgo(r.createdAt)}</div></div></div></div>`).join('');
+}
+loadHistory();
+</script>
+</body>
+</html>

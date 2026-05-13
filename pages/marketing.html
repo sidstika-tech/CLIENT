@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Marketing Builder — Double Eight AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="hamburger" onclick="document.querySelector('.sidebar').classList.toggle('open');document.getElementById('nav-overlay')?.classList.toggle('show',document.querySelector('.sidebar').classList.contains('open'))">☰</button><span class="topbar-title">MARKETING BUILDER</span></div>
+    <div class="page-content">
+      <div class="two-col-form">
+        <div class="card">
+          <h3 style="font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;margin-bottom:1.25rem;color:var(--gold)">◈ BUILD STRATEGY</h3>
+          <div class="form-group"><label class="form-label">Business Name *</label><input type="text" class="form-input" id="mk-name" placeholder="Your business name"></div>
+          <div class="form-group"><label class="form-label">Industry *</label><input type="text" class="form-input" id="mk-industry" placeholder="e.g. E-commerce, SaaS, Consulting"></div>
+          <div class="form-group"><label class="form-label">Target Audience *</label><input type="text" class="form-input" id="mk-audience" placeholder="e.g. SMB owners, 25-40 female consumers"></div>
+          <div class="form-group"><label class="form-label">Marketing Goals *</label><textarea class="form-textarea" id="mk-goals" placeholder="e.g. 500 leads/month, 10K Instagram followers, $100K revenue" style="min-height:70px"></textarea></div>
+          <div class="form-group"><label class="form-label">Monthly Budget</label><input type="text" class="form-input" id="mk-budget" placeholder="e.g. $2,000, $10,000"></div>
+          <div class="form-group"><label class="form-label">Current Presence</label><input type="text" class="form-input" id="mk-presence" placeholder="e.g. None, Basic website, 1K IG followers"></div>
+          <div class="form-group"><label class="form-label">Timeline</label>
+            <select class="form-select" id="mk-timeline">
+              <option>1 month</option><option>3 months</option><option selected>6 months</option><option>12 months</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="doMarketing()">
+            <span class="loader" id="mk-loader" style="display:none"></span> <span id="mk-btn-text">◈ Build Marketing Strategy</span>
+          </button>
+        </div>
+        <div>
+          <div id="mk-result" style="display:none" class="result-panel">
+            <h4>Marketing Strategy</h4>
+            <div class="result-content" id="mk-content"></div>
+            <div class="result-actions">
+              <button class="btn btn-secondary btn-sm" onclick="copyText(window._mkResult)">Copy</button>
+              <button class="btn btn-secondary btn-sm" onclick="exportReport(window._mkReportId,'pdf')">↓ PDF</button>
+              <button class="btn btn-secondary btn-sm" onclick="exportReport(window._mkReportId,'docx')">↓ DOCX</button>
+              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('mk-result').style.display='none'">← New</button>
+            </div>
+          </div>
+          <div id="mk-history-wrap">
+            <div class="section-hdr" style="margin-bottom:1rem"><h3 style="font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px">PREVIOUS STRATEGIES</h3></div>
+            <div id="mk-history" class="vault-grid">
+              <div class="empty-state"><div class="empty-icon">◈</div><p>No strategies yet</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../js/core.js"></script>
+<script>
+Auth.check(); applyLang(getLang()); buildLayout('marketing');
+async function doMarketing() {
+  const name=document.getElementById('mk-name').value.trim();
+  const goals=document.getElementById('mk-goals').value.trim();
+  if(!name||!goals){Toast.show('Fill in required fields','error');return;}
+  const btn=document.getElementById('mk-loader').closest('button');
+  document.getElementById('mk-loader').style.display='inline-block';
+  document.getElementById('mk-btn-text').textContent='Generating...';
+  btn.disabled=true;
+  try {
+    const data = await api.post('/marketing/build',{inputs:{businessName:name,industry:document.getElementById('mk-industry').value,targetAudience:document.getElementById('mk-audience').value,goals,budget:document.getElementById('mk-budget').value,currentPresence:document.getElementById('mk-presence').value,timeline:document.getElementById('mk-timeline').value}});
+    if(data?.error) throw new Error(data.error);
+    window._mkResult=data.report.content; window._mkReportId=data.report._id;
+    document.getElementById('mk-content').innerHTML=renderMarkdown(data.report.content);
+    document.getElementById('mk-result').style.display='block';
+    document.getElementById('mk-history-wrap').style.display='none';
+    Toast.show('Strategy built!','success');
+  } catch(e){Toast.show(e.message,'error');}
+  finally{document.getElementById('mk-loader').style.display='none';document.getElementById('mk-btn-text').textContent='◈ Build Marketing Strategy';btn.disabled=false;}
+}
+async function loadHistory() {
+  const d = await api.get('/marketing/reports');
+  if(!d?.reports?.length) return;
+  document.getElementById('mk-history').innerHTML = d.reports.map(r=>`<div class="vault-item"><div class="vault-item-header"><div class="vault-item-icon">◈</div><div><div class="vault-item-title">${r.title}</div><div class="vault-item-meta">${timeAgo(r.createdAt)}</div></div></div></div>`).join('');
+}
+loadHistory();
+</script>
+</body>
+</html>
