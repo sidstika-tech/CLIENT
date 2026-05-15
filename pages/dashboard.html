@@ -103,32 +103,6 @@ Auth.check();
 buildLayout('dashboard');
 document.getElementById('top-date').textContent = new Date().toLocaleDateString(t('nav.main')==='MAIN'?'en-US':'ar-SA',{weekday:'long',month:'long',day:'numeric'});
 
-// Apply translations
-function applyDashTranslations() {
-  document.getElementById('page-title').textContent = t('dash.welcome').replace('back','').trim() + ' DASHBOARD' ;
-  document.getElementById('page-title').textContent = 'DASHBOARD';
-  document.getElementById('btn-new-report').textContent = t('dash.new_report');
-  document.getElementById('stat-lbl-reports').textContent = t('dash.reports');
-  document.getElementById('stat-lbl-chats').textContent = t('dash.chats');
-  document.getElementById('stat-lbl-research').textContent = t('dash.research');
-  document.getElementById('stat-lbl-plan').textContent = t('dash.plan');
-  document.getElementById('upgrade-link').textContent = t('dash.upgrade');
-  document.getElementById('qa1').textContent = t('dash.quick_chat'); document.getElementById('qa1s').textContent = t('dash.quick_chat_sub');
-  document.getElementById('qa2').textContent = t('dash.quick_plan'); document.getElementById('qa2s').textContent = t('dash.quick_plan_sub');
-  document.getElementById('qa3').textContent = t('dash.quick_market'); document.getElementById('qa3s').textContent = t('dash.quick_market_sub');
-  document.getElementById('qa4').textContent = t('dash.quick_marketing'); document.getElementById('qa4s').textContent = t('dash.quick_marketing_sub');
-  document.getElementById('qa5').textContent = t('dash.quick_pitch'); document.getElementById('qa5s').textContent = t('dash.quick_pitch_sub');
-  document.getElementById('qa6').textContent = t('dash.quick_all'); document.getElementById('qa6s').textContent = t('dash.quick_all_sub');
-  document.getElementById('recent-hdr').textContent = t('dash.recent');
-  document.getElementById('view-all-btn').textContent = t('dash.view_all');
-  document.getElementById('usage-hdr').textContent = t('dash.usage');
-  document.getElementById('tip-hdr').textContent = t('dash.ai_tip');
-  document.getElementById('btn-ask-ai').textContent = t('dash.ask_ai');
-  document.getElementById('welcome-sub').textContent = t('dash.platform_ready');
-  document.getElementById('no-reports-txt').innerHTML = t('dash.no_reports');
-}
-applyDashTranslations();
-
 const TOOL_ICONS = {business_plan:'📋',market_research:'◉',marketing_strategy:'◈',brand_kit:'🎨',business_name:'💡',slogan:'✍',competitor_matrix:'⚔',pricing_calculator:'💰',launch_roadmap:'🚀',contract:'📄',budget_estimator:'💵',pitch_deck:'🎯',ad_copy:'📢',seo_keywords:'🔍',content_calendar:'📅',market_study:'📊',cold_email:'📧',website_copy:'🌐',sales_script:'🎤',prompt_writer:'✦'};
 
 async function loadDashboard() {
@@ -136,7 +110,6 @@ async function loadDashboard() {
   if(!u?.user) return;
   const user = u.user;
   Auth.setUser(user);
-  document.getElementById('welcome-msg').textContent = `${t('dash.welcome')}, ${user.name?.split(' ')[0] || ''}!`;
   document.getElementById('stat-reports').textContent = user.usage?.reportsGenerated || 0;
   document.getElementById('stat-chats').textContent = user.usage?.chatMessages || 0;
   document.getElementById('stat-research').textContent = user.usage?.marketResearch || 0;
