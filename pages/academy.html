@@ -116,50 +116,6 @@
         </div>
       </div>
 
-      <!-- Admin Panel (shown to admin users only) -->
-      <div class="admin-panel" id="admin-panel">
-        <h4>⚙ ADMIN — ADD NEW CONTENT</h4>
-        <div class="form-grid">
-          <div class="form-group"><label class="form-label">Title</label><input type="text" class="form-input" id="adm-title" placeholder="Course or strategy title"></div>
-          <div class="form-group"><label class="form-label">Category</label>
-            <select class="form-select" id="adm-cat">
-              <option value="strategy">Business Strategy</option>
-              <option value="mindset">Mindset</option>
-              <option value="marketing">Marketing</option>
-              <option value="finance">Finance</option>
-              <option value="startup">Startup</option>
-              <option value="sales">Sales</option>
-              <option value="leadership">Leadership</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="adm-desc" placeholder="Brief description of what users will learn..." style="min-height:70px"></textarea></div>
-        <div class="form-grid">
-          <div class="form-group"><label class="form-label">Google Drive / YouTube Link</label><input type="url" class="form-input" id="adm-link" placeholder="https://drive.google.com/..."></div>
-          <div class="form-group"><label class="form-label">Content Type</label>
-            <select class="form-select" id="adm-type">
-              <option value="course">Course</option>
-              <option value="video">Video</option>
-              <option value="ebook">eBook / PDF</option>
-              <option value="strategy">Strategy Guide</option>
-              <option value="template">Template</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-grid">
-          <div class="form-group"><label class="form-label">Duration / Pages</label><input type="text" class="form-input" id="adm-duration" placeholder="e.g. 2h 30min / 45 pages"></div>
-          <div class="form-group"><label class="form-label">Badge</label>
-            <select class="form-select" id="adm-badge">
-              <option value="">None</option>
-              <option value="new">New</option>
-              <option value="hot">Hot</option>
-              <option value="free">Free</option>
-              <option value="featured">Featured</option>
-            </select>
-          </div>
-        </div>
-        <button class="btn btn-primary" onclick="adminAddContent()">+ Add Content</button>
-      </div>
 
       <!-- Category Tabs -->
       <div class="cat-tabs">
@@ -201,14 +157,7 @@ Auth.check();
 buildLayout('academy');
 applyLang(getLang());
 
-/* ── CONTENT DATABASE (stored locally + expandable by admin) ── */
-const DEFAULT_CONTENT = [
-  {
-    id:'c1', title:'The $100M Offer Framework', cat:'strategy', type:'strategy',
-    desc:'Alex Hormozi\'s exact framework for building irresistible offers that sell themselves. The strategy behind multiple 8-figure businesses.',
-    link:'https://drive.google.com/file/d/1example', duration:'3h 20min',
-    icon:'💰', badge:'hot', featured:true, date:'2025-05-13'
-  },
+
   {
     id:'c2', title:'Zero to One — Peter Thiel\'s Startup Secrets', cat:'startup', type:'course',
     desc:'How to build a monopoly, find secrets others miss, and go from zero to a billion-dollar company. Key lessons from the legendary book.',
@@ -395,24 +344,6 @@ function openContent(id) {
   }
 }
 
-/* ── ADMIN: add content ── */
-function adminAddContent() {
-  const title = document.getElementById('adm-title').value.trim();
-  const desc  = document.getElementById('adm-desc').value.trim();
-  const link  = document.getElementById('adm-link').value.trim();
-  if(!title||!desc){Toast.show('Title and description required','error');return;}
-  const saved = JSON.parse(localStorage.getItem('d8_academy')||'[]');
-  const newItem = {
-    id:'u'+Date.now(),
-    title, cat:document.getElementById('adm-cat').value,
-    type:document.getElementById('adm-type').value,
-    desc, link,
-    duration:document.getElementById('adm-duration').value||'—',
-    icon:'📌',
-    badge:document.getElementById('adm-badge').value,
-    featured:document.getElementById('adm-badge').value==='featured',
-    date:new Date().toISOString().slice(0,10)
-  };
   saved.unshift(newItem);
   localStorage.setItem('d8_academy', JSON.stringify(saved));
   ['adm-title','adm-desc','adm-link','adm-duration'].forEach(id=>document.getElementById(id).value='');
@@ -420,11 +351,7 @@ function adminAddContent() {
   renderAll(currentCat);
 }
 
-/* ── SHOW ADMIN PANEL FOR ADMIN USERS ── */
-const user = Auth.user();
-if(user?.role==='admin'||user?.isAdmin) {
-  document.getElementById('admin-panel').classList.add('show');
-}
+
 
 renderAll();
 renderDaily();
