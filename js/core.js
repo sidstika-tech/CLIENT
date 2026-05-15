@@ -368,20 +368,6 @@ function buildLayout(pageId) {
     document.body.insertBefore(overlay, document.body.firstChild);
   }
 
-  // Inject sidebar close button inside sidebar
-  if(!sidebar.querySelector('.sidebar-close-btn')) {
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'sidebar-close-btn';
-    closeBtn.innerHTML = '✕';
-    closeBtn.title = 'Close menu';
-    closeBtn.onclick = () => {
-      sidebar.classList.remove('open');
-      const ov = document.getElementById('main-overlay');
-      if(ov) ov.classList.remove('show');
-    };
-    sidebar.appendChild(closeBtn);
-  }
-
   // Hamburger setup — find all .hamburger buttons and wire them
   document.querySelectorAll('.hamburger').forEach(btn => {
     btn.onclick = () => {
