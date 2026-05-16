@@ -6,13 +6,49 @@ const Auth = {
   token: () => localStorage.getItem('d8_token'),
   user: () => { try { return JSON.parse(localStorage.getItem('d8_user')||'{}'); } catch{ return {}; } },
   setUser: (u) => localStorage.setItem('d8_user', JSON.stringify(u)),
-  logout: () => { localStorage.removeItem('d8_token'); localStorage.removeItem('d8_user'); window.location.href='/index.html'; },
-  check: () => { if(!localStorage.getItem('d8_token')) window.location.href='/index.html'; }
+  logout: async () => {
+    try {
+      // Invalidate token on server so it can't be reused
+      const token = localStorage.getItem('d8_token');
+      if (token) {
+        await fetch(`${API}/auth/logout`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+        }).catch(() => {});
+      }
+    } finally {
+      localStorage.removeItem('d8_token');
+      localStorage.removeItem('d8_user');
+      // Use relative path so it works in any deployment subdirectory
+      const base = window.location.pathname.split('/pages/')[0] || '';
+      window.location.href = base + '/index.html';
+    }
+  },
+  check: () => { if(!localStorage.getItem('d8_token')) { const base = window.location.pathname.split('/pages/')[0] || ''; window.location.href = base + '/index.html'; } },
+  // Refresh user data from server to get latest plan/usage
+  refresh: async () => {
+    try {
+      const r = await fetch(`${API}/auth/me`, { headers: { 'Authorization': `Bearer ${Auth.token()}`, 'Content-Type': 'application/json' } });
+      if (r.ok) { const d = await r.json(); if (d.user) Auth.setUser(d.user); }
+    } catch {}
+  }
 };
 
 /* ── API CLIENT ── */
 const api = {
   headers: () => ({ 'Content-Type':'application/json', 'Authorization': `Bearer ${Auth.token()}` }),
+  _handleLimitReached(data) {
+    // Redirect to billing when plan limit is hit
+    if (data && data.error === 'limit_reached') {
+      Toast.show('Plan limit reached. Upgrade to continue.', 'error', 5000);
+      setTimeout(() => {
+        const base = window.location.pathname.split('/pages/')[0] || '';
+        window.location.href = base + '/pages/billing.html';
+      }, 2000);
+      return true;
+    }
+    return false;
+  },
   async get(path) {
     const r = await fetch(`${API}${path}`, { headers: this.headers() });
     if(r.status===401) { Auth.logout(); return; }
@@ -21,7 +57,9 @@ const api = {
   async post(path, body) {
     const r = await fetch(`${API}${path}`, { method:'POST', headers: this.headers(), body: JSON.stringify(body) });
     if(r.status===401) { Auth.logout(); return; }
-    return r.json();
+    const data = await r.json();
+    if(r.status===403) { this._handleLimitReached(data); }
+    return data;
   },
   async put(path, body) {
     const r = await fetch(`${API}${path}`, { method:'PUT', headers: this.headers(), body: JSON.stringify(body) });
@@ -35,6 +73,13 @@ const api = {
   },
   async streamPost(path, body, onChunk) {
     const r = await fetch(`${API}${path}`, { method:'POST', headers: this.headers(), body: JSON.stringify(body) });
+    if(r.status===401) { Auth.logout(); return; }
+    // Handle limit_reached before streaming
+    if(r.status===403) {
+      const data = await r.json().catch(()=>({}));
+      this._handleLimitReached(data);
+      throw new Error(data.message || 'Limit reached');
+    }
     if(!r.body) throw new Error('No stream');
     const reader = r.body.getReader();
     const decoder = new TextDecoder();
@@ -252,10 +297,6 @@ function applyDir(lang) {
   const isAr = lang === 'ar';
   document.documentElement.setAttribute('dir', isAr ? 'rtl' : 'ltr');
   document.documentElement.setAttribute('lang', lang);
-  // Re-translate all elements with data-i18n attribute
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    el.textContent = t(el.dataset.i18n);
-  });
 }
 
 /* ── TOAST ── */
@@ -366,6 +407,20 @@ function buildLayout(pageId) {
     overlay.className = 'sidebar-overlay';
     overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('show'); };
     document.body.insertBefore(overlay, document.body.firstChild);
+  }
+
+  // Inject sidebar close button inside sidebar
+  if(!sidebar.querySelector('.sidebar-close-btn')) {
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'sidebar-close-btn';
+    closeBtn.innerHTML = '✕';
+    closeBtn.title = 'Close menu';
+    closeBtn.onclick = () => {
+      sidebar.classList.remove('open');
+      const ov = document.getElementById('main-overlay');
+      if(ov) ov.classList.remove('show');
+    };
+    sidebar.appendChild(closeBtn);
   }
 
   // Hamburger setup — find all .hamburger buttons and wire them

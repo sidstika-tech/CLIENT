@@ -55,7 +55,9 @@
         <button class="float-close-btn" onclick="resetModal()" title="Close result">✕</button>
         <h4 id="result-title-lbl">Generated Result</h4>
         <div class="result-content" id="modal-result-content"></div>
+        <div id="website-preview-wrap" style="display:none;margin-top:1rem"><div style="font-family:'Bebas Neue',cursive;font-size:.9rem;letter-spacing:1px;color:var(--gold);margin-bottom:.5rem">LIVE PREVIEW</div><iframe id="website-preview-frame" style="width:100%;height:480px;border:1px solid var(--border);border-radius:var(--radius);background:#fff"></iframe></div>
         <div class="result-actions">
+          <button class="btn btn-primary btn-sm" id="download-html-btn" style="display:none" onclick="downloadHTMLFile()">⬇ Download index.html</button>
           <button class="btn btn-secondary btn-sm" id="copy-btn" onclick="copyText(window._lastResult)">Copy Text</button>
           <button class="btn btn-secondary btn-sm" onclick="exportReport(window._lastReportId,'docx')">↓ DOCX</button>
           <button class="btn btn-secondary btn-sm" onclick="exportReport(window._lastReportId,'pdf')">↓ PDF</button>
@@ -210,7 +212,7 @@ const TOOLS = [
     {id:'goal',label:'Goal of Outreach',labelAr:'هدف التواصل',type:'text',placeholder:'e.g. Book a 15-min discovery call'},
     {id:'tone',label:'Tone',labelAr:'الأسلوب',type:'select',options:['Professional & Warm','Direct & Bold','Consultative','Casual & Friendly']},
   ]},
-  { id:'website_copy', icon:'🌐', name:'Website Copy', nameAr:'محتوى الموقع الإلكتروني', desc:'Full copy for homepage, about, services & contact pages — conversion-optimized.', descAr:'محتوى كامل للصفحة الرئيسية ونبذة عنا والخدمات والتواصل.', cat:'sales', tag:'Sales', tagAr:'مبيعات', tagClass:'tag-sales', fields:[
+  { id:'website_creation', icon:'🌐', name:'Website Creator', nameAr:'منشئ المواقع', desc:'Generate a complete HTML website file — ready to download and deploy in one click.', descAr:'محتوى كامل للصفحة الرئيسية ونبذة عنا والخدمات والتواصل.', cat:'sales', tag:'Sales', tagAr:'مبيعات', tagClass:'tag-sales', fields:[
     {id:'businessName',label:'Business Name',labelAr:'اسم الشركة',type:'text',required:true},
     {id:'industry',label:'Industry',labelAr:'القطاع',type:'text',required:true},
     {id:'offer',label:'Primary Offer',labelAr:'العرض الرئيسي',type:'text',placeholder:'What do you sell?',required:true},
@@ -290,7 +292,20 @@ async function generateTool() {
     if(data?.error) throw new Error(data.error);
     if(!data?.report) throw new Error(ar?'لم يتم إرجاع نتيجة':'No result returned');
     window._lastResult=data.report.content; window._lastReportId=data.report._id;
-    document.getElementById('modal-result-content').innerHTML=renderMarkdown(data.report.content);
+    const isWeb=currentTool.id==='website_creation';
+    const dlBtn=document.getElementById('download-html-btn');
+    const cpBtn=document.getElementById('copy-btn');
+    const pvWrap=document.getElementById('website-preview-wrap');
+    const pvFrame=document.getElementById('website-preview-frame');
+    if(isWeb){
+      document.getElementById('modal-result-content').innerHTML='';
+      pvWrap.style.display='block'; pvFrame.srcdoc=data.report.content;
+      dlBtn.style.display='inline-flex'; cpBtn.style.display='none';
+    } else {
+      pvWrap.style.display='none'; pvFrame.srcdoc='';
+      document.getElementById('modal-result-content').innerHTML=renderMarkdown(data.report.content);
+      dlBtn.style.display='none'; cpBtn.style.display='inline-flex';
+    }
     document.getElementById('modal-result').style.display='block';
     document.getElementById('modal-footer').style.display='none';
     Toast.show(ar?'تم إنشاء التقرير بنجاح!':'Report generated successfully!','success');
@@ -301,6 +316,21 @@ async function generateTool() {
 function resetModal() {
   document.getElementById('modal-result').style.display='none';
   document.getElementById('modal-footer').style.display='flex';
+  const pv=document.getElementById('website-preview-wrap');
+  const fr=document.getElementById('website-preview-frame');
+  if(pv) pv.style.display='none';
+  if(fr) fr.srcdoc='';
+}
+function downloadHTMLFile() {
+  if(!window._lastResult) return;
+  const blob=new Blob([window._lastResult],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  const name=(document.getElementById('f_businessName')?.value||'website').toLowerCase().replace(/\s+/g,'-');
+  a.href=url; a.download='index.html';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  Toast.show('index.html downloaded!','success');
 }
 
 renderTools();

@@ -2,185 +2,668 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Double Eight AI — Business Intelligence Platform</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>Double Eight AI — Build Your Business. No Experience Needed.</title>
+<meta name="description" content="The AI platform built for MENA entrepreneurs. Generate business plans, market research, pitch decks, and 17 more tools in seconds. Start free.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/main.css">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#080810;position:relative;overflow:hidden;}
-.auth-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(245,158,11,.12) 0%,transparent 70%),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(245,158,11,.06) 0%,transparent 60%);pointer-events:none;}
-.auth-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(245,158,11,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,.04) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;}
-.auth-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
-.auth-particles::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:var(--gold);filter:blur(120px);opacity:.05;top:-200px;left:-100px;animation:float-orb 10s ease-in-out infinite alternate;}
-.auth-particles::after{content:'';position:absolute;width:300px;height:300px;border-radius:50%;background:#8b5cf6;filter:blur(80px);opacity:.04;bottom:-100px;right:-50px;animation:float-orb 14s ease-in-out infinite alternate-reverse;}
-@keyframes float-orb{from{transform:translate(0,0)}to{transform:translate(30px,20px)}}
-.auth-wrap{position:relative;z-index:1;width:100%;max-width:460px;padding:2rem;}
-.auth-logo{text-align:center;margin-bottom:2.5rem;}
-.auth-logo .logo-mark{width:56px;height:56px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-family:'Bebas Neue',cursive;font-size:28px;color:#080810;margin-bottom:.75rem;}
-.auth-logo h1{font-family:'Bebas Neue',cursive;font-size:2.2rem;color:#fff;letter-spacing:2px;margin:0;}
-.auth-logo p{color:rgba(255,255,255,.4);font-size:.85rem;margin:.25rem 0 0;font-family:'Outfit',sans-serif;}
-.auth-card{background:rgba(255,255,255,.03);border:1px solid rgba(245,158,11,.15);border-radius:20px;padding:2.5rem;backdrop-filter:blur(10px);}
-.auth-tabs{display:flex;background:rgba(255,255,255,.04);border-radius:10px;padding:4px;margin-bottom:2rem;gap:4px;}
-.auth-tab{flex:1;padding:.6rem;text-align:center;border-radius:7px;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:500;cursor:pointer;transition:.2s;color:rgba(255,255,255,.4);border:none;background:none;}
-.auth-tab.active{background:rgba(245,158,11,.15);color:#f59e0b;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--gold:#f59e0b;--gold-dark:#d97706;--bg:#07070f;--bg2:#0d0d1c;--text:#fff;--text2:rgba(255,255,255,.6);--text3:rgba(255,255,255,.3);}
+html{scroll-behavior:smooth;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+
+/* ── BG ── */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.bg-glow{position:absolute;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.08) 0%,transparent 70%);top:-200px;left:50%;transform:translateX(-50%);animation:glow 8s ease-in-out infinite;}
+@keyframes glow{0%,100%{opacity:.6;transform:translateX(-50%) scale(1);}50%{opacity:1;transform:translateX(-50%) scale(1.1);}}
+.bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(245,158,11,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,.025) 1px,transparent 1px);background-size:65px 65px;}
+.particle{position:absolute;width:2px;height:2px;background:var(--gold);border-radius:50%;animation:rise linear infinite;opacity:0;}
+@keyframes rise{0%{transform:translateY(100vh);opacity:0;}10%{opacity:.5;}90%{opacity:.2;}100%{transform:translateY(-5vh);opacity:0;}}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 2.5rem;background:rgba(7,7,15,.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(245,158,11,.08);}
+.nav-logo{display:flex;align-items:center;gap:.7rem;text-decoration:none;}
+.logo-box{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',cursive;font-size:19px;color:#07070f;}
+.logo-name{font-family:'Bebas Neue',cursive;font-size:1.3rem;letter-spacing:2px;color:#fff;}
+.nav-right{display:flex;align-items:center;gap:1rem;}
+.nav-link{font-size:.85rem;color:var(--text2);cursor:pointer;transition:.15s;background:none;border:none;font-family:'Outfit',sans-serif;}
+.nav-link:hover{color:var(--gold);}
+.btn-nav{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:var(--gold);padding:.45rem 1.1rem;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;transition:.2s;font-family:'Outfit',sans-serif;}
+.btn-nav:hover{background:rgba(245,158,11,.2);}
+
+/* ── SECTIONS ── */
+section{position:relative;z-index:1;}
+
+/* ── HERO ── */
+.hero{min-height:92vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:4rem 2rem 3rem;}
+.hero-inner{max-width:820px;}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:20px;padding:.4rem 1rem;font-size:.75rem;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2rem;}
+.hero-badge .dot{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.hero h1{font-family:'Bebas Neue',cursive;font-size:clamp(3.2rem,8vw,6.5rem);line-height:.92;letter-spacing:1px;margin-bottom:1.5rem;}
+.hero h1 .line-white{display:block;color:#fff;}
+.hero h1 .line-gold{display:block;background:linear-gradient(135deg,var(--gold),#fbbf24,var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero h1 .line-dim{display:block;color:rgba(255,255,255,.55);font-size:clamp(2rem,5vw,4rem);}
+.hero-sub{font-size:1.05rem;color:var(--text2);line-height:1.75;max-width:580px;margin:0 auto 2.5rem;}
+.hero-sub strong{color:#fff;font-weight:500;}
+.hero-ctas{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin-bottom:3rem;}
+.btn-hero-primary{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#07070f;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;padding:1rem 2.2rem;border-radius:12px;border:none;cursor:pointer;transition:.25s;box-shadow:0 8px 30px rgba(245,158,11,.2);}
+.btn-hero-primary:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(245,158,11,.35);}
+.btn-hero-ghost{background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-family:'Outfit',sans-serif;font-size:.92rem;padding:.9rem 1.75rem;border-radius:12px;cursor:pointer;transition:.2s;}
+.btn-hero-ghost:hover{border-color:rgba(245,158,11,.4);color:var(--gold);}
+.hero-trust{display:flex;align-items:center;justify-content:center;gap:2rem;flex-wrap:wrap;font-size:.78rem;color:var(--text3);}
+.hero-trust span{display:flex;align-items:center;gap:.35rem;}
+.hero-trust span::before{content:'✓';color:var(--gold);}
+
+/* ── PROBLEM SECTION ── */
+.problem{padding:5rem 2rem;max-width:1100px;margin:0 auto;}
+.problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2.5rem;}
+.prob-card{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);border-radius:14px;padding:1.5rem;display:flex;gap:1rem;align-items:flex-start;}
+.prob-icon{font-size:1.4rem;flex-shrink:0;}
+.prob-title{font-size:.9rem;font-weight:600;color:#f87171;margin-bottom:.3rem;}
+.prob-desc{font-size:.8rem;color:var(--text3);line-height:1.6;}
+
+/* ── SECTION HEADER ── */
+.sec-header{text-align:center;margin-bottom:3rem;}
+.sec-eyebrow{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.15em;color:var(--gold);margin-bottom:.75rem;}
+.sec-title{font-family:'Bebas Neue',cursive;font-size:clamp(2rem,4vw,3.2rem);letter-spacing:1px;margin-bottom:.6rem;}
+.sec-sub{font-size:.9rem;color:var(--text2);max-width:520px;margin:0 auto;line-height:1.7;}
+
+/* ── NICHE STATEMENT ── */
+.niche{padding:5rem 2rem;background:linear-gradient(135deg,rgba(245,158,11,.06),rgba(245,158,11,.01));border-top:1px solid rgba(245,158,11,.1);border-bottom:1px solid rgba(245,158,11,.1);}
+.niche-inner{max-width:900px;margin:0 auto;text-align:center;}
+.niche-flag{font-size:2rem;margin-bottom:1rem;}
+.niche h2{font-family:'Bebas Neue',cursive;font-size:clamp(1.8rem,4vw,3rem);letter-spacing:1px;margin-bottom:1rem;}
+.niche p{font-size:1rem;color:var(--text2);line-height:1.8;max-width:680px;margin:0 auto 2rem;}
+.niche-stats{display:flex;justify-content:center;gap:3rem;flex-wrap:wrap;}
+.niche-stat .n{font-family:'Bebas Neue',cursive;font-size:2.5rem;color:var(--gold);letter-spacing:1px;}
+.niche-stat .l{font-size:.75rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-top:.1rem;}
+
+/* ── TOOLS SHOWCASE ── */
+.tools-section{padding:5rem 2rem;max-width:1200px;margin:0 auto;}
+.tools-showcase{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem;margin-top:2rem;}
+.tool-showcase-card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:1.4rem;transition:.25s;cursor:default;position:relative;overflow:hidden;}
+.tool-showcase-card:hover{border-color:rgba(245,158,11,.25);transform:translateY(-3px);}
+.tool-showcase-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:.3s;}
+.tool-showcase-card:hover::before{opacity:1;}
+.tsc-icon{font-size:1.4rem;margin-bottom:.7rem;}
+.tsc-name{font-size:.9rem;font-weight:600;color:#fff;margin-bottom:.25rem;}
+.tsc-desc{font-size:.75rem;color:var(--text3);line-height:1.5;}
+.tsc-tag{display:inline-block;font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:5px;text-transform:uppercase;letter-spacing:.05em;margin-top:.6rem;}
+
+/* ── ONBOARDING JOURNEY ── */
+.journey{padding:5rem 2rem;background:rgba(13,13,28,.6);}
+.journey-inner{max-width:900px;margin:0 auto;}
+.journey-steps{display:flex;flex-direction:column;gap:0;margin-top:2.5rem;position:relative;}
+.journey-steps::before{content:'';position:absolute;left:28px;top:28px;bottom:28px;width:2px;background:linear-gradient(to bottom,var(--gold),rgba(245,158,11,.1));z-index:0;}
+.journey-step{display:flex;gap:1.5rem;align-items:flex-start;padding:1.5rem 0;position:relative;z-index:1;}
+.step-num{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',cursive;font-size:1.4rem;color:#07070f;flex-shrink:0;box-shadow:0 0 30px rgba(245,158,11,.3);}
+.step-content{padding-top:.6rem;}
+.step-label{font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;color:#fff;margin-bottom:.35rem;}
+.step-desc{font-size:.87rem;color:var(--text2);line-height:1.65;}
+.step-cta-link{color:var(--gold);font-size:.82rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:.3rem;margin-top:.5rem;}
+.step-cta-link:hover{text-decoration:underline;}
+
+/* ── LIVE DEMO STRIP ── */
+.demo-strip{padding:5rem 2rem;max-width:1100px;margin:0 auto;}
+.demo-card{background:rgba(13,13,28,.95);border:1px solid rgba(245,158,11,.2);border-radius:20px;padding:2.5rem;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;}
+.demo-left h2{font-family:'Bebas Neue',cursive;font-size:2rem;letter-spacing:1px;margin-bottom:.75rem;}
+.demo-left p{font-size:.9rem;color:var(--text2);line-height:1.7;margin-bottom:1.5rem;}
+.demo-features{list-style:none;display:flex;flex-direction:column;gap:.7rem;margin-bottom:2rem;}
+.demo-features li{font-size:.85rem;color:var(--text2);display:flex;align-items:center;gap:.6rem;}
+.demo-features li::before{content:'✓';color:var(--gold);font-weight:700;flex-shrink:0;}
+.demo-right{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:1.5rem;min-height:280px;display:flex;flex-direction:column;gap:.75rem;}
+.demo-topbar{display:flex;gap:.4rem;margin-bottom:.5rem;}
+.demo-dot{width:10px;height:10px;border-radius:50%;}
+.demo-output{flex:1;font-size:.8rem;color:var(--text2);line-height:1.8;}
+.demo-output .do-heading{color:var(--gold);font-weight:700;font-size:.85rem;}
+.demo-output .typing-cursor{display:inline-block;width:2px;height:14px;background:var(--gold);animation:blink .8s infinite;vertical-align:middle;margin-left:2px;}
+.demo-input-row{display:flex;gap:.5rem;}
+.demo-input{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:.55rem .85rem;color:#fff;font-size:.82rem;font-family:'Outfit',sans-serif;outline:none;}
+.demo-btn{background:linear-gradient(135deg,var(--gold),var(--gold-dark));border:none;border-radius:8px;padding:.55rem 1rem;font-size:.8rem;font-weight:700;color:#07070f;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;}
+.demo-btn:disabled{opacity:.6;}
+
+/* ── PRICING ── */
+.pricing{padding:5rem 2rem;max-width:1100px;margin:0 auto;}
+.plans-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem;margin-top:2.5rem;}
+.plan{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:2rem;display:flex;flex-direction:column;position:relative;transition:.2s;}
+.plan.featured{border-color:var(--gold);background:rgba(245,158,11,.06);box-shadow:0 0 50px rgba(245,158,11,.1);}
+.plan-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--gold);color:#07070f;font-size:.68rem;font-weight:700;padding:3px 14px;border-radius:20px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;}
+.plan-name{font-family:'Bebas Neue',cursive;font-size:1.5rem;letter-spacing:1px;margin-bottom:.25rem;}
+.plan-price{font-family:'Bebas Neue',cursive;font-size:3.5rem;color:var(--gold);line-height:1;}
+.plan-period{font-size:.78rem;color:var(--text3);margin-bottom:1.5rem;}
+.plan-features{list-style:none;flex:1;display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.5rem;}
+.plan-features li{font-size:.83rem;color:var(--text2);display:flex;align-items:flex-start;gap:.5rem;line-height:1.4;}
+.plan-features li.yes::before{content:'✓';color:#22c55e;flex-shrink:0;font-size:.78rem;margin-top:.1rem;}
+.plan-features li.no::before{content:'✕';color:rgba(255,255,255,.2);flex-shrink:0;font-size:.78rem;margin-top:.1rem;}
+.plan-features li.star::before{content:'★';color:var(--gold);flex-shrink:0;font-size:.78rem;margin-top:.1rem;}
+.plan-btn{width:100%;padding:.85rem;border-radius:10px;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;border:none;transition:.2s;}
+.plan-btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#07070f;}
+.plan-btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,158,11,.3);}
+.plan-btn-ghost{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:var(--text2);}
+.plan-btn-ghost:hover{border-color:rgba(245,158,11,.3);color:var(--gold);}
+.offer-tag{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#f87171;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em;display:inline-block;margin-bottom:.75rem;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{box-shadow:none;}50%{box-shadow:0 0 10px rgba(239,68,68,.3);}}
+
+/* ── TESTIMONIALS ── */
+.testimonials{padding:5rem 2rem;background:rgba(13,13,28,.5);}
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem;max-width:1100px;margin:2.5rem auto 0;}
+.testi-card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:1.5rem;position:relative;}
+.testi-card::before{content:'"';position:absolute;top:.5rem;right:1rem;font-size:3rem;color:var(--gold);opacity:.3;font-family:serif;line-height:1;}
+.testi-text{font-size:.875rem;color:var(--text2);line-height:1.75;margin-bottom:1rem;}
+.testi-author{display:flex;align-items:center;gap:.75rem;}
+.testi-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:700;color:#07070f;flex-shrink:0;}
+.testi-name{font-size:.85rem;font-weight:600;color:#fff;}
+.testi-role{font-size:.73rem;color:var(--text3);}
+.testi-stars{color:var(--gold);font-size:.8rem;margin-bottom:.5rem;}
+
+/* ── FAQ ── */
+.faq{padding:5rem 2rem;max-width:800px;margin:0 auto;}
+.faq-list{display:flex;flex-direction:column;gap:.6rem;margin-top:2.5rem;}
+.faq-item{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:12px;overflow:hidden;transition:.2s;}
+.faq-item:hover{border-color:rgba(245,158,11,.2);}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.4rem;cursor:pointer;font-size:.9rem;font-weight:500;color:#fff;user-select:none;}
+.faq-arrow{color:var(--gold);font-size:.85rem;transition:.3s;flex-shrink:0;}
+.faq-item.open .faq-arrow{transform:rotate(180deg);}
+.faq-a{display:none;padding:0 1.4rem 1.1rem;font-size:.85rem;color:var(--text2);line-height:1.7;}
+.faq-item.open .faq-a{display:block;}
+
+/* ── CTA FINAL ── */
+.cta-final{padding:5rem 2rem;text-align:center;}
+.cta-box{max-width:680px;margin:0 auto;background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(245,158,11,.04));border:1px solid rgba(245,158,11,.25);border-radius:24px;padding:3rem 2rem;}
+.cta-box h2{font-family:'Bebas Neue',cursive;font-size:clamp(2rem,4vw,3rem);letter-spacing:1px;margin-bottom:.75rem;}
+.cta-box p{font-size:.95rem;color:var(--text2);line-height:1.7;margin-bottom:2rem;}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid rgba(255,255,255,.06);padding:2rem 2.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.footer-logo{font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:2px;color:rgba(255,255,255,.4);}
+.footer-links{display:flex;gap:1.5rem;}
+.footer-links a{font-size:.78rem;color:var(--text3);text-decoration:none;transition:.15s;}
+.footer-links a:hover{color:var(--gold);}
+.footer-copy{font-size:.73rem;color:var(--text3);}
+
+/* ── AUTH MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:.2s;backdrop-filter:blur(6px);}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.auth-modal{background:rgba(13,13,28,.98);border:1px solid rgba(245,158,11,.2);border-radius:20px;width:100%;max-width:440px;padding:2.5rem;transform:translateY(20px);transition:.25s;}
+.modal-overlay.open .auth-modal{transform:translateY(0);}
+.auth-modal h2{font-family:'Bebas Neue',cursive;font-size:1.8rem;letter-spacing:1px;margin-bottom:.25rem;text-align:center;}
+.auth-modal p{font-size:.82rem;color:var(--text3);text-align:center;margin-bottom:1.75rem;}
+.auth-tabs{display:flex;background:rgba(255,255,255,.04);border-radius:10px;padding:4px;gap:4px;margin-bottom:1.5rem;}
+.auth-tab{flex:1;padding:.55rem;text-align:center;border-radius:7px;font-size:.88rem;font-weight:500;cursor:pointer;transition:.2s;color:rgba(255,255,255,.35);border:none;background:none;font-family:'Outfit',sans-serif;}
+.auth-tab.active{background:rgba(245,158,11,.15);color:var(--gold);}
 .auth-form{display:none;}
 .auth-form.active{display:block;}
-.form-group{margin-bottom:1.25rem;}
-.form-label{display:block;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:500;color:rgba(255,255,255,.5);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.06em;}
-.form-input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:.8rem 1rem;color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;transition:.2s;box-sizing:border-box;}
-.form-input:focus{outline:none;border-color:rgba(245,158,11,.5);background:rgba(245,158,11,.05);}
-.btn-auth{width:100%;padding:.9rem;background:linear-gradient(135deg,#f59e0b,#d97706);border:none;border-radius:10px;color:#080810;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s;margin-top:.5rem;}
+.form-group{margin-bottom:1rem;}
+.form-label{display:block;font-size:.73rem;font-weight:500;color:rgba(255,255,255,.4);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.07em;}
+.form-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:9px;padding:.75rem 1rem;color:#fff;font-family:'Outfit',sans-serif;font-size:.92rem;transition:.2s;box-sizing:border-box;}
+.form-input:focus{outline:none;border-color:rgba(245,158,11,.45);background:rgba(245,158,11,.04);}
+.form-input::placeholder{color:rgba(255,255,255,.2);}
+.btn-auth{width:100%;padding:.9rem;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border:none;border-radius:10px;color:#07070f;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:.2s;margin-top:.5rem;}
 .btn-auth:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(245,158,11,.3);}
-.btn-auth:disabled{opacity:.65;cursor:not-allowed;transform:none;}
-.auth-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:.75rem 1rem;color:#f87171;font-family:'Outfit',sans-serif;font-size:.85rem;margin-bottom:1rem;display:none;}
-.auth-divider{text-align:center;color:rgba(255,255,255,.2);font-size:.8rem;font-family:'Outfit',sans-serif;margin:1.5rem 0;}
-.auth-features{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-top:2rem;}
-.auth-feat{text-align:center;padding:.75rem .5rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;}
-.auth-feat .icon{font-size:1.3rem;margin-bottom:.3rem;}
-.auth-feat span{display:block;font-family:'Outfit',sans-serif;font-size:.7rem;color:rgba(255,255,255,.35);}
-.lang-switch{display:flex;justify-content:center;gap:.5rem;margin-bottom:1.5rem;}
-.lang-switch button{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:.35rem .75rem;font-size:.78rem;color:rgba(255,255,255,.5);cursor:pointer;transition:.2s;font-family:'Outfit',sans-serif;}
-.lang-switch button.active{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.4);color:#f59e0b;}
+.btn-auth:disabled{opacity:.6;transform:none;}
+.auth-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:.65rem 1rem;color:#f87171;font-size:.82rem;margin-bottom:1rem;display:none;}
+.modal-close-btn{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,.4);font-size:1rem;transition:.15s;}
+.modal-close-btn:hover{color:#ef4444;border-color:#ef4444;}
+.auth-modal{position:relative;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .problem-grid,.plans-grid,.demo-card{grid-template-columns:1fr;}
+  .niche-stats{gap:1.5rem;}
+  nav{padding:1rem 1.25rem;}
+}
+@media(max-width:600px){
+  .hero-ctas{flex-direction:column;align-items:center;}
+  .btn-hero-primary,.btn-hero-ghost{width:100%;text-align:center;}
+  .hero-trust{gap:1rem;}
+  .footer{flex-direction:column;text-align:center;}
+}
 </style>
 </head>
 <body>
-<div class="auth-page">
-  <div class="auth-bg"></div>
-  <div class="auth-grid"></div>
-  <div class="auth-particles"></div>
-  <div class="auth-wrap">
-    <div class="lang-switch">
-      <button id="lb-en" class="active" onclick="setAuthLang('en')">🇬🇧 English</button>
-      <button id="lb-ar" onclick="setAuthLang('ar')">🇸🇦 العربية</button>
+
+<!-- BG -->
+<div class="bg">
+  <div class="bg-glow"></div>
+  <div class="bg-grid"></div>
+  <div id="particles"></div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="logo-box">D8</div>
+    <span class="logo-name">DOUBLE EIGHT AI</span>
+  </a>
+  <div class="nav-right">
+    <a href="#pricing" class="nav-link" style="text-decoration:none">Pricing</a>
+    <a href="#faq" class="nav-link" style="text-decoration:none">FAQ</a>
+    <button class="nav-link" onclick="openAuth('login')">Sign In</button>
+    <button class="btn-nav" onclick="openAuth('register')">Get Started Free</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge"><span class="dot"></span> Built for MENA Entrepreneurs · Arabic & English</div>
+    <h1>
+      <span class="line-white">YOUR BUSINESS.</span>
+      <span class="line-gold">BUILT BY AI.</span>
+      <span class="line-dim">IN SECONDS.</span>
+    </h1>
+    <p class="hero-sub">
+      No business school. No expensive consultants. No wasted years.<br>
+      <strong>Double Eight AI</strong> gives every entrepreneur in the Arab world the exact tools that billion-dollar companies pay hundreds of thousands for — at a fraction of the cost.
+    </p>
+    <div class="hero-ctas">
+      <button class="btn-hero-primary" onclick="openAuth('register')">⚡ Start Free — No Credit Card</button>
+      <button class="btn-hero-ghost" onclick="document.getElementById('demo-section').scrollIntoView({behavior:'smooth'})">See It Work →</button>
     </div>
-    <div class="auth-logo">
-      <div class="logo-mark">D8</div>
-      <h1>DOUBLE EIGHT AI</h1>
-      <p id="auth-tagline">Business Intelligence Platform</p>
+    <div class="hero-trust">
+      <span>Free plan available</span>
+      <span>17 AI-powered tools</span>
+      <span>Arabic & English</span>
+      <span>Cancel anytime</span>
     </div>
-    <div class="auth-card">
-      <div class="auth-tabs">
-        <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
-        <button class="auth-tab" id="tab-register" onclick="switchTab('register')">Create Account</button>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section style="padding:4rem 2rem;max-width:1100px;margin:0 auto;position:relative;z-index:1;">
+  <div class="sec-header">
+    <div class="sec-eyebrow">The Reality</div>
+    <h2 class="sec-title">WHY MOST BUSINESSES IN THE MENA FAIL</h2>
+    <p class="sec-sub">Not because of bad ideas. Because of missing tools, knowledge gaps, and expensive barriers.</p>
+  </div>
+  <div class="problem-grid">
+    <div class="prob-card"><div class="prob-icon">💸</div><div><div class="prob-title">Consultants cost $5,000+</div><div class="prob-desc">A basic business plan from a consultant costs more than most startup budgets in the region. Most entrepreneurs skip it entirely — and fail without structure.</div></div></div>
+    <div class="prob-card"><div class="prob-icon">🌍</div><div><div class="prob-title">Generic tools built for the West</div><div class="prob-desc">Every AI tool out there is built for the American market. No Arabic support. No MENA market awareness. No Gulf business context. Just templates that don't fit.</div></div></div>
+    <div class="prob-card"><div class="prob-icon">⏳</div><div><div class="prob-title">Research takes weeks</div><div class="prob-desc">Finding market data, competitor info, pricing benchmarks, and customer insights takes weeks of research most founders don't have time or money to do.</div></div></div>
+    <div class="prob-card"><div class="prob-icon">😰</div><div><div class="prob-title">No idea where to start</div><div class="prob-desc">First-generation entrepreneurs with no business background face a wall. Where do you start? What documents do you need? What does an investor want? Nobody teaches this.</div></div></div>
+  </div>
+</section>
+
+<!-- NICHE STATEMENT -->
+<section class="niche">
+  <div class="niche-inner">
+    <div class="niche-flag">🌙</div>
+    <h2>BUILT SPECIFICALLY FOR THE ARAB ENTREPRENEUR</h2>
+    <p>Whether you're in Dubai, Riyadh, Cairo, Amman, Casablanca, or Beirut — Double Eight AI understands your market, speaks your language, and gives you tools built around your reality. Not Silicon Valley's.</p>
+    <div class="niche-stats">
+      <div class="niche-stat"><div class="n">600M+</div><div class="l">Arab speakers worldwide</div></div>
+      <div class="niche-stat"><div class="n">$3.5T</div><div class="l">MENA GDP opportunity</div></div>
+      <div class="niche-stat"><div class="n">0</div><div class="l">Real AI tools built for them</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS SHOWCASE -->
+<section class="tools-section">
+  <div class="sec-header">
+    <div class="sec-eyebrow">17 Tools. One Platform.</div>
+    <h2 class="sec-title">EVERYTHING YOU NEED TO BUILD</h2>
+    <p class="sec-sub">From idea to investor-ready in one click. Every tool your business needs, powered by Gemini AI.</p>
+  </div>
+  <div class="tools-showcase">
+    <div class="tool-showcase-card"><div class="tsc-icon">📋</div><div class="tsc-name">Business Plan</div><div class="tsc-desc">Full investor-ready plan with financial projections and 12-month roadmap.</div><span class="tsc-tag" style="background:rgba(59,130,246,.15);color:#60a5fa">Strategy</span></div>
+    <div class="tool-showcase-card"><div class="tsc-icon">◉</div><div class="tsc-name">Market Research</div><div class="tsc-desc">Deep competitor analysis and customer intelligence for your specific market.</div><span class="tsc-tag" style="background:rgba(34,197,94,.15);color:#4ade80">Research</span></div>
+    <div class="tool-showcase-card"><div class="tsc-icon">🎨</div><div class="tsc-name">Brand Kit</div><div class="tsc-desc">Complete brand identity — colors, fonts, voice, logo concept and guidelines.</div><span class="tsc-tag" style="background:rgba(168,85,247,.15);color:#c084fc">Brand</span></div>
+    <div class="tool-showcase-card"><div class="tsc-icon">🎯</div><div class="tsc-name">Pitch Deck</div><div class="tsc-desc">13-slide investor pitch script with speaker notes and funding ask.</div><span class="tsc-tag" style="background:rgba(245,158,11,.15);color:var(--gold)">Funding</span></div>
+    <div class="tool-showcase-card"><div class="tsc-icon">🌐</div><div class="tsc-name">Website Creator</div><div class="tsc-desc">Full HTML website generated and ready to download in one click.</div><span class="tsc-tag" style="background:rgba(6,182,212,.15);color:#22d3ee">Web</span></div>
+    <div class="tool-showcase-card"><div class="tsc-icon">📢</div><div class="tsc-name">Ad Campaigns</div><div class="tsc-desc">Complete campaigns for Facebook, Instagram, Google, TikTok and LinkedIn.</div><span class="tsc-tag" style="background:rgba(245,158,11,.15);color:var(--gold)">Marketing</span></div>
+    <div class="tool-showcase-card"><div class="tsc-icon">🚀</div><div class="tsc-name">30-Day Roadmap</div><div class="tsc-desc">Day-by-day launch plan with specific tasks, tools, and success metrics.</div><span class="tsc-tag" style="background:rgba(59,130,246,.15);color:#60a5fa">Launch</span></div>
+    <div class="tool-showcase-card"><div class="tsc-icon">💰</div><div class="tsc-name">Pricing Strategy</div><div class="tsc-desc">Break-even analysis, margin calculator, and competitor pricing comparison.</div><span class="tsc-tag" style="background:rgba(34,197,94,.15);color:#4ade80">Finance</span></div>
+    <div class="tool-showcase-card"><div class="tsc-icon">📧</div><div class="tsc-name">Cold Email Sequence</div><div class="tsc-desc">5-email drip sequence + LinkedIn messages + objection handler.</div><span class="tsc-tag" style="background:rgba(239,68,68,.15);color:#f87171">Sales</span></div>
+  </div>
+  <div style="text-align:center;margin-top:2rem">
+    <button class="btn-hero-primary" onclick="openAuth('register')" style="font-size:.9rem;padding:.8rem 1.75rem">See All 17 Tools →</button>
+  </div>
+</section>
+
+<!-- ONBOARDING JOURNEY -->
+<section class="journey">
+  <div class="journey-inner">
+    <div class="sec-header">
+      <div class="sec-eyebrow">Your Path</div>
+      <h2 class="sec-title">FROM IDEA TO LAUNCHED IN 5 STEPS</h2>
+      <p class="sec-sub">We guide you through the exact sequence. No guesswork. No wasted time.</p>
+    </div>
+    <div class="journey-steps">
+      <div class="journey-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-label">Validate Your Idea</div>
+          <div class="step-desc">Use the <strong style="color:#fff">Market Research</strong> tool to understand your market size, competition, and customer pain points in your specific region. Know if your idea is worth pursuing before spending a dirham.</div>
+          <a class="step-cta-link" onclick="openAuth('register')">Start with Market Research →</a>
+        </div>
       </div>
-      <div id="auth-error" class="auth-error"></div>
-      <form class="auth-form active" id="login-form" onsubmit="handleLogin(event)">
-        <div class="form-group">
-          <label class="form-label" id="lbl-email">Email Address</label>
-          <input type="email" class="form-input" id="login-email" placeholder="you@company.com" required>
+      <div class="journey-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-label">Build Your Foundation</div>
+          <div class="step-desc">Generate a complete <strong style="color:#fff">Business Plan</strong> with financial projections, market analysis, and a 12-month roadmap. Investor-ready in under 2 minutes. What consultants charge $5,000 for.</div>
+          <a class="step-cta-link" onclick="openAuth('register')">Create Your Business Plan →</a>
         </div>
-        <div class="form-group">
-          <label class="form-label" id="lbl-pw">Password</label>
-          <input type="password" class="form-input" id="login-pass" placeholder="••••••••" required>
+      </div>
+      <div class="journey-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-label">Build Your Brand</div>
+          <div class="step-desc">Generate your <strong style="color:#fff">Brand Kit</strong> — full identity with colors, fonts, voice, and messaging guidelines. Then generate your <strong style="color:#fff">Website</strong> and download it as a ready HTML file.</div>
+          <a class="step-cta-link" onclick="openAuth('register')">Build Your Brand →</a>
         </div>
-        <button type="submit" class="btn-auth" id="login-btn">Sign In →</button>
-      </form>
-      <form class="auth-form" id="register-form" onsubmit="handleRegister(event)">
-        <div class="form-group">
-          <label class="form-label" id="lbl-name">Full Name</label>
-          <input type="text" class="form-input" id="reg-name" placeholder="Your Name" required>
+      </div>
+      <div class="journey-step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-label">Get Your First Customers</div>
+          <div class="step-desc">Build your <strong style="color:#fff">Marketing Strategy</strong>, generate your <strong style="color:#fff">Ad Campaigns</strong>, write your <strong style="color:#fff">Cold Email Sequences</strong>, and execute your <strong style="color:#fff">30-Day Launch Plan</strong>.</div>
+          <a class="step-cta-link" onclick="openAuth('register')">Start Getting Customers →</a>
         </div>
-        <div class="form-group">
-          <label class="form-label" id="lbl-remail">Email Address</label>
-          <input type="email" class="form-input" id="reg-email" placeholder="you@company.com" required>
+      </div>
+      <div class="journey-step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <div class="step-label">Raise Capital (When Ready)</div>
+          <div class="step-desc">When the time comes, use the <strong style="color:#fff">Investor Pitch Deck</strong> generator and the <strong style="color:#fff">AI Advisor</strong> to prepare your funding story and financials. Walk into any meeting prepared.</div>
+          <a class="step-cta-link" onclick="openAuth('register')">Prepare Your Pitch →</a>
         </div>
-        <div class="form-group">
-          <label class="form-label" id="lbl-rpw">Password</label>
-          <input type="password" class="form-input" id="reg-pass" placeholder="Min 6 characters" required minlength="6">
-        </div>
-        <button type="submit" class="btn-auth" id="reg-btn">Create Account →</button>
-      </form>
-      <div class="auth-divider" id="auth-feat-label">17 AI-powered business tools</div>
-      <div class="auth-features">
-        <div class="auth-feat"><div class="icon">⚡</div><span id="feat1">Instant Generation</span></div>
-        <div class="auth-feat"><div class="icon">◎</div><span id="feat2">AI Advisor</span></div>
-        <div class="auth-feat"><div class="icon">▣</div><span id="feat3">Export Reports</span></div>
       </div>
     </div>
   </div>
-</div>
-<script>
-const API = 'https://api.doubleeight.online/api';
-const AUTH_STRINGS = {
-  en: {
-    signin:'Sign In', create:'Create Account', email:'Email Address', pw:'Password',
-    name:'Full Name', signin_btn:'Sign In →', create_btn:'Create Account →',
-    tagline:'Business Intelligence Platform', feat_label:'17 AI-powered business tools',
-    feat1:'Instant Generation', feat2:'AI Advisor', feat3:'Export Reports',
-    signing:'Signing in...', creating:'Creating...'
-  },
-  ar: {
-    signin:'تسجيل الدخول', create:'إنشاء حساب', email:'البريد الإلكتروني', pw:'كلمة المرور',
-    name:'الاسم الكامل', signin_btn:'تسجيل الدخول →', create_btn:'إنشاء حساب →',
-    tagline:'منصة الذكاء الاصطناعي للأعمال', feat_label:'17 أداة ذكاء اصطناعي للأعمال',
-    feat1:'توليد فوري', feat2:'مستشار ذكي', feat3:'تصدير التقارير',
-    signing:'جارٍ تسجيل الدخول...', creating:'جارٍ الإنشاء...'
-  }
-};
-let authLang = localStorage.getItem('d8_lang') || 'en';
+</section>
 
-function setAuthLang(lang) {
-  authLang = lang;
-  localStorage.setItem('d8_lang', lang);
-  const s = AUTH_STRINGS[lang];
-  document.getElementById('html-root') && document.getElementById('html-root').setAttribute('dir', lang==='ar'?'rtl':'ltr');
-  document.documentElement.setAttribute('dir', lang==='ar'?'rtl':'ltr');
-  document.documentElement.setAttribute('lang', lang);
-  document.getElementById('lb-en').classList.toggle('active', lang==='en');
-  document.getElementById('lb-ar').classList.toggle('active', lang==='ar');
-  document.getElementById('tab-login').textContent = s.signin;
-  document.getElementById('tab-register').textContent = s.create;
-  document.getElementById('lbl-email').textContent = s.email;
-  document.getElementById('lbl-pw').textContent = s.pw;
-  document.getElementById('lbl-name').textContent = s.name;
-  document.getElementById('lbl-remail').textContent = s.email;
-  document.getElementById('lbl-rpw').textContent = s.pw;
-  document.getElementById('login-btn').textContent = s.signin_btn;
-  document.getElementById('reg-btn').textContent = s.create_btn;
-  document.getElementById('auth-tagline').textContent = s.tagline;
-  document.getElementById('auth-feat-label').textContent = s.feat_label;
-  document.getElementById('feat1').textContent = s.feat1;
-  document.getElementById('feat2').textContent = s.feat2;
-  document.getElementById('feat3').textContent = s.feat3;
+<!-- LIVE DEMO -->
+<section class="demo-strip" id="demo-section">
+  <div class="demo-card">
+    <div class="demo-left">
+      <h2>SEE IT WORK IN REAL TIME</h2>
+      <p>Ask our AI Advisor anything about your business. Get expert-level answers in seconds — strategy, pricing, marketing, legal, funding. In Arabic or English.</p>
+      <ul class="demo-features">
+        <li>Business plan generation in under 90 seconds</li>
+        <li>Market research for any MENA industry</li>
+        <li>Answers in Arabic or English instantly</li>
+        <li>Export to PDF, DOCX, or HTML</li>
+      </ul>
+      <button class="btn-hero-primary" onclick="openAuth('register')" style="font-size:.88rem;padding:.85rem 1.75rem">Try It Free Now →</button>
+    </div>
+    <div class="demo-right">
+      <div class="demo-topbar">
+        <div class="demo-dot" style="background:#ef4444"></div>
+        <div class="demo-dot" style="background:var(--gold)"></div>
+        <div class="demo-dot" style="background:#22c55e"></div>
+      </div>
+      <div class="demo-output" id="demo-output">
+        <span class="do-heading">◎ AI Advisor</span><br><br>
+        Ask me anything about your business idea...
+      </div>
+      <div class="demo-input-row">
+        <input class="demo-input" id="demo-input" placeholder="e.g. How do I price my SaaS for UAE market?" maxlength="120" onkeydown="if(event.key==='Enter')runDemo()">
+        <button class="demo-btn" id="demo-btn" onclick="runDemo()">Ask →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="sec-header">
+    <div class="sec-eyebrow">Simple Pricing</div>
+    <h2 class="sec-title">START FREE. SCALE WHEN READY.</h2>
+    <p class="sec-sub">No hidden fees. No contracts. Cancel anytime.</p>
+  </div>
+  <div class="plans-grid">
+    <div class="plan">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">$0</div>
+      <div class="plan-period">forever</div>
+      <ul class="plan-features">
+        <li class="yes">20 AI chat messages</li>
+        <li class="yes">3 tool reports</li>
+        <li class="yes">2 market research</li>
+        <li class="yes">Business Academy access</li>
+        <li class="yes">Community access</li>
+        <li class="no">PDF/DOCX export</li>
+        <li class="no">Website creator</li>
+        <li class="no">Unlimited generation</li>
+      </ul>
+      <button class="plan-btn plan-btn-ghost" onclick="openAuth('register')">Start Free</button>
+    </div>
+    <div class="plan featured">
+      <div class="plan-badge">🔥 MOST POPULAR</div>
+      <div class="offer-tag">FIRST MONTH FREE</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-price">$19</div>
+      <div class="plan-period">/month after free trial</div>
+      <ul class="plan-features">
+        <li class="yes">Unlimited AI chat</li>
+        <li class="yes">100 tool reports/month</li>
+        <li class="yes">Unlimited market research</li>
+        <li class="star">Website Creator — full HTML</li>
+        <li class="star">Ad Campaign Strategy</li>
+        <li class="star">SEO Growth Plan</li>
+        <li class="yes">PDF, DOCX, HTML export</li>
+        <li class="yes">Priority generation speed</li>
+        <li class="yes">Arabic & English interface</li>
+      </ul>
+      <button class="plan-btn plan-btn-primary" onclick="openAuth('register')">🎁 Claim Free Month</button>
+    </div>
+    <div class="plan">
+      <div class="plan-name">Enterprise</div>
+      <div class="plan-price">$99</div>
+      <div class="plan-period">/month</div>
+      <ul class="plan-features">
+        <li class="yes">Everything in Pro</li>
+        <li class="yes">Unlimited everything</li>
+        <li class="star">Team seats (up to 10)</li>
+        <li class="star">White-label reports</li>
+        <li class="star">API access</li>
+        <li class="yes">Custom integrations</li>
+        <li class="yes">Priority 24h support</li>
+        <li class="yes">Dedicated account manager</li>
+      </ul>
+      <button class="plan-btn plan-btn-ghost" onclick="openAuth('register')">Contact Us</button>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="sec-header" style="max-width:1100px;margin:0 auto;">
+    <div class="sec-eyebrow">Real Results</div>
+    <h2 class="sec-title">WHAT ENTREPRENEURS SAY</h2>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">I generated a full business plan for my logistics startup in Dubai in under 3 minutes. My investors loved it. What I would have paid $4,000 for I got in seconds.</div>
+      <div class="testi-author"><div class="testi-avatar" style="background:var(--gold)">A</div><div><div class="testi-name">Ahmed K.</div><div class="testi-role">Founder, Dubai Logistics Startup</div></div></div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">أخيراً أداة تفهم السوق العربي. استخدمت أداة أبحاث السوق لمشروعي في الرياض وكانت النتائج دقيقة جداً. أنصح كل رائد أعمال عربي باستخدامها.</div>
+      <div class="testi-author"><div class="testi-avatar" style="background:#6366f1">س</div><div><div class="testi-name">سارة المطيري</div><div class="testi-role">مؤسسة، منصة تعليمية — الرياض</div></div></div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">The cold email sequence tool generated campaigns that booked 8 meetings in the first week. The AI Advisor helped me close my first enterprise deal. This platform pays for itself every month.</div>
+      <div class="testi-author"><div class="testi-avatar" style="background:#10b981">C</div><div><div class="testi-name">Carlos M.</div><div class="testi-role">B2B Sales Consultant — Cairo</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="sec-header">
+    <div class="sec-eyebrow">Questions</div>
+    <h2 class="sec-title">FREQUENTLY ASKED</h2>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">Is it really free to start? <span class="faq-arrow">▾</span></div><div class="faq-a">Yes. The free plan gives you 20 AI chat messages, 3 tool reports, and full access to the Business Academy and Community — forever. No credit card required to sign up.</div></div>
+    <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">Is it available in Arabic? <span class="faq-arrow">▾</span></div><div class="faq-a">Yes. The entire platform supports Arabic and English. You can switch languages in Settings. All tools generate content in whichever language you're using.</div></div>
+    <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">How good is the AI output quality? <span class="faq-arrow">▾</span></div><div class="faq-a">We use Google's Gemini 2.5 Flash for all tool generation — one of the most powerful AI models available. The AI Advisor uses Groq's Llama 3.3 70B for instant streaming responses. Output is detailed, specific, and actionable.</div></div>
+    <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">What's included in the Pro first month free offer? <span class="faq-arrow">▾</span></div><div class="faq-a">Full Pro access for 30 days — unlimited AI chat, 100 tool reports, all export formats, Website Creator, Ad Campaign Strategy, SEO Plan, and everything else in Pro. Your card is saved but not charged for 30 days.</div></div>
+    <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">Can I download my generated reports? <span class="faq-arrow">▾</span></div><div class="faq-a">Yes. Pro users can export any report as PDF, DOCX, or HTML. The Website Creator generates a ready index.html file you can download and deploy directly.</div></div>
+    <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">Is my data secure? <span class="faq-arrow">▾</span></div><div class="faq-a">Yes. All data is encrypted. Your business information, reports, and conversations are stored securely and are never shared or used to train AI models.</div></div>
+    <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">Can I cancel anytime? <span class="faq-arrow">▾</span></div><div class="faq-a">Absolutely. Cancel anytime from Settings → Billing. No questions asked. You keep access until the end of your billing period.</div></div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-final">
+  <div class="cta-box">
+    <h2>YOUR COMPETITION IS ALREADY USING AI.<br>ARE YOU?</h2>
+    <p>Every day you wait, someone else in your market is using Double Eight AI to build faster, pitch better, and grow smarter. Start free in 30 seconds.</p>
+    <button class="btn-hero-primary" onclick="openAuth('register')" style="font-size:1rem;padding:1rem 2.5rem">⚡ Start Building Free</button>
+    <div style="font-size:.75rem;color:var(--text3);margin-top:1rem">No credit card · Free forever plan · Arabic & English</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DOUBLE EIGHT AI</div>
+  <div class="footer-links">
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+    <a href="pages/dashboard.html">Dashboard</a>
+  </div>
+  <div class="footer-copy">© 2025 Double Eight AI · doubleeight.online</div>
+</footer>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="auth-modal">
+  <div class="auth-modal">
+    <button class="modal-close-btn" onclick="closeAuth()">✕</button>
+    <h2>DOUBLE EIGHT AI</h2>
+    <p id="auth-modal-sub">Join thousands of entrepreneurs building smarter</p>
+    <div class="auth-tabs">
+      <button class="auth-tab" id="tab-login" onclick="switchAuthTab('login')">Sign In</button>
+      <button class="auth-tab active" id="tab-register" onclick="switchAuthTab('register')">Get Started Free</button>
+    </div>
+    <div id="auth-error" class="auth-error"></div>
+    <form class="auth-form" id="login-form" onsubmit="handleLogin(event)">
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="login-email" placeholder="you@email.com" required></div>
+      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="login-pass" placeholder="••••••••" required></div>
+      <button type="submit" class="btn-auth" id="login-btn">Sign In →</button>
+    </form>
+    <form class="auth-form active" id="register-form" onsubmit="handleRegister(event)">
+      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="reg-name" placeholder="Your name" required></div>
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="reg-email" placeholder="you@email.com" required></div>
+      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="reg-pass" placeholder="Min 6 characters" required minlength="6"></div>
+      <button type="submit" class="btn-auth" id="reg-btn">⚡ Create Free Account →</button>
+    </form>
+  </div>
+</div>
+
+<script>
+const API='https://api.doubleeight.online/api';
+
+// Redirect if logged in
+if(localStorage.getItem('d8_token')) window.location.href='pages/dashboard.html';
+
+// Particles
+const pc=document.getElementById('particles');
+for(let i=0;i<20;i++){
+  const p=document.createElement('div');
+  p.className='particle';
+  p.style.cssText=`left:${Math.random()*100}%;animation-duration:${10+Math.random()*15}s;animation-delay:${Math.random()*12}s;`;
+  pc.appendChild(p);
 }
-function switchTab(tab) {
-  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (tab==='login'&&i===0)||(tab==='register'&&i===1)));
-  document.getElementById('login-form').classList.toggle('active', tab==='login');
-  document.getElementById('register-form').classList.toggle('active', tab==='register');
+
+// FAQ
+function toggleFaq(el){
+  const isOpen=el.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(f=>f.classList.remove('open'));
+  if(!isOpen) el.classList.add('open');
+}
+
+// AUTH MODAL
+function openAuth(tab='register'){
+  document.getElementById('auth-modal').classList.add('open');
+  switchAuthTab(tab);
+  document.body.style.overflow='hidden';
+}
+function closeAuth(){
+  document.getElementById('auth-modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('auth-modal').addEventListener('click',function(e){if(e.target===this)closeAuth();});
+
+function switchAuthTab(tab){
+  const isLogin=tab==='login';
+  document.getElementById('tab-login').classList.toggle('active',isLogin);
+  document.getElementById('tab-register').classList.toggle('active',!isLogin);
+  document.getElementById('login-form').classList.toggle('active',isLogin);
+  document.getElementById('register-form').classList.toggle('active',!isLogin);
   document.getElementById('auth-error').style.display='none';
+  document.getElementById('auth-modal-sub').textContent=isLogin?'Welcome back':'Join thousands of entrepreneurs building smarter';
 }
-function showError(msg) { const el=document.getElementById('auth-error'); el.textContent=msg; el.style.display='block'; }
-async function handleLogin(e) {
+
+function showAuthError(msg){
+  const el=document.getElementById('auth-error');
+  el.textContent=msg;el.style.display='block';
+}
+
+async function handleLogin(e){
   e.preventDefault();
   const btn=document.getElementById('login-btn');
-  btn.textContent=AUTH_STRINGS[authLang].signing; btn.disabled=true;
-  try {
-    const r = await fetch(`${API}/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:document.getElementById('login-email').value,password:document.getElementById('login-pass').value})});
-    const d = await r.json();
-    if(!r.ok) throw new Error(d.error||'Login failed');
+  btn.textContent='Signing in...';btn.disabled=true;
+  try{
+    const r=await fetch(`${API}/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:document.getElementById('login-email').value,password:document.getElementById('login-pass').value})});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.error||'Login failed');
     localStorage.setItem('d8_token',d.token);
     localStorage.setItem('d8_user',JSON.stringify(d.user));
     window.location.href='pages/dashboard.html';
-  } catch(err){ showError(err.message); }
-  finally{ btn.textContent=AUTH_STRINGS[authLang].signin_btn; btn.disabled=false; }
+  }catch(err){showAuthError(err.message);}
+  finally{btn.textContent='Sign In →';btn.disabled=false;}
 }
-async function handleRegister(e) {
+
+async function handleRegister(e){
   e.preventDefault();
   const btn=document.getElementById('reg-btn');
-  btn.textContent=AUTH_STRINGS[authLang].creating; btn.disabled=true;
-  try {
-    const r = await fetch(`${API}/auth/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('reg-name').value,email:document.getElementById('reg-email').value,password:document.getElementById('reg-pass').value})});
-    const d = await r.json();
-    if(!r.ok) throw new Error(d.error||'Registration failed');
+  btn.textContent='Creating account...';btn.disabled=true;
+  try{
+    const r=await fetch(`${API}/auth/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('reg-name').value,email:document.getElementById('reg-email').value,password:document.getElementById('reg-pass').value})});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.error||'Registration failed');
     localStorage.setItem('d8_token',d.token);
     localStorage.setItem('d8_user',JSON.stringify(d.user));
     window.location.href='pages/dashboard.html';
-  } catch(err){ showError(err.message); }
-  finally{ btn.textContent=AUTH_STRINGS[authLang].create_btn; btn.disabled=false; }
+  }catch(err){showAuthError(err.message);}
+  finally{btn.textContent='⚡ Create Free Account →';btn.disabled=false;}
 }
-if(localStorage.getItem('d8_token')) window.location.href='pages/dashboard.html';
-setAuthLang(authLang);
+
+// LIVE DEMO (simulated - real AI needs auth)
+const DEMO_RESPONSES=[
+  {q:'price',r:'For SaaS pricing in the UAE market, you should consider 3 tiers: <br><br><span class="do-heading">Starter: AED 99–199/month</span><br>Perfect for solo founders and freelancers.<br><br><span class="do-heading">Pro: AED 499–999/month</span><br>For SMBs needing team features. This is your primary revenue driver.<br><br><span class="do-heading">Enterprise: AED 2,000+/month</span><br>For corporations needing SLAs and compliance.<br><br>UAE buyers respond strongly to value-based pricing. Lead with ROI, not features.'},
+  {q:'market',r:'The MENA e-commerce market is projected to reach <span class="do-heading">$50B by 2025</span>, growing at 22% annually — faster than any other region globally.<br><br>Key opportunity areas:<br>• Saudi Arabia: largest market, 70% mobile penetration<br>• UAE: highest GDP per capita, luxury segment dominant<br>• Egypt: largest population, price-sensitive, massive growth potential<br><br>Your biggest competitive advantage: <span class="do-heading">Arabic-first experience</span>. Most foreign players fail here.'},
+  {q:'start',r:'Here is your exact 30-day launch sequence for the MENA market:<br><br><span class="do-heading">Week 1 — Validate</span><br>Interview 20 potential customers. Offer first 3 free in exchange for feedback.<br><br><span class="do-heading">Week 2 — Build Authority</span><br>Post daily on LinkedIn and Instagram. Share your knowledge. Build before you sell.<br><br><span class="do-heading">Week 3 — Soft Launch</span><br>Email your network. Offer a founding member discount. Aim for 10 paying customers.<br><br><span class="do-heading">Week 4 — Scale</span><br>Run targeted ads. Double what works. Cut what doesn\'t.'},
+  {q:'default',r:'Great question. Here\'s what I\'d recommend based on best practices for MENA entrepreneurs:<br><br>1. <span class="do-heading">Start with market validation</span> — talk to 20 real potential customers before building anything.<br>2. <span class="do-heading">Focus on one problem, one customer type</span> — specificity wins in competitive markets.<br>3. <span class="do-heading">Build in Arabic first</span> — 80% of your TAM prefers Arabic content but most competitors ignore this.<br><br>Sign up to use the full AI Advisor — it gives personalized, detailed answers specific to your business.'}
+];
+
+function runDemo(){
+  const input=document.getElementById('demo-input');
+  const output=document.getElementById('demo-output');
+  const btn=document.getElementById('demo-btn');
+  const q=input.value.trim();
+  if(!q)return;
+  btn.disabled=true;btn.textContent='...';
+  output.innerHTML='<span class="do-heading">◎ AI Advisor</span><br><br><span style="color:var(--text3)">Thinking...</span>';
+  let response=DEMO_RESPONSES[3];
+  const ql=q.toLowerCase();
+  if(ql.includes('price')||ql.includes('pricing')||ql.includes('cost'))response=DEMO_RESPONSES[0];
+  else if(ql.includes('market')||ql.includes('mena')||ql.includes('region'))response=DEMO_RESPONSES[1];
+  else if(ql.includes('start')||ql.includes('launch')||ql.includes('begin'))response=DEMO_RESPONSES[2];
+  setTimeout(()=>{
+    output.innerHTML=`<span class="do-heading">◎ AI Advisor</span><br><br>${response.r}<br><br><span style="color:var(--text3);font-size:.75rem">Sign up for full access with your specific business details →</span>`;
+    btn.disabled=false;btn.textContent='Ask →';
+    input.value='';
+  },1200);
+}
 </script>
 </body>
 </html>
