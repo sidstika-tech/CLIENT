@@ -169,10 +169,10 @@ function renderTools(cat = 'all') {
 function openTool(toolId) {
   const tool = TOOLS.find(tl => tl.id === toolId);
   if (!tool) return;
-  currentTool = tool;
-  document.getElementById('modal-tool-icon').textContent = tool.icon;
-  document.getElementById('modal-tool-name').textContent = isAr() ? tool.nameAr : tool.name;
-  document.getElementById('modal-tool-desc').textContent = isAr() ? tool.descAr : tool.desc;
+ currentTool = tool;
+  document.getElementById('modal-icon').textContent = tool.icon;
+  document.getElementById('modal-title').textContent = isAr() ? tool.nameAr : tool.name;
+  document.getElementById('modal-desc').textContent = isAr() ? tool.descAr : tool.desc;
   document.getElementById('modal-result').style.display = 'none';
   document.getElementById('website-preview-wrap').style.display = 'none';
   document.getElementById('modal-footer').style.display = 'flex';
