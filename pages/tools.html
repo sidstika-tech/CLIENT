@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI Tools — Double Eight AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<style>
+.cat-filters{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+.cat-btn{padding:.4rem 1rem;border-radius:20px;font-size:.8rem;font-weight:500;border:1px solid var(--border);color:var(--text3);transition:.15s;cursor:pointer;}
+.cat-btn.active{background:var(--gold-dim);border-color:var(--border-gold);color:var(--gold);}
+</style>
+</head>
+<body>
+<div class="app-grid-bg"></div><div class="page-particles"></div>
+<div class="app">
+  <aside class="sidebar"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="hamburger">☰</button>
+      <span class="topbar-title" id="page-title">AI TOOLS HUB</span>
+      <div class="topbar-right">
+        <span id="tools-count" style="font-size:.8rem;color:var(--text3)">17 AI-powered tools</span>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="cat-filters">
+        <button class="cat-btn active" onclick="filterCat('all',this)" id="cat-all">All Tools</button>
+        <button class="cat-btn" onclick="filterCat('brand',this)" id="cat-brand">Brand &amp; Identity</button>
+        <button class="cat-btn" onclick="filterCat('plan',this)" id="cat-plan">Planning &amp; Strategy</button>
+        <button class="cat-btn" onclick="filterCat('legal',this)" id="cat-legal">Legal &amp; Finance</button>
+        <button class="cat-btn" onclick="filterCat('mkt',this)" id="cat-mkt">Marketing</button>
+        <button class="cat-btn" onclick="filterCat('sales',this)" id="cat-sales">Sales &amp; Copy</button>
+      </div>
+      <div class="tools-grid" id="tools-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOOL MODAL -->
+<div class="modal-overlay" id="tool-modal">
+  <div class="modal" style="max-width:680px">
+    <div class="modal-header">
+      <span id="modal-icon" style="font-size:1.5rem"></span>
+      <div>
+        <div class="modal-title" id="modal-title"></div>
+        <div style="font-size:.8rem;color:var(--text3);margin-top:.1rem" id="modal-desc"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal('tool-modal')" style="flex-shrink:0">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="modal-form"></div>
+      <div id="modal-result" style="display:none" class="result-panel">
+        <button class="float-close-btn" onclick="resetModal()" title="Close result">✕</button>
+        <h4 id="result-title-lbl">Generated Result</h4>
+        <div class="result-content" id="modal-result-content"></div>
+        <div id="website-preview-wrap" style="display:none;margin-top:1rem"><div style="font-family:'Bebas Neue',cursive;font-size:.9rem;letter-spacing:1px;color:var(--gold);margin-bottom:.5rem">LIVE PREVIEW</div><iframe id="website-preview-frame" style="width:100%;height:480px;border:1px solid var(--border);border-radius:var(--radius);background:#fff"></iframe></div>
+        <div class="result-actions">
+          <button class="btn btn-primary btn-sm" id="download-html-btn" style="display:none" onclick="downloadHTMLFile()">⬇ Download index.html</button>
+          <button class="btn btn-secondary btn-sm" id="copy-btn" onclick="copyText(window._lastResult)">Copy Text</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportReport(window._lastReportId,'docx')">↓ DOCX</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportReport(window._lastReportId,'pdf')">↓ PDF</button>
+          <button class="btn btn-secondary btn-sm" id="new-btn" onclick="resetModal()">← New</button>
+          <button class="btn btn-danger btn-sm" onclick="closeModal('tool-modal')" id="close-result-btn" style="margin-left:auto">✕ Close</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" id="modal-footer">
+      <button class="btn btn-secondary" id="cancel-modal-btn" onclick="closeModal('tool-modal')">Cancel</button>
+      <button class="btn btn-primary" id="generate-btn" onclick="generateTool()">
+        <span class="loader" id="gen-loader" style="display:none"></span>
+        <span id="gen-btn-text">⚡ Generate</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/core.js"></script>
+<script>
+Auth.check(); applyLang(getLang());
+buildLayout('tools');
+
+function applyTranslations() {
+  const isAr = localStorage.getItem('d8_lang')==='ar';
+  document.getElementById('page-title').textContent = isAr ? 'مركز الأدوات الذكية' : 'AI TOOLS HUB';
+  document.getElementById('tools-count').textContent = isAr ? '6 أدوات متخصصة' : '6 AI-powered tools';
+}
+applyTranslations();
+
+const TOOLS = [
+  { id:'contract', icon:'📄', name:'Contract Agreement', nameAr:'اتفاقية عقد', desc:'Legally-sound contract templates for any business situation.', descAr:'قوالب عقود قانونية سليمة.', cat:'legal', tag:'Legal', tagAr:'قانوني', tagClass:'tag-legal', fields:[
+    {id:'contractType', label:'Contract Type', labelAr:'نوع العقد', type:'select', options:['Service Agreement','NDA (Non-Disclosure)','Partnership Agreement','Freelance Contract','Consulting Agreement','Employment Contract']},
+    {id:'partyA', label:'Party A (Your Name/Company)', labelAr:'الطرف الأول', type:'text', placeholder:'Your company name', required:true},
+    {id:'partyB', label:'Party B (Client/Other Party)', labelAr:'الطرف الثاني', type:'text', placeholder:'Client name', required:true},
+    {id:'service', label:'Service / Subject Matter', labelAr:'الخدمة', type:'text', placeholder:'e.g. Web development services', required:true},
+    {id:'payment', label:'Payment Terms', labelAr:'شروط الدفع', type:'text', placeholder:'e.g. $5,000 on project completion'},
+    {id:'duration', label:'Duration / Timeline', labelAr:'المدة', type:'text', placeholder:'e.g. 3 months, Project-based'},
+    {id:'jurisdiction', label:'Jurisdiction / Country', labelAr:'الاختصاص القضائي', type:'text', placeholder:'e.g. UAE, UK, New York'},
+  ]},
+  { id:'pitch_deck', icon:'🎯', name:'Investor Pitch Deck', nameAr:'عرض المستثمرين', desc:'13-slide pitch deck script with speaker notes and funding ask.', descAr:'نص عرض 13 شريحة مع ملاحظات المتحدث.', cat:'legal', tag:'Finance', tagAr:'مالية', tagClass:'tag-legal', fields:[
+    {id:'businessName', label:'Business Name', labelAr:'اسم الشركة', type:'text', required:true},
+    {id:'industry', label:'Industry', labelAr:'القطاع', type:'text', required:true},
+    {id:'problem', label:'The Problem You Solve', labelAr:'المشكلة التي تحلها', type:'textarea', placeholder:'What painful problem exists in the market?', required:true},
+    {id:'solution', label:'Your Solution', labelAr:'حلك', type:'textarea', placeholder:'How do you solve it uniquely?', required:true},
+    {id:'traction', label:'Current Traction', labelAr:'النتائج الحالية', type:'text', placeholder:'e.g. 500 users, $10K MRR, 3 paid pilots'},
+    {id:'fundingAsk', label:'Funding Ask', labelAr:'طلب التمويل', type:'text', placeholder:'e.g. $500,000 seed round'},
+    {id:'useOfFunds', label:'Use of Funds', labelAr:'استخدام الأموال', type:'text', placeholder:'e.g. 40% product, 40% marketing, 20% ops'},
+  ]},
+  { id:'seo_keywords', icon:'🔍', name:'SEO Keyword Map', nameAr:'خريطة كلمات SEO', desc:'Complete keyword strategy with content clusters and 90-day execution plan.', descAr:'استراتيجية كلمات مفتاحية كاملة مع خطة 90 يوم.', cat:'mkt', tag:'Marketing', tagAr:'تسويق', tagClass:'tag-mkt', fields:[
+    {id:'businessName', label:'Business Name', labelAr:'اسم الشركة', type:'text', required:true},
+    {id:'industry', label:'Industry / Niche', labelAr:'القطاع', type:'text', required:true},
+    {id:'website', label:'Website URL (optional)', labelAr:'رابط الموقع', type:'text', placeholder:'e.g. mysite.com'},
+    {id:'location', label:'Target Location', labelAr:'الموقع المستهدف', type:'text', placeholder:'e.g. UAE, Global, Saudi Arabia'},
+    {id:'competitors', label:'Known Competitors', labelAr:'المنافسون المعروفون', type:'text', placeholder:'e.g. competitor1.com, competitor2.com'},
+  ]},
+  { id:'cold_email', icon:'📧', name:'Cold Email Sequence', nameAr:'تسلسل البريد البارد', desc:'5-email drip campaign + LinkedIn messages + objection handling guide.', descAr:'5 رسائل بريد إلكتروني + رسائل LinkedIn + معالجة الاعتراضات.', cat:'sales', tag:'Sales', tagAr:'مبيعات', tagClass:'tag-sales', fields:[
+    {id:'senderBusiness', label:'Your Business Name', labelAr:'اسم شركتك', type:'text', required:true},
+    {id:'targetProspect', label:'Target Prospect Type', labelAr:'نوع العميل المستهدف', type:'text', placeholder:'e.g. SaaS founders, Real estate agents', required:true},
+    {id:'industry', label:'Prospect Industry', labelAr:'قطاع العميل', type:'text', required:true},
+    {id:'valueProp', label:'Your Value Proposition', labelAr:'عرض القيمة', type:'textarea', placeholder:'Why should they care? What result do you deliver?', required:true},
+    {id:'goal', label:'Goal of Outreach', labelAr:'هدف التواصل', type:'text', placeholder:'e.g. Book a 15-min discovery call'},
+    {id:'tone', label:'Tone', labelAr:'الأسلوب', type:'select', options:['Professional & Warm','Direct & Bold','Consultative','Casual & Friendly']},
+  ]},
+  { id:'website_creation', icon:'🌐', name:'Website Creator', nameAr:'منشئ المواقع', desc:'Generate a complete HTML website — fully designed, ready to download.', descAr:'أنشئ موقع HTML كامل جاهز للتحميل والنشر.', cat:'sales', tag:'Website', tagAr:'موقع', tagClass:'tag-mkt', fields:[
+    {id:'businessName', label:'Business / Project Name', labelAr:'اسم المشروع', type:'text', placeholder:'e.g. My Startup', required:true},
+    {id:'content', label:'Website Type', labelAr:'نوع الموقع', type:'select', options:['Business / Company','Portfolio / Personal','Restaurant / Cafe','E-Commerce / Store','Startup / SaaS','Gym / Fitness','Real Estate','Medical / Clinic']},
+    {id:'sections', label:'Sections to Include', labelAr:'الأقسام المطلوبة', type:'select', options:['Hero + Features + CTA','Hero + About + Services + Contact','Full (All Sections)']},
+    {id:'colors', label:'Color Style', labelAr:'نمط الألوان', type:'select', options:['Dark & Gold (Luxury)','Light & Clean (Minimal)','Dark & Blue (Tech)','White & Green (Health)','Dark & Purple (Creative)']},
+    {id:'fonts', label:'Font Style', labelAr:'نمط الخط', type:'select', options:['Modern Sans-Serif','Bold Display','Elegant & Thin']},
+    {id:'interactive', label:'Interactive Features', labelAr:'المميزات التفاعلية', type:'select', options:['Smooth Scroll Only','Smooth Scroll + Animations','All Interactive Features']},
+    {id:'extraDetails', label:'Extra Details (optional)', labelAr:'تفاصيل إضافية', type:'text', placeholder:'e.g. Arabic support, dark mode, pricing table'},
+  ]},
+  { id:'sales_script', icon:'🎤', name:'Sales Script', nameAr:'نص المبيعات', desc:'Word-for-word sales script with objection handling and 5 closing techniques.', descAr:'نص مبيعات كامل مع معالجة الاعتراضات وتقنيات الإغلاق.', cat:'sales', tag:'Sales', tagAr:'مبيعات', tagClass:'tag-sales', fields:[
+    {id:'businessName', label:'Business Name', labelAr:'اسم الشركة', type:'text', required:true},
+    {id:'product', label:'Product / Service', labelAr:'المنتج/الخدمة', type:'text', required:true},
+    {id:'price', label:'Price Point', labelAr:'نقطة السعر', type:'text', placeholder:'e.g. $299/month or $2,500 project'},
+    {id:'channel', label:'Sales Channel', labelAr:'قناة المبيعات', type:'select', options:['Phone / Video call','In-Person Meeting','Demo Call','Chat / Messaging']},
+    {id:'targetClient', label:'Target Client Profile', labelAr:'ملف العميل المستهدف', type:'text', required:true},
+    {id:'objections', label:'Common Objections', labelAr:'الاعتراضات الشائعة', type:'text', placeholder:'e.g. Too expensive, Need to think about it'},
+  ]}
+];
+
+let currentTool = null;
+const isAr = () => localStorage.getItem('d8_lang') === 'ar';
+
+function filterCat(cat, btn) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTools(cat);
+}
+
+function renderTools(cat = 'all') {
+  const filtered = cat === 'all' ? TOOLS : TOOLS.filter(tl => tl.cat === cat);
+  const grid = document.getElementById('tools-grid');
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🔧</div><p>No tools in this category</p></div>';
+    return;
+  }
+  grid.innerHTML = filtered.map(tl => `
+    <div class="tool-card" onclick="openTool('${tl.id}')">
+      <div class="tool-icon">${tl.icon}</div>
+      <div class="tool-name">${isAr() ? tl.nameAr : tl.name}</div>
+      <div class="tool-desc">${isAr() ? tl.descAr : tl.desc}</div>
+      <span class="tool-tag ${tl.tagClass}">${isAr() ? tl.tagAr : tl.tag}</span>
+    </div>`).join('');
+}
+
+function openTool(toolId) {
+  const tool = TOOLS.find(tl => tl.id === toolId);
+  if (!tool) return;
+  currentTool = tool;
+  document.getElementById('modal-tool-icon').textContent = tool.icon;
+  document.getElementById('modal-tool-name').textContent = isAr() ? tool.nameAr : tool.name;
+  document.getElementById('modal-tool-desc').textContent = isAr() ? tool.descAr : tool.desc;
+  document.getElementById('modal-result').style.display = 'none';
+  document.getElementById('website-preview-wrap').style.display = 'none';
+  document.getElementById('modal-footer').style.display = 'flex';
+  document.getElementById('gen-btn-text').textContent = isAr() ? '⚡ توليد' : '⚡ Generate';
+  document.getElementById('gen-loader').style.display = 'none';
+  document.getElementById('generate-btn').disabled = false;
+
+  // Build form fields
+  document.getElementById('modal-form').innerHTML = tool.fields.map(f => {
+    const label = isAr() ? f.labelAr : f.label;
+    const req = f.required ? '<span style="color:var(--red)">*</span>' : '';
+    if (f.type === 'select') {
+      return `<div class="form-group">
+        <label class="form-label">${label} ${req}</label>
+        <select class="form-select" id="f_${f.id}">
+          ${f.options.map(o => `<option value="${o}">${o}</option>`).join('')}
+        </select>
+      </div>`;
+    }
+    if (f.type === 'textarea') {
+      return `<div class="form-group">
+        <label class="form-label">${label} ${req}</label>
+        <textarea class="form-textarea" id="f_${f.id}" placeholder="${f.placeholder || ''}" ${f.required ? 'required' : ''}></textarea>
+      </div>`;
+    }
+    return `<div class="form-group">
+      <label class="form-label">${label} ${req}</label>
+      <input type="text" class="form-input" id="f_${f.id}" placeholder="${f.placeholder || ''}" ${f.required ? 'required' : ''}>
+    </div>`;
+  }).join('');
+
+  openModal('tool-modal');
+}
+
+async function generateTool() {
+  if (!currentTool) return;
+  const inputs = {};
+  let valid = true;
+  currentTool.fields.forEach(f => {
+    const el = document.getElementById('f_' + f.id);
+    if (el) {
+      inputs[f.id] = el.value.trim();
+      if (f.required && !inputs[f.id]) { valid = false; el.style.borderColor = 'var(--red)'; }
+      else if (el.style) el.style.borderColor = '';
+    }
+  });
+  if (!valid) { Toast.show(isAr() ? 'يرجى ملء الحقول المطلوبة' : 'Please fill required fields', 'error'); return; }
+
+  const btn = document.getElementById('generate-btn');
+  const loader = document.getElementById('gen-loader');
+  const btnText = document.getElementById('gen-btn-text');
+  btn.disabled = true;
+  loader.style.display = 'inline-block';
+  btnText.textContent = isAr() ? 'جارٍ التوليد...' : 'Generating...';
+
+  try {
+    const data = await api.post('/tools/generate', { toolType: currentTool.id, inputs });
+    if (!data || data.error) throw new Error(data?.error || 'Generation failed');
+
+    window._lastResult = data.report.content;
+    window._lastReportId = data.report._id;
+
+    const isWebsite = currentTool.id === 'website_creation';
+    const pvWrap = document.getElementById('website-preview-wrap');
+    const pvFrame = document.getElementById('website-preview-frame');
+    const dlBtn = document.getElementById('download-html-btn');
+    const cpBtn = document.getElementById('copy-btn');
+
+    if (isWebsite) {
+      document.getElementById('modal-result-content').innerHTML = '';
+      pvWrap.style.display = 'block';
+      pvFrame.srcdoc = data.report.content;
+      dlBtn.style.display = 'inline-flex';
+      cpBtn.style.display = 'none';
+    } else {
+      pvWrap.style.display = 'none';
+      pvFrame.srcdoc = '';
+      document.getElementById('modal-result-content').innerHTML = renderMarkdown(data.report.content);
+      dlBtn.style.display = 'none';
+      cpBtn.style.display = 'inline-flex';
+    }
+
+    document.getElementById('modal-result').style.display = 'block';
+    document.getElementById('modal-footer').style.display = 'none';
+    Toast.show(isAr() ? 'تم التوليد بنجاح!' : 'Generated successfully!', 'success');
+  } catch (err) {
+    Toast.show(err.message || 'Generation failed', 'error');
+  } finally {
+    btn.disabled = false;
+    loader.style.display = 'none';
+    btnText.textContent = isAr() ? '⚡ توليد' : '⚡ Generate';
+  }
+}
+
+function resetModal() {
+  document.getElementById('modal-result').style.display = 'none';
+  document.getElementById('modal-footer').style.display = 'flex';
+  const pv = document.getElementById('website-preview-wrap');
+  const fr = document.getElementById('website-preview-frame');
+  if (pv) pv.style.display = 'none';
+  if (fr) fr.srcdoc = '';
+}
+
+function downloadHTMLFile() {
+  if (!window._lastResult) return;
+  const blob = new Blob([window._lastResult], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'index.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  Toast.show('index.html downloaded!', 'success');
+}
+
+// Check if URL has ?tool= param to open directly
+const urlTool = new URLSearchParams(window.location.search).get('tool');
+if (urlTool) openTool(urlTool);
+
+renderTools('all');
+
+</script>
+</body>
+</html>

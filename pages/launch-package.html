@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Launch Package — Double Eight AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<style>
+/* ── HERO BANNER ── */
+.pkg-hero{
+  background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(245,158,11,.03));
+  border:1px solid var(--border-gold);border-radius:var(--radius-lg);
+  padding:2rem 2.5rem;margin-bottom:2rem;position:relative;overflow:hidden;
+}
+.pkg-hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 80% at 100% 50%,rgba(245,158,11,.06),transparent);
+  pointer-events:none;
+}
+.pkg-hero-top{display:flex;align-items:flex-start;gap:1.5rem;flex-wrap:wrap;}
+.pkg-hero-icon{font-size:3rem;flex-shrink:0;line-height:1;}
+.pkg-hero-text h2{font-family:'Bebas Neue',cursive;font-size:1.9rem;letter-spacing:1.5px;margin-bottom:.35rem;}
+.pkg-hero-text .match-name{color:var(--gold);}
+.pkg-hero-text p{font-size:.875rem;color:var(--text2);line-height:1.7;max-width:580px;}
+.pkg-meta{display:flex;gap:1.25rem;flex-wrap:wrap;margin-top:1rem;}
+.pkg-meta-item{font-size:.75rem;color:var(--text3);display:flex;align-items:center;gap:.35rem;}
+.pkg-meta-item strong{color:var(--text2);}
+/* ── PROGRESS STRIP ── */
+.pkg-progress-strip{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1.1rem 1.5rem;margin-bottom:1.75rem;display:flex;align-items:center;gap:1.25rem;
+}
+.pkg-progress-bar{flex:1;height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;}
+.pkg-progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),#fbbf24);border-radius:4px;transition:width .6s ease;}
+.pkg-progress-text{font-size:.8rem;color:var(--text2);white-space:nowrap;}
+.pkg-progress-pct{font-family:'Bebas Neue',cursive;font-size:1.1rem;color:var(--gold);letter-spacing:1px;}
+/* ── GENERATE ALL BUTTON ── */
+.generate-all-wrap{text-align:center;margin-bottom:2rem;}
+.btn-generate-all{
+  background:linear-gradient(135deg,var(--gold),var(--gold-dark));
+  color:#07070f;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;
+  padding:1rem 2.5rem;border-radius:12px;border:none;cursor:pointer;
+  transition:.25s;box-shadow:0 8px 30px rgba(245,158,11,.25);
+  display:inline-flex;align-items:center;gap:.75rem;
+}
+.btn-generate-all:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(245,158,11,.35);}
+.btn-generate-all:disabled{opacity:.6;transform:none;box-shadow:none;cursor:wait;}
+.generate-all-sub{font-size:.78rem;color:var(--text3);margin-top:.65rem;}
+/* ── PACKAGE GRID ── */
+.pkg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.1rem;margin-bottom:2rem;}
+/* ── PACKAGE CARD ── */
+.pkg-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:1.4rem;display:flex;flex-direction:column;gap:.9rem;
+  transition:.25s;position:relative;overflow:hidden;
+}
+.pkg-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:0;transition:.3s;
+}
+.pkg-card.done{border-color:rgba(34,197,94,.25);}
+.pkg-card.done::before{background:linear-gradient(90deg,transparent,#22c55e,transparent);opacity:1;}
+.pkg-card.generating{border-color:var(--border-gold);}
+.pkg-card.generating::before{opacity:1;animation:scanline 1.5s linear infinite;}
+@keyframes scanline{from{background-position:-200% 0}to{background-position:200% 0}}
+.pkg-card-top{display:flex;align-items:flex-start;gap:.85rem;}
+.pkg-card-icon{
+  width:46px;height:46px;border-radius:12px;background:var(--gold-dim);
+  display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;
+}
+.pkg-card.done .pkg-card-icon{background:rgba(34,197,94,.12);}
+.pkg-card-num{
+  position:absolute;top:.85rem;right:.85rem;
+  font-family:'Bebas Neue',cursive;font-size:.8rem;color:var(--text3);letter-spacing:.08em;
+}
+.pkg-card-title{font-size:.95rem;font-weight:600;color:var(--text);margin-bottom:.18rem;}
+.pkg-card-tagline{font-size:.75rem;color:var(--text3);line-height:1.45;font-style:italic;}
+/* status indicator */
+.pkg-status{display:flex;align-items:center;gap:.5rem;font-size:.75rem;}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.status-pending .status-dot{background:var(--border);}
+.status-pending .status-text{color:var(--text3);}
+.status-generating .status-dot{background:var(--gold);animation:blink 1s infinite;}
+.status-generating .status-text{color:var(--gold);}
+.status-done .status-dot{background:#22c55e;}
+.status-done .status-text{color:#4ade80;}
+.status-error .status-dot{background:#ef4444;}
+.status-error .status-text{color:#f87171;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+/* generate single button */
+.pkg-gen-btn{
+  background:var(--gold-dim);border:1px solid var(--border-gold);color:var(--gold);
+  font-size:.78rem;font-weight:600;padding:.38rem .85rem;border-radius:7px;
+  cursor:pointer;font-family:'Outfit',sans-serif;transition:.15s;
+  display:inline-flex;align-items:center;gap:.4rem;
+}
+.pkg-gen-btn:hover{background:rgba(245,158,11,.22);}
+.pkg-gen-btn:disabled{opacity:.5;cursor:wait;}
+/* view report button */
+.pkg-view-btn{
+  background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:#4ade80;
+  font-size:.78rem;font-weight:600;padding:.38rem .85rem;border-radius:7px;
+  cursor:pointer;font-family:'Outfit',sans-serif;transition:.15s;
+  display:inline-flex;align-items:center;gap:.4rem;
+}
+.pkg-view-btn:hover{background:rgba(34,197,94,.18);}
+/* ── REPORT VIEWER MODAL ── */
+.report-modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:500;
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:1.5rem 1rem;opacity:0;pointer-events:none;transition:.2s;
+  backdrop-filter:blur(5px);overflow-y:auto;
+}
+.report-modal-overlay.open{opacity:1;pointer-events:all;}
+.report-modal{
+  background:var(--bg2);border:1px solid var(--border-gold);border-radius:var(--radius-lg);
+  width:100%;max-width:780px;position:relative;
+  transform:translateY(20px);transition:.25s;
+}
+.report-modal-overlay.open .report-modal{transform:translateY(0);}
+.report-modal-header{
+  padding:1.4rem 1.75rem 1rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:.9rem;
+  position:sticky;top:0;background:var(--bg2);z-index:10;border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+}
+.report-modal-title{font-family:'Bebas Neue',cursive;font-size:1.25rem;letter-spacing:1px;flex:1;}
+.report-modal-close{
+  background:var(--surface2);border:1px solid var(--border);
+  width:32px;height:32px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;color:var(--text2);font-size:1rem;cursor:pointer;flex-shrink:0;
+  transition:.15s;
+}
+.report-modal-close:hover{color:#ef4444;border-color:#ef4444;}
+.report-modal-body{padding:1.5rem 1.75rem;}
+.report-content{font-size:.875rem;color:var(--text2);line-height:1.82;white-space:pre-wrap;}
+.report-content h1,.report-content h2{font-family:'Bebas Neue',cursive;color:var(--gold);letter-spacing:1px;margin:1.4rem 0 .5rem;}
+.report-content h3{font-family:'Outfit',sans-serif;font-weight:600;color:var(--text);margin:.9rem 0 .3rem;}
+.report-content strong{color:var(--text);}
+.report-content ul,.report-content ol{padding-left:1.4rem;margin:.45rem 0;}
+.report-content li{margin:.25rem 0;}
+.report-content table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.82rem;}
+.report-content th{background:var(--gold-dim);color:var(--gold);padding:.45rem .7rem;text-align:left;font-size:.75rem;text-transform:uppercase;}
+.report-content td{padding:.45rem .7rem;border-bottom:1px solid var(--border);}
+.report-modal-footer{
+  padding:1rem 1.75rem 1.4rem;border-top:1px solid var(--border);
+  display:flex;gap:.7rem;justify-content:flex-end;flex-wrap:wrap;
+  position:sticky;bottom:0;background:var(--bg2);z-index:10;
+  border-radius:0 0 var(--radius-lg) var(--radius-lg);
+}
+/* ── COMPLETION BANNER ── */
+.completion-banner{
+  background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(34,197,94,.03));
+  border:1px solid rgba(34,197,94,.25);border-radius:var(--radius-lg);
+  padding:2rem;text-align:center;margin-bottom:1.5rem;display:none;
+}
+.completion-banner.show{display:block;}
+.completion-banner h3{font-family:'Bebas Neue',cursive;font-size:1.8rem;letter-spacing:1px;color:#4ade80;margin-bottom:.5rem;}
+.completion-banner p{font-size:.875rem;color:var(--text2);margin-bottom:1.25rem;line-height:1.65;}
+/* ── NO DNA STATE ── */
+.no-dna-state{text-align:center;padding:4rem 2rem;}
+.no-dna-state h3{font-family:'Bebas Neue',cursive;font-size:1.5rem;letter-spacing:1px;margin-bottom:.5rem;}
+.no-dna-state p{font-size:.875rem;color:var(--text2);margin-bottom:1.5rem;line-height:1.65;}
+@media(max-width:700px){
+  .pkg-grid{grid-template-columns:1fr;}
+  .pkg-hero{padding:1.25rem;}
+  .report-modal-body{padding:1rem;}
+}
+</style>
+</head>
+<body>
+<div class="app-grid-bg"></div>
+<div class="app">
+  <aside class="sidebar"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="hamburger">☰</button>
+      <span class="topbar-title">LAUNCH PACKAGE</span>
+      <div class="topbar-right">
+        <span id="pkg-topbar-info" style="font-size:.78rem;color:var(--text3)">Building your complete business</span>
+      </div>
+    </div>
+    <div class="page-content">
+      <div id="pkg-view">
+        <div class="empty-state"><div class="empty-icon"><div class="loader"></div></div><p>Loading your Launch Package...</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REPORT MODAL -->
+<div class="report-modal-overlay" id="report-modal">
+  <div class="report-modal">
+    <div class="report-modal-header">
+      <div class="report-modal-title" id="modal-title">Report</div>
+      <button class="report-modal-close" onclick="closeReportModal()">✕</button>
+    </div>
+    <div class="report-modal-body">
+      <div class="report-content" id="modal-content"></div>
+    </div>
+    <div class="report-modal-footer">
+      <button class="btn btn-secondary btn-sm" onclick="copyReport()">⎘ Copy</button>
+      <button class="btn btn-secondary btn-sm" id="modal-export-docx" onclick="exportCurrentReport('docx')">↓ DOCX</button>
+      <button class="btn btn-secondary btn-sm" id="modal-export-pdf" onclick="exportCurrentReport('pdf')">↓ PDF</button>
+      <button class="btn btn-primary btn-sm" onclick="closeReportModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/core.js"></script>
+<script>
+Auth.check();
+buildLayout('package');
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let dna = null;
+let packageItems = [];
+let isGeneratingAll = false;
+let currentReportContent = '';
+let currentReportId = null;
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+async function init() {
+  try {
+    const d = await api.get('/launch-package');
+    if (!d?.success) { showNoDNA(); return; }
+    dna = d.dna;
+    packageItems = d.items;
+    renderPage();
+  } catch(e) {
+    showNoDNA();
+  }
+}
+
+function showNoDNA() {
+  document.getElementById('pkg-view').innerHTML = `
+    <div class="no-dna-state">
+      <div style="font-size:3rem;margin-bottom:1rem">🧬</div>
+      <h3>COMPLETE YOUR BUSINESS DNA FIRST</h3>
+      <p>Your Launch Package is built directly from your Business DNA analysis.<br>Answer 8 questions and get your complete personalized business package.</p>
+      <button class="btn btn-primary" onclick="window.location.href='dna.html'" style="padding:.85rem 2rem">
+        🧬 Go to Business DNA →
+      </button>
+    </div>`;
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────
+function renderPage() {
+  const match = dna.matchResult;
+  const done = packageItems.filter(i => i.status === 'done').length;
+  const total = packageItems.length;
+  const pct = Math.round((done / total) * 100);
+  const isComplete = done === total;
+  const lang = localStorage.getItem('d8_lang') || 'en';
+
+  document.getElementById('pkg-topbar-info').textContent =
+    `${done}/${total} generated · ${pct}%`;
+
+  document.getElementById('pkg-view').innerHTML = `
+    <!-- HERO -->
+    <div class="pkg-hero">
+      <div class="pkg-hero-top">
+        <div class="pkg-hero-icon">🚀</div>
+        <div class="pkg-hero-text">
+          <h2>YOUR COMPLETE LAUNCH PACKAGE<br><span class="match-name">${match.businessMatch}</span></h2>
+          <p>8 professional documents — built from your DNA — covering everything from market intelligence to your 30-day launch plan. This is your complete business, generated by AI, personalized to <strong>${dna.country}</strong>.</p>
+          <div class="pkg-meta">
+            <div class="pkg-meta-item">🌍 <strong>${dna.country}</strong></div>
+            <div class="pkg-meta-item">◉ <strong>${dna.industry}</strong></div>
+            <div class="pkg-meta-item">💰 <strong>${dna.budget}</strong></div>
+            <div class="pkg-meta-item">📊 DNA Score: <strong style="color:var(--gold)">${match.score}/100</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="pkg-progress-strip">
+      <div class="pkg-progress-pct">${pct}%</div>
+      <div class="pkg-progress-bar">
+        <div class="pkg-progress-fill" style="width:${pct}%"></div>
+      </div>
+      <div class="pkg-progress-text">${done} of ${total} documents ready</div>
+    </div>
+
+    <!-- COMPLETION BANNER -->
+    <div class="completion-banner ${isComplete ? 'show' : ''}">
+      <div style="font-size:2.5rem;margin-bottom:.75rem">🎉</div>
+      <h3>YOUR BUSINESS IS READY TO LAUNCH</h3>
+      <p>All 8 documents are generated. You now have everything a Fortune 500 company pays consultants $100,000+ for — built specifically for your business in ${dna.country}. Now go build.</p>
+      <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="window.location.href='chat.html'" style="padding:.8rem 1.5rem">◎ Ask AI Advisor What's Next →</button>
+        <button class="btn btn-secondary" onclick="window.location.href='vault.html'" style="padding:.8rem 1.5rem">▣ View All Reports</button>
+      </div>
+    </div>
+
+    <!-- GENERATE ALL (shown if not all done) -->
+    ${!isComplete ? `
+    <div class="generate-all-wrap">
+      <button class="btn-generate-all" id="generate-all-btn" onclick="generateAll()">
+        <span id="gen-all-icon">⚡</span>
+        <span id="gen-all-text">Generate All 8 Documents</span>
+      </button>
+      <div class="generate-all-sub">
+        ${done === 0 ? 'One click. All documents generated sequentially. Takes 2–4 minutes.' : `${total - done} remaining. Continue generating.`}
+      </div>
+    </div>` : ''}
+
+    <!-- PACKAGE GRID -->
+    <div class="pkg-grid" id="pkg-grid">
+      ${packageItems.map((item, idx) => renderCard(item, idx)).join('')}
+    </div>
+
+    <!-- BOTTOM ACTIONS -->
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;padding-top:1rem;border-top:1px solid var(--border)">
+      <button class="btn btn-secondary" onclick="window.location.href='dna.html'">← Back to DNA</button>
+      <button class="btn btn-secondary" onclick="window.location.href='vault.html'">▣ View All Reports</button>
+      <button class="btn btn-secondary" onclick="window.location.href='chat.html'" style="margin-left:auto">◎ Ask AI Advisor</button>
+    </div>
+  `;
+}
+
+function renderCard(item, idx) {
+  const statusClass = item.status === 'done' ? 'done' : item.status === 'generating' ? 'generating' : '';
+  const statusIndicator = {
+    done: `<div class="pkg-status status-done"><div class="status-dot"></div><span class="status-text">✓ Ready to view</span></div>`,
+    generating: `<div class="pkg-status status-generating"><div class="status-dot"></div><span class="status-text">Generating<span style="animation:dots 1.2s infinite">...</span></span></div>`,
+    error: `<div class="pkg-status status-error"><div class="status-dot"></div><span class="status-text">Failed — click to retry</span></div>`,
+    pending: `<div class="pkg-status status-pending"><div class="status-dot"></div><span class="status-text">Not generated yet</span></div>`,
+  }[item.status] || '';
+
+  const actionBtn = item.status === 'done'
+    ? `<button class="pkg-view-btn" onclick="viewReport('${item.reportId}','${escAttr(item.label)}')">📖 View Report</button>`
+    : item.status === 'generating'
+    ? `<button class="pkg-gen-btn" disabled><span class="loader" style="width:12px;height:12px;border-width:2px"></span> Generating...</button>`
+    : `<button class="pkg-gen-btn" id="btn-${item.id}" onclick="generateSingle('${item.id}')">⚡ Generate</button>`;
+
+  return `
+    <div class="pkg-card ${statusClass}" id="card-${item.id}">
+      <div class="pkg-card-num">${String(idx + 1).padStart(2,'0')}</div>
+      <div class="pkg-card-top">
+        <div class="pkg-card-icon">${item.icon}</div>
+        <div style="flex:1;min-width:0">
+          <div class="pkg-card-title">${item.label}</div>
+          <div class="pkg-card-tagline">"${item.tagline}"</div>
+        </div>
+      </div>
+      ${statusIndicator}
+      <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap">
+        ${actionBtn}
+        ${item.status === 'done' ? `<button class="pkg-gen-btn" onclick="generateSingle('${item.id}')" style="opacity:.5;font-size:.7rem">↺ Regenerate</button>` : ''}
+      </div>
+    </div>`;
+}
+
+// ── GENERATE ALL ──────────────────────────────────────────────────────────
+async function generateAll() {
+  if (isGeneratingAll) return;
+  isGeneratingAll = true;
+
+  const btn = document.getElementById('generate-all-btn');
+  const icon = document.getElementById('gen-all-icon');
+  const text = document.getElementById('gen-all-text');
+  if (btn) { btn.disabled = true; }
+  if (icon) icon.innerHTML = '<span class="loader" style="width:16px;height:16px;border-width:2px"></span>';
+  if (text) text.textContent = 'Generating your business...';
+
+  // Get pending items in order
+  const pending = packageItems.filter(i => i.status !== 'done');
+
+  for (const item of pending) {
+    await generateSingle(item.id, true); // silent=true (no toast each time)
+    // Small pause between generations to not overwhelm the API
+    await new Promise(r => setTimeout(r, 800));
+  }
+
+  isGeneratingAll = false;
+  Toast.show('🎉 All documents generated! Your business is ready.', 'success', 5000);
+}
+
+// ── GENERATE SINGLE ───────────────────────────────────────────────────────
+async function generateSingle(itemId, silent = false) {
+  const item = packageItems.find(i => i.id === itemId);
+  if (!item) return;
+
+  // Update UI to generating state
+  item.status = 'generating';
+  updateCard(item);
+
+  try {
+    const d = await api.post('/launch-package/generate-item', { itemId });
+    if (!d?.success) throw new Error(d?.error || 'Generation failed');
+
+    item.status = 'done';
+    item.reportId = d.report._id;
+    if (!silent) Toast.show(`✓ ${item.label} ready!`, 'success');
+  } catch (err) {
+    item.status = 'error';
+    if (!silent) Toast.show(`Failed: ${err.message}`, 'error');
+    console.error('Generate error:', err);
+  }
+
+  updateCard(item);
+  updateProgress();
+}
+
+function updateCard(item) {
+  const card = document.getElementById(`card-${item.id}`);
+  if (!card) return;
+  const idx = packageItems.findIndex(i => i.id === item.id);
+  card.outerHTML = renderCard(item, idx);
+}
+
+function updateProgress() {
+  const done = packageItems.filter(i => i.status === 'done').length;
+  const total = packageItems.length;
+  const pct = Math.round((done / total) * 100);
+
+  const fill = document.querySelector('.pkg-progress-fill');
+  const txt = document.querySelector('.pkg-progress-text');
+  const topInfo = document.getElementById('pkg-topbar-info');
+  const pctEl = document.querySelector('.pkg-progress-pct');
+
+  if (fill) fill.style.width = pct + '%';
+  if (txt) txt.textContent = `${done} of ${total} documents ready`;
+  if (topInfo) topInfo.textContent = `${done}/${total} generated · ${pct}%`;
+  if (pctEl) pctEl.textContent = pct + '%';
+
+  // Show completion banner if all done
+  if (done === total) {
+    const banner = document.querySelector('.completion-banner');
+    if (banner) banner.classList.add('show');
+    const genWrap = document.querySelector('.generate-all-wrap');
+    if (genWrap) genWrap.style.display = 'none';
+  }
+}
+
+// ── VIEW REPORT MODAL ─────────────────────────────────────────────────────
+async function viewReport(reportId, title) {
+  currentReportId = reportId;
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-content').innerHTML =
+    '<div class="empty-state" style="padding:2rem"><div class="loader"></div><p style="margin-top:.75rem">Loading report...</p></div>';
+  document.getElementById('report-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  try {
+    const d = await api.get(`/tools/reports/${reportId}`);
+    if (!d?.report?.content) throw new Error('Could not load report');
+    currentReportContent = d.report.content;
+    document.getElementById('modal-content').innerHTML = renderMarkdown(d.report.content);
+  } catch(err) {
+    document.getElementById('modal-content').innerHTML =
+      `<div class="empty-state"><div class="empty-icon">⚠</div><p>${err.message}</p></div>`;
+  }
+}
+
+function closeReportModal() {
+  document.getElementById('report-modal').classList.remove('open');
+  document.body.style.overflow = '';
+  currentReportId = null;
+  currentReportContent = '';
+}
+
+// Close modal on overlay click
+document.getElementById('report-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeReportModal();
+});
+
+function copyReport() {
+  if (!currentReportContent) return;
+  copyText(currentReportContent);
+}
+
+async function exportCurrentReport(format) {
+  if (!currentReportId) return;
+  await exportReport(currentReportId, format);
+}
+
+function escAttr(str) {
+  return String(str).replace(/'/g,"&#39;").replace(/"/g,'&quot;');
+}
+
+init();
+</script>
+</body>
+</html>
