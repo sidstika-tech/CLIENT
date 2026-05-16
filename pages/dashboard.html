@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dashboard — Double Eight AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<style>
+.welcome-banner{background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(245,158,11,.03));border:1px solid var(--border-gold);border-radius:var(--radius-lg);padding:1.75rem 2rem;margin-bottom:1.75rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;}
+.welcome-text h2{font-family:'Bebas Neue',cursive;font-size:1.8rem;letter-spacing:1px;color:var(--text);margin-bottom:.2rem;}
+.welcome-text p{font-size:.9rem;color:var(--text2);}
+.welcome-icon{font-size:2.5rem;flex-shrink:0;}
+/* ONBOARDING CHECKLIST */
+.onboarding-card{background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(99,102,241,.02));border:1px solid rgba(99,102,241,.2);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.75rem;}
+.onboarding-card h3{font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px;color:#818cf8;margin-bottom:.25rem;}
+.onboarding-card p{font-size:.8rem;color:var(--text3);margin-bottom:1rem;}
+.onboard-progress{height:5px;background:rgba(255,255,255,.06);border-radius:3px;margin-bottom:1rem;overflow:hidden;}
+.onboard-progress-fill{height:100%;background:linear-gradient(90deg,#6366f1,#818cf8);border-radius:3px;transition:width .5s;}
+.onboard-steps{display:flex;flex-direction:column;gap:.5rem;}
+.onboard-step{display:flex;align-items:center;gap:.85rem;padding:.6rem .85rem;border-radius:9px;cursor:pointer;transition:.15s;border:1px solid transparent;}
+.onboard-step:hover{background:var(--surface);border-color:var(--border);}
+.onboard-step.done{opacity:.5;}
+.onboard-step-check{width:22px;height:22px;border-radius:50%;border:2px solid rgba(99,102,241,.4);display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0;transition:.2s;}
+.onboard-step.done .onboard-step-check{background:#6366f1;border-color:#6366f1;color:#fff;}
+.onboard-step-text{flex:1;font-size:.83rem;color:var(--text);}
+.onboard-step-text span{font-size:.73rem;color:var(--text3);display:block;}
+.onboard-step-arrow{font-size:.75rem;color:var(--text3);}
+/* QUICK ACTIONS */
+.quick-actions{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:1rem;margin-bottom:1.75rem;}
+.quick-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;cursor:pointer;transition:.2s;}
+.quick-btn:hover{border-color:var(--border-gold);transform:translateY(-2px);}
+.quick-btn .q-icon{font-size:1.5rem;margin-bottom:.6rem;}
+.quick-btn .q-label{font-size:.85rem;font-weight:500;color:var(--text);}
+.quick-btn .q-sub{font-size:.73rem;color:var(--text3);margin-top:.2rem;}
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.section-hdr h3{font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px;}
+.recent-list{display:flex;flex-direction:column;gap:.6rem;}
+.recent-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;cursor:pointer;transition:.15s;}
+.recent-item:hover{border-color:var(--border-gold);}
+.recent-icon{font-size:1.1rem;flex-shrink:0;width:36px;height:36px;background:var(--surface2);border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.recent-title{font-size:.87rem;font-weight:500;color:var(--text);}
+.recent-meta{font-size:.73rem;color:var(--text3);margin-top:.1rem;}
+.recent-time{margin-left:auto;font-size:.73rem;color:var(--text3);white-space:nowrap;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;}
+.usage-bar-wrap{display:flex;flex-direction:column;gap:.75rem;}
+.usage-row{display:flex;flex-direction:column;gap:.3rem;}
+.usage-label{display:flex;justify-content:space-between;font-size:.8rem;color:var(--text2);}
+/* AI TIP card */
+.tip-card{background:var(--card-gold);border:1px solid var(--border-gold);border-radius:var(--radius);padding:1.25rem;margin-top:1rem;}
+.tip-card .tip-hdr{font-family:'Bebas Neue',cursive;font-size:1rem;letter-spacing:1px;color:var(--gold);margin-bottom:.5rem;}
+.tip-card .tip-text{font-size:.83rem;color:var(--text2);line-height:1.7;}
+/* limit warning */
+.limit-banner{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.75rem;display:none;align-items:center;gap:1rem;flex-wrap:wrap;}
+.limit-banner.show{display:flex;}
+.limit-banner-text h4{font-size:.88rem;font-weight:600;color:#f87171;margin-bottom:.2rem;}
+.limit-banner-text p{font-size:.78rem;color:var(--text3);}
+@media(max-width:800px){.two-col{grid-template-columns:1fr;}.quick-actions{grid-template-columns:1fr 1fr;}.welcome-banner{flex-direction:column;gap:1rem;}}
+</style>
+</head>
+<body>
+<div class="app-grid-bg"></div><div class="page-particles"></div>
+<div class="app">
+  <aside class="sidebar"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="hamburger" title="Menu">☰</button>
+      <span class="topbar-title">DASHBOARD</span>
+      <div class="topbar-right">
+        <span id="top-date" style="font-size:.78rem;color:var(--text3)"></span>
+        <button class="btn-new" onclick="window.location.href='tools.html'">+ New Report</button>
+      </div>
+    </div>
+    <div class="page-content">
+
+      <!-- Limit warning -->
+      <div class="limit-banner" id="limit-banner">
+        <div style="font-size:1.5rem">⚠</div>
+        <div class="limit-banner-text" style="flex:1">
+          <h4>You've reached your free plan limit</h4>
+          <p>Upgrade to Pro — first month free — to continue generating reports and growing your business.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="window.location.href='billing.html'">🎁 Upgrade Free →</button>
+      </div>
+
+      <!-- Welcome -->
+      <div class="welcome-banner">
+        <div class="welcome-icon">⚡</div>
+        <div class="welcome-text">
+          <h2 id="welcome-msg">Welcome back!</h2>
+          <p id="welcome-sub">Your AI business platform is ready. What are we building today?</p>
+        </div>
+        <button class="btn btn-primary" style="white-space:nowrap;margin-left:auto" onclick="window.location.href='chat.html'">◎ Ask AI Advisor</button>
+      </div>
+
+      <!-- Onboarding checklist (shown until all done) -->
+      <div class="onboarding-card" id="onboarding-card">
+        <h3>🚀 YOUR LAUNCH CHECKLIST</h3>
+        <p>Complete these 5 steps to launch your business with AI</p>
+        <div class="onboard-progress"><div class="onboard-progress-fill" id="onboard-progress-fill" style="width:0%"></div></div>
+        <div class="onboard-steps">
+          <div class="onboard-step" id="os1" onclick="window.location.href='market.html'">
+            <div class="onboard-step-check" id="osc1">1</div>
+            <div class="onboard-step-text">Run your first Market Research<span>Understand your market before spending a dollar</span></div>
+            <div class="onboard-step-arrow">→</div>
+          </div>
+          <div class="onboard-step" id="os2" onclick="goTool('business_plan')">
+            <div class="onboard-step-check" id="osc2">2</div>
+            <div class="onboard-step-text">Generate your Business Plan<span>Investor-ready in under 2 minutes</span></div>
+            <div class="onboard-step-arrow">→</div>
+          </div>
+          <div class="onboard-step" id="os3" onclick="goTool('brand_kit')">
+            <div class="onboard-step-check" id="osc3">3</div>
+            <div class="onboard-step-text">Create your Brand Kit<span>Colors, fonts, voice and logo concept</span></div>
+            <div class="onboard-step-arrow">→</div>
+          </div>
+          <div class="onboard-step" id="os4" onclick="window.location.href='marketing.html'">
+            <div class="onboard-step-check" id="osc4">4</div>
+            <div class="onboard-step-text">Build your Marketing Strategy<span>Full plan to get your first customers</span></div>
+            <div class="onboard-step-arrow">→</div>
+          </div>
+          <div class="onboard-step" id="os5" onclick="goTool('pitch_deck')">
+            <div class="onboard-step-check" id="osc5">5</div>
+            <div class="onboard-step-text">Generate your Investor Pitch Deck<span>Ready to raise capital when you are</span></div>
+            <div class="onboard-step-arrow">→</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Reports Generated</div><div class="stat-value" id="stat-reports">—</div><div class="stat-sub">Total all-time</div></div>
+        <div class="stat-card"><div class="stat-label">AI Chats</div><div class="stat-value" id="stat-chats">—</div><div class="stat-sub">Sessions total</div></div>
+        <div class="stat-card"><div class="stat-label">Market Research</div><div class="stat-value" id="stat-research">—</div><div class="stat-sub">Reports done</div></div>
+        <div class="stat-card"><div class="stat-label">Current Plan</div><div class="stat-value" id="stat-plan" style="font-size:1.4rem;text-transform:uppercase">—</div><div class="stat-sub"><a onclick="window.location.href='billing.html'" style="color:var(--gold);cursor:pointer">Upgrade →</a></div></div>
+      </div>
+
+      <!-- Quick actions -->
+      <div class="quick-actions">
+        <div class="quick-btn" onclick="window.location.href='chat.html'"><div class="q-icon">◎</div><div class="q-label">AI Advisor</div><div class="q-sub">Ask anything</div></div>
+        <div class="quick-btn" onclick="goTool('business_plan')"><div class="q-icon">📋</div><div class="q-label">Business Plan</div><div class="q-sub">Investor-ready</div></div>
+        <div class="quick-btn" onclick="window.location.href='market.html'"><div class="q-icon">◉</div><div class="q-label">Market Research</div><div class="q-sub">Deep insights</div></div>
+        <div class="quick-btn" onclick="window.location.href='marketing.html'"><div class="q-icon">◈</div><div class="q-label">Marketing Plan</div><div class="q-sub">Full strategy</div></div>
+        <div class="quick-btn" onclick="goTool('pitch_deck')"><div class="q-icon">🎯</div><div class="q-label">Pitch Deck</div><div class="q-sub">Raise capital</div></div>
+        <div class="quick-btn" onclick="window.location.href='tools.html'"><div class="q-icon">◫</div><div class="q-label">All Tools</div><div class="q-sub">17 AI tools</div></div>
+      </div>
+
+      <!-- Recent + Usage -->
+      <div class="two-col">
+        <div>
+          <div class="section-hdr">
+            <h3>Recent Reports</h3>
+            <button class="btn btn-secondary btn-sm" onclick="window.location.href='vault.html'">View All →</button>
+          </div>
+          <div class="recent-list" id="recent-list">
+            <div class="empty-state"><div class="empty-icon">▣</div><p>No reports yet.<br>Start with the checklist above!</p></div>
+          </div>
+        </div>
+        <div>
+          <div class="section-hdr"><h3>Usage This Month</h3></div>
+          <div class="card">
+            <div class="usage-bar-wrap" id="usage-bars"><div style="color:var(--text3);font-size:.82rem;text-align:center;padding:1rem">Loading...</div></div>
+          </div>
+          <div class="tip-card">
+            <div class="tip-hdr">◎ AI ADVISOR TIP</div>
+            <div class="tip-text" id="tip-text">Loading tip...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/core.js"></script>
+<script>
+Auth.check();
+buildLayout('dashboard');
+document.getElementById('top-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+
+const ONBOARD_KEY='d8_onboard';
+const TOOL_ICONS={business_plan:'📋',market_research:'◉',marketing_strategy:'◈',brand_kit:'🎨',business_name:'💡',slogan:'✍',competitor_matrix:'⚔',pricing_calculator:'💰',launch_roadmap:'🚀',contract:'📄',budget_estimator:'💵',pitch_deck:'🎯',ad_copy:'📢',seo_keywords:'🔍',content_calendar:'📅',market_study:'📊',cold_email:'📧',website_creation:'🌐',sales_script:'🎤',prompt_writer:'✦'};
+
+function goTool(type){window.location.href=`tools.html?tool=${type}`;}
+
+// Onboarding checklist
+function getOnboard(){try{return JSON.parse(localStorage.getItem(ONBOARD_KEY)||'{}');}catch{return{};}}
+function setOnboard(key){const o=getOnboard();o[key]=true;localStorage.setItem(ONBOARD_KEY,JSON.stringify(o));}
+function updateOnboard(reportsCount,researchCount){
+  const o=getOnboard();
+  // Auto-mark based on usage
+  if(researchCount>0) setOnboard('market');
+  if(reportsCount>0) setOnboard('business_plan');
+  const ob=getOnboard();
+  const steps=['market','business_plan','brand_kit','marketing','pitch_deck'];
+  let done=0;
+  steps.forEach((s,i)=>{
+    const el=document.getElementById(`os${i+1}`);
+    const chk=document.getElementById(`osc${i+1}`);
+    if(ob[s]){el.classList.add('done');chk.innerHTML='✓';done++;}
+  });
+  const pct=Math.round((done/steps.length)*100);
+  document.getElementById('onboard-progress-fill').style.width=pct+'%';
+  // Hide checklist if all done
+  if(done===steps.length) document.getElementById('onboarding-card').style.display='none';
+}
+
+async function loadDashboard(){
+  const u=await api.get('/auth/me');
+  if(!u?.user)return;
+  const user=u.user;
+  Auth.setUser(user);
+  document.getElementById('welcome-msg').textContent=`Welcome back, ${user.name?.split(' ')[0]||''}!`;
+  document.getElementById('stat-reports').textContent=user.usage?.reportsGenerated||0;
+  document.getElementById('stat-chats').textContent=user.usage?.chatMessages||0;
+  document.getElementById('stat-research').textContent=user.usage?.marketResearch||0;
+  document.getElementById('stat-plan').textContent=user.membership?.plan||'Free';
+
+  // Show limit warning for free users near limit
+  const plan=user.membership?.plan||'free';
+  if(plan==='free'&&(user.usage?.reportsGenerated>=2||user.usage?.chatMessages>=15)){
+    document.getElementById('limit-banner').classList.add('show');
+  }
+
+  // Usage bars
+  const LIMITS={free:{chat:20,reports:3,research:2,marketing:2},starter:{chat:200,reports:20,research:15,marketing:15},pro:{chat:1000,reports:100,research:75,marketing:75},enterprise:{chat:-1,reports:-1,research:-1,marketing:-1}};
+  const limits=LIMITS[plan]||LIMITS.free;
+  const usage=user.usage||{};
+  const items=[
+    {label:'AI Chats',used:usage.chatMessages||0,max:limits.chat},
+    {label:'Reports',used:usage.reportsGenerated||0,max:limits.reports},
+    {label:'Market Research',used:usage.marketResearch||0,max:limits.research},
+    {label:'Marketing Plans',used:usage.marketingPlans||0,max:limits.marketing}
+  ];
+  document.getElementById('usage-bars').innerHTML=items.map(it=>{
+    const pct=it.max===-1?5:Math.min(100,Math.round((it.used/it.max)*100));
+    const color=pct>=90?'#ef4444':pct>=70?'var(--gold)':'var(--gold)';
+    return`<div class="usage-row"><div class="usage-label"><span>${it.label}</span><span style="font-size:.73rem;color:var(--text3)">${it.used}/${it.max===-1?'∞':it.max}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${color}"></div></div></div>`;
+  }).join('');
+
+  // Recent reports
+  const rep=await api.get('/tools/reports');
+  const gen=await api.get('/generator/reports');
+  const all=[...(rep?.reports||[]),...(gen?.reports||[])].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,6);
+  if(all.length){
+    document.getElementById('recent-list').innerHTML=all.map(r=>`
+      <div class="recent-item" onclick="window.location.href='vault.html'">
+        <div class="recent-icon">${TOOL_ICONS[r.type]||'📄'}</div>
+        <div><div class="recent-title">${r.title}</div><div class="recent-meta">${r.type?.replace(/_/g,' ')}</div></div>
+        <div class="recent-time">${timeAgo(r.createdAt)}</div>
+      </div>`).join('');
+  }
+
+  updateOnboard(usage.reportsGenerated||0,usage.marketResearch||0);
+
+  // AI tip
+  const lang=localStorage.getItem('d8_lang')||'en';
+  const tips={
+    en:['Run Market Research before spending on marketing. Know your customer first.','Your pitch deck should answer: Problem → Solution → Market → Traction → Ask.','Cold email works. Personalize line 1 and keep the whole email under 100 words.','A Brand Kit makes every piece of content 10x more professional. Create yours today.','The best time to build a business plan was when you had the idea. The second best time is now.'],
+    ar:['أجرِ أبحاث السوق قبل الإنفاق على التسويق. اعرف عميلك أولاً.','يجب أن تجيب وثيقة المستثمرين على: المشكلة → الحل → السوق → القوة الدافعة → الطلب.','البريد البارد يعمل. خصّص السطر الأول واجعل البريد أقل من 100 كلمة.','هوية العلامة تجعل كل محتوى احترافياً بشكل مضاعف. أنشئها اليوم.','أفضل وقت لبناء خطة عمل كان عند ولادة الفكرة. ثاني أفضل وقت هو الآن.']
+  };
+  const tipArr=tips[lang]||tips.en;
+  document.getElementById('tip-text').textContent=tipArr[Math.floor(Math.random()*tipArr.length)];
+}
+loadDashboard();
+</script>
+</body>
+</html>
