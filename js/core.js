@@ -16,22 +16,26 @@ const api = {
   async get(path) {
     const r = await fetch(`${API}${path}`, { headers: this.headers() });
     if(r.status===401) { Auth.logout(); return; }
-    return r.json();
+    const text = await r.text();
+    try { return JSON.parse(text); } catch { throw new Error(`Server error (${r.status}): ${text.slice(0,150)}`); }
   },
   async post(path, body) {
     const r = await fetch(`${API}${path}`, { method:'POST', headers: this.headers(), body: JSON.stringify(body) });
     if(r.status===401) { Auth.logout(); return; }
-    return r.json();
+    const text = await r.text();
+    try { return JSON.parse(text); } catch { throw new Error(`Server error (${r.status}): ${text.slice(0,150)}`); }
   },
   async put(path, body) {
     const r = await fetch(`${API}${path}`, { method:'PUT', headers: this.headers(), body: JSON.stringify(body) });
     if(r.status===401) { Auth.logout(); return; }
-    return r.json();
+    const text = await r.text();
+    try { return JSON.parse(text); } catch { throw new Error(`Server error (${r.status}): ${text.slice(0,150)}`); }
   },
   async del(path) {
     const r = await fetch(`${API}${path}`, { method:'DELETE', headers: this.headers() });
     if(r.status===401) { Auth.logout(); return; }
-    return r.json();
+    const text = await r.text();
+    try { return JSON.parse(text); } catch { throw new Error(`Server error (${r.status}): ${text.slice(0,150)}`); }
   },
   async streamPost(path, body, onChunk) {
     const r = await fetch(`${API}${path}`, { method:'POST', headers: this.headers(), body: JSON.stringify(body) });
