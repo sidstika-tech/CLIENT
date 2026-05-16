@@ -93,6 +93,29 @@
         <button class="btn btn-primary" style="white-space:nowrap;margin-left:auto" onclick="window.location.href='chat.html'">◎ Ask AI Advisor</button>
       </div>
 
+      <!-- DNA CTA (shown if no DNA yet) -->
+      <div id="dna-cta-banner" style="display:none;background:linear-gradient(135deg,rgba(99,102,241,.12),rgba(245,158,11,.06));border:1px solid rgba(99,102,241,.25);border-radius:var(--radius-lg);padding:1.75rem 2rem;margin-bottom:1.75rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
+        <div style="font-size:2.5rem;flex-shrink:0">🧬</div>
+        <div style="flex:1">
+          <div style="font-family:'Bebas Neue',cursive;font-size:1.4rem;letter-spacing:1px;margin-bottom:.3rem">DISCOVER YOUR PERFECT BUSINESS</div>
+          <div style="font-size:.85rem;color:var(--text2)">Answer 8 quick questions — our AI tells you exactly what business to build based on YOUR skills, budget, and country.</div>
+        </div>
+        <button class="btn btn-primary" onclick="window.location.href='dna.html'" style="white-space:nowrap;padding:.85rem 1.5rem">🧬 Start Business DNA →</button>
+      </div>
+      <!-- DNA Summary (shown if DNA exists) -->
+      <div id="dna-summary-banner" style="display:none;background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(245,158,11,.04));border:1px solid rgba(99,102,241,.2);border-radius:var(--radius-lg);padding:1.5rem 2rem;margin-bottom:1.75rem;cursor:pointer;" onclick="window.location.href='dna.html'">
+        <div style="display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap">
+          <div id="dna-score-mini" style="width:56px;height:56px;border-radius:50%;background:rgba(245,158,11,.15);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <span style="font-family:'Bebas Neue',cursive;font-size:1.1rem;color:var(--gold)">—</span>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:.68rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.2rem">YOUR BUSINESS MATCH</div>
+            <div style="font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;color:var(--text)" id="dna-match-mini">Loading...</div>
+            <div style="font-size:.75rem;color:var(--text3)" id="dna-country-mini"></div>
+          </div>
+          <div style="font-size:.8rem;color:#818cf8;font-weight:600">View Full Report →</div>
+        </div>
+      </div>
       <!-- Onboarding checklist (shown until all done) -->
       <div class="onboarding-card" id="onboarding-card">
         <h3>🚀 YOUR LAUNCH CHECKLIST</h3>
@@ -142,7 +165,7 @@
         <div class="quick-btn" onclick="window.location.href='market.html'"><div class="q-icon">◉</div><div class="q-label">Market Research</div><div class="q-sub">Deep insights</div></div>
         <div class="quick-btn" onclick="window.location.href='marketing.html'"><div class="q-icon">◈</div><div class="q-label">Marketing Plan</div><div class="q-sub">Full strategy</div></div>
         <div class="quick-btn" onclick="goTool('pitch_deck')"><div class="q-icon">🎯</div><div class="q-label">Pitch Deck</div><div class="q-sub">Raise capital</div></div>
-        <div class="quick-btn" onclick="window.location.href='tools.html'"><div class="q-icon">◫</div><div class="q-label">All Tools</div><div class="q-sub">17 AI tools</div></div>
+        <div class="quick-btn" onclick="window.location.href='launch-package.html'" style="border-color:var(--border-gold);background:rgba(245,158,11,.04)"><div class="q-icon">🚀</div><div class="q-label" style="color:var(--gold)">Launch Package</div><div class="q-sub">8 documents complete</div></div>
       </div>
 
       <!-- Recent + Usage -->

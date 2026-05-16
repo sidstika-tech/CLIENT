@@ -6,49 +6,13 @@ const Auth = {
   token: () => localStorage.getItem('d8_token'),
   user: () => { try { return JSON.parse(localStorage.getItem('d8_user')||'{}'); } catch{ return {}; } },
   setUser: (u) => localStorage.setItem('d8_user', JSON.stringify(u)),
-  logout: async () => {
-    try {
-      // Invalidate token on server so it can't be reused
-      const token = localStorage.getItem('d8_token');
-      if (token) {
-        await fetch(`${API}/auth/logout`, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
-        }).catch(() => {});
-      }
-    } finally {
-      localStorage.removeItem('d8_token');
-      localStorage.removeItem('d8_user');
-      // Use relative path so it works in any deployment subdirectory
-      const base = window.location.pathname.split('/pages/')[0] || '';
-      window.location.href = base + '/index.html';
-    }
-  },
-  check: () => { if(!localStorage.getItem('d8_token')) { const base = window.location.pathname.split('/pages/')[0] || ''; window.location.href = base + '/index.html'; } },
-  // Refresh user data from server to get latest plan/usage
-  refresh: async () => {
-    try {
-      const r = await fetch(`${API}/auth/me`, { headers: { 'Authorization': `Bearer ${Auth.token()}`, 'Content-Type': 'application/json' } });
-      if (r.ok) { const d = await r.json(); if (d.user) Auth.setUser(d.user); }
-    } catch {}
-  }
+  logout: () => { localStorage.removeItem('d8_token'); localStorage.removeItem('d8_user'); window.location.href='/index.html'; },
+  check: () => { if(!localStorage.getItem('d8_token')) window.location.href='/index.html'; }
 };
 
 /* ── API CLIENT ── */
 const api = {
   headers: () => ({ 'Content-Type':'application/json', 'Authorization': `Bearer ${Auth.token()}` }),
-  _handleLimitReached(data) {
-    // Redirect to billing when plan limit is hit
-    if (data && data.error === 'limit_reached') {
-      Toast.show('Plan limit reached. Upgrade to continue.', 'error', 5000);
-      setTimeout(() => {
-        const base = window.location.pathname.split('/pages/')[0] || '';
-        window.location.href = base + '/pages/billing.html';
-      }, 2000);
-      return true;
-    }
-    return false;
-  },
   async get(path) {
     const r = await fetch(`${API}${path}`, { headers: this.headers() });
     if(r.status===401) { Auth.logout(); return; }
@@ -57,9 +21,7 @@ const api = {
   async post(path, body) {
     const r = await fetch(`${API}${path}`, { method:'POST', headers: this.headers(), body: JSON.stringify(body) });
     if(r.status===401) { Auth.logout(); return; }
-    const data = await r.json();
-    if(r.status===403) { this._handleLimitReached(data); }
-    return data;
+    return r.json();
   },
   async put(path, body) {
     const r = await fetch(`${API}${path}`, { method:'PUT', headers: this.headers(), body: JSON.stringify(body) });
@@ -73,13 +35,6 @@ const api = {
   },
   async streamPost(path, body, onChunk) {
     const r = await fetch(`${API}${path}`, { method:'POST', headers: this.headers(), body: JSON.stringify(body) });
-    if(r.status===401) { Auth.logout(); return; }
-    // Handle limit_reached before streaming
-    if(r.status===403) {
-      const data = await r.json().catch(()=>({}));
-      this._handleLimitReached(data);
-      throw new Error(data.message || 'Limit reached');
-    }
     if(!r.body) throw new Error('No stream');
     const reader = r.body.getReader();
     const decoder = new TextDecoder();
@@ -107,7 +62,7 @@ const T = {
   en: {
     // Nav
     'nav.main':'MAIN', 'nav.tools_group':'AI TOOLS', 'nav.account':'ACCOUNT',
-    'nav.dashboard':'Dashboard', 'nav.chat':'AI Advisor', 'nav.tools':'All Tools',
+    'nav.dashboard':'Dashboard', 'nav.dna':'Business DNA', 'nav.package':'Launch Package', 'nav.chat':'AI Advisor', 'nav.tools':'All Tools',
     'nav.generator':'Business Generator', 'nav.market':'Market Research',
     'nav.marketing':'Marketing Builder', 'nav.prompt':'Prompt Writer',
     'nav.vault':'Project Vault', 'nav.billing':'Billing & Plans', 'nav.settings':'Settings', 'nav.learn':'LEARN & GROW', 'nav.academy':'Business Academy', 'nav.community':'Community',
@@ -197,7 +152,7 @@ const T = {
   ar: {
     // Nav
     'nav.main':'الرئيسية', 'nav.tools_group':'أدوات الذكاء الاصطناعي', 'nav.account':'الحساب',
-    'nav.dashboard':'لوحة التحكم', 'nav.chat':'المستشار الذكي', 'nav.tools':'كل الأدوات',
+    'nav.dashboard':'لوحة التحكم', 'nav.dna':'هويتي التجارية', 'nav.package':'حزمة الإطلاق', 'nav.chat':'المستشار الذكي', 'nav.tools':'كل الأدوات',
     'nav.generator':'مولّد الأعمال', 'nav.market':'أبحاث السوق',
     'nav.marketing':'بناء التسويق', 'nav.prompt':'كاتب البرومبت',
     'nav.vault':'خزنة المشاريع', 'nav.billing':'الفواتير والخطط', 'nav.settings':'الإعدادات', 'nav.learn':'تعلّم وانمُ', 'nav.academy':'أكاديمية الأعمال', 'nav.community':'المجتمع',
@@ -348,14 +303,12 @@ function buildLayout(pageId) {
   const nav = [
     { group: t('nav.main'), items:[
       { id:'dashboard', icon:'⊞', labelKey:'nav.dashboard', href:'dashboard.html' },
+      { id:'dna', icon:'🧬', labelKey:'nav.dna', href:'dna.html' },
+      { id:'package', icon:'🚀', labelKey:'nav.package', href:'launch-package.html' },
       { id:'chat', icon:'◎', labelKey:'nav.chat', href:'chat.html' },
     ]},
     { group: t('nav.tools_group'), items:[
       { id:'tools', icon:'◫', labelKey:'nav.tools', href:'tools.html' },
-      { id:'generator', icon:'⚡', labelKey:'nav.generator', href:'generator.html' },
-      { id:'market', icon:'◉', labelKey:'nav.market', href:'market.html' },
-      { id:'marketing', icon:'◈', labelKey:'nav.marketing', href:'marketing.html' },
-      { id:'prompt', icon:'✦', labelKey:'nav.prompt', href:'prompt.html' },
     ]},
     { group: t('nav.account'), items:[
       { id:'vault', icon:'▣', labelKey:'nav.vault', href:'vault.html' },

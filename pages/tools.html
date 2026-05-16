@@ -101,64 +101,15 @@ function applyTranslations() {
 applyTranslations();
 
 const TOOLS = [
-  { id:'brand_kit', icon:'🎨', name:'Brand Kit', nameAr:'هوية العلامة', desc:'Complete brand identity: colors, typography, voice, logo concepts & guidelines.', descAr:'هوية علامة كاملة: الألوان، الخطوط، الصوت، مفاهيم الشعار.', cat:'brand', tag:'Brand', tagAr:'علامة', tagClass:'tag-brand', fields:[
-    {id:'businessName',label:'Business Name',labelAr:'اسم الشركة',type:'text',placeholder:'e.g. Nexus Capital',required:true},
-    {id:'industry',label:'Industry',labelAr:'القطاع',type:'text',placeholder:'e.g. FinTech, Health, E-commerce',required:true},
-    {id:'values',label:'Brand Values',labelAr:'قيم العلامة',type:'text',placeholder:'e.g. Innovation, Trust, Simplicity'},
-    {id:'targetAudience',label:'Target Audience',labelAr:'الجمهور المستهدف',type:'text',placeholder:'e.g. Millennial entrepreneurs'},
-    {id:'style',label:'Style Preference',labelAr:'تفضيل الأسلوب',type:'text',placeholder:'e.g. Modern & Minimalist'},
+  
+  
+  
   ]},
-  { id:'business_name', icon:'💡', name:'Business Name Ideas', nameAr:'أفكار أسماء الأعمال', desc:'10 creative, market-ready business names with domain suggestions & taglines.', descAr:'10 أسماء أعمال إبداعية جاهزة للسوق مع اقتراحات النطاق.', cat:'brand', tag:'Brand', tagAr:'علامة', tagClass:'tag-brand', fields:[
-    {id:'industry',label:'Industry',labelAr:'القطاع',type:'text',placeholder:'e.g. Sustainable Fashion',required:true},
-    {id:'description',label:'What does it do?',labelAr:'ماذا تفعل؟',type:'textarea',placeholder:'Brief description of your business idea',required:true},
-    {id:'style',label:'Naming Style',labelAr:'أسلوب التسمية',type:'text',placeholder:'e.g. Short, Modern, Tech-sounding'},
-    {id:'targetMarket',label:'Target Market',labelAr:'السوق المستهدف',type:'text',placeholder:'e.g. US market, Global, MENA'},
-  ]},
-  { id:'slogan', icon:'✍', name:'Slogan & Tagline', nameAr:'الشعار والعبارة الترويجية', desc:'15 powerful taglines grouped by style with A/B testing framework.', descAr:'15 شعاراً قوياً مجمّعة حسب الأسلوب مع إطار اختبار A/B.', cat:'brand', tag:'Brand', tagAr:'علامة', tagClass:'tag-brand', fields:[
-    {id:'businessName',label:'Business Name',labelAr:'اسم الشركة',type:'text',required:true},
-    {id:'industry',label:'Industry',labelAr:'القطاع',type:'text',required:true},
-    {id:'coreValue',label:'Core Value',labelAr:'القيمة الأساسية',type:'text',placeholder:'e.g. Speed, Quality, Trust'},
-    {id:'tone',label:'Tone',labelAr:'الأسلوب',type:'select',options:['Professional','Bold & Edgy','Friendly','Luxury','Humorous','Inspirational']},
-  ]},
-  { id:'business_plan', icon:'📋', name:'Business Plan', nameAr:'خطة العمل', desc:'Full investor-ready business plan with financial projections, market analysis & 12-month roadmap.', descAr:'خطة عمل كاملة جاهزة للمستثمرين مع توقعات مالية وتحليل السوق.', cat:'plan', tag:'Strategy', tagAr:'استراتيجية', tagClass:'tag-plan', fields:[
-    {id:'businessName',label:'Business Name',labelAr:'اسم الشركة',type:'text',required:true},
-    {id:'industry',label:'Industry',labelAr:'القطاع',type:'text',required:true},
-    {id:'businessModel',label:'Business Model',labelAr:'نموذج العمل',type:'text',placeholder:'e.g. SaaS, E-commerce, Service',required:true},
-    {id:'targetMarket',label:'Target Market',labelAr:'السوق المستهدف',type:'text',required:true},
-    {id:'investment',label:'Initial Investment',labelAr:'الاستثمار الأولي',type:'text',placeholder:'e.g. $50,000'},
-    {id:'goals',label:'Key Goals',labelAr:'الأهداف الرئيسية',type:'textarea',placeholder:'What do you want to achieve in 12 months?',required:true},
-    {id:'location',label:'Location',labelAr:'الموقع',type:'text',placeholder:'e.g. Dubai, UAE / Remote'},
-  ]},
-  { id:'competitor_matrix', icon:'⚔', name:'Competitor Analysis', nameAr:'تحليل المنافسين', desc:'Deep competitive intelligence matrix with gap analysis and battle plan.', descAr:'مصفوفة استخباراتية تنافسية عميقة مع تحليل الفجوات وخطة المعركة.', cat:'plan', tag:'Strategy', tagAr:'استراتيجية', tagClass:'tag-plan', fields:[
-    {id:'businessName',label:'Your Business',labelAr:'شركتك',type:'text',required:true},
-    {id:'industry',label:'Industry',labelAr:'القطاع',type:'text',required:true},
-    {id:'uniqueAngle',label:'Your Unique Angle',labelAr:'ميزتك الفريدة',type:'text',placeholder:'What makes you different?'},
-    {id:'region',label:'Market Region',labelAr:'منطقة السوق',type:'text',placeholder:'e.g. Global, MENA, US'},
-  ]},
-  { id:'pricing_calculator', icon:'💰', name:'Pricing Strategy', nameAr:'استراتيجية التسعير', desc:'Complete pricing model analysis with break-even, revenue projections & psychology tips.', descAr:'تحليل نموذج التسعير الكامل مع نقطة التعادل والتوقعات.', cat:'plan', tag:'Strategy', tagAr:'استراتيجية', tagClass:'tag-plan', fields:[
-    {id:'businessName',label:'Business Name',labelAr:'اسم الشركة',type:'text',required:true},
-    {id:'product',label:'Product / Service',labelAr:'المنتج/الخدمة',type:'text',required:true},
-    {id:'industry',label:'Industry',labelAr:'القطاع',type:'text',required:true},
-    {id:'monthlyCosts',label:'Monthly Costs ($)',labelAr:'التكاليف الشهرية ($)',type:'text',placeholder:'e.g. 5000'},
-    {id:'targetMargin',label:'Target Profit Margin',labelAr:'هامش الربح المستهدف',type:'text',placeholder:'e.g. 40%'},
-    {id:'competitorPricing',label:'Competitor Price Range',labelAr:'نطاق أسعار المنافسين',type:'text',placeholder:'e.g. $50–$200/mo'},
-  ]},
-  { id:'launch_roadmap', icon:'🚀', name:'30-Day Launch Roadmap', nameAr:'خارطة طريق الإطلاق 30 يوم', desc:'Day-by-day launch plan with specific tasks, tools, and success metrics.', descAr:'خطة إطلاق يوم بيوم مع مهام وأدوات ومقاييس نجاح محددة.', cat:'plan', tag:'Strategy', tagAr:'استراتيجية', tagClass:'tag-plan', fields:[
-    {id:'businessName',label:'Business Name',labelAr:'اسم الشركة',type:'text',required:true},
-    {id:'industry',label:'Industry',labelAr:'القطاع',type:'text',required:true},
-    {id:'budget',label:'Launch Budget',labelAr:'ميزانية الإطلاق',type:'text',placeholder:'e.g. $500, $5,000'},
-    {id:'teamSize',label:'Team Size',labelAr:'حجم الفريق',type:'text',placeholder:'e.g. Solo, 2 people'},
-    {id:'currentStatus',label:'Current Status',labelAr:'الحالة الحالية',type:'text',placeholder:'e.g. Idea stage, MVP ready'},
-    {id:'goal',label:'30-Day Goal',labelAr:'هدف 30 يوم',type:'text',placeholder:'e.g. Get first 10 paying customers'},
-  ]},
-  { id:'budget_estimator', icon:'💵', name:'Budget Estimator', nameAr:'تقدير الميزانية', desc:'6-month startup budget with cash flow projection, burn rate, and funding sources.', descAr:'ميزانية الشركة الناشئة لـ 6 أشهر مع توقع التدفق النقدي.', cat:'legal', tag:'Finance', tagAr:'مالية', tagClass:'tag-legal', fields:[
-    {id:'businessType',label:'Business Type',labelAr:'نوع الشركة',type:'text',required:true},
-    {id:'industry',label:'Industry',labelAr:'القطاع',type:'text',required:true},
-    {id:'location',label:'Location',labelAr:'الموقع',type:'text',placeholder:'e.g. Remote, Dubai, New York'},
-    {id:'teamSize',label:'Team Size',labelAr:'حجم الفريق',type:'text',placeholder:'e.g. 1, 5, 10'},
-    {id:'revenueModel',label:'Revenue Model',labelAr:'نموذج الإيرادات',type:'text',placeholder:'e.g. Subscription, One-time, Commission'},
-    {id:'targetRevenue',label:'Target Revenue (Month 6)',labelAr:'الإيرادات المستهدفة (الشهر 6)',type:'text',placeholder:'e.g. $20,000/month'},
-  ]},
+  
+  
+  
+  
+  
   { id:'contract', icon:'📄', name:'Contract Agreement', nameAr:'اتفاقية عقد', desc:'Legally-sound contract templates: Service Agreement, NDA, Partnership, Freelance.', descAr:'قوالب عقود قانونية سليمة: اتفاقية خدمات، NDA، شراكة، مستقل.', cat:'legal', tag:'Legal', tagAr:'قانوني', tagClass:'tag-legal', fields:[
     {id:'contractType',label:'Contract Type',labelAr:'نوع العقد',type:'select',options:['Service Agreement','NDA (Non-Disclosure)','Partnership Agreement','Freelance Contract','Consulting Agreement','Employment Contract']},
     {id:'partyA',label:'Party A (Provider/Company)',labelAr:'الطرف الأول (المزود/الشركة)',type:'text',placeholder:'Your company name',required:true},
@@ -177,12 +128,7 @@ const TOOLS = [
     {id:'fundingAsk',label:'Funding Ask',labelAr:'طلب التمويل',type:'text',placeholder:'e.g. $500,000 seed'},
     {id:'useOfFunds',label:'Use of Funds',labelAr:'استخدام الأموال',type:'text',placeholder:'e.g. 40% product, 40% marketing, 20% ops'},
   ]},
-  { id:'ad_copy', icon:'📢', name:'Multi-Platform Ad Copy', nameAr:'نسخ إعلانات متعددة المنصات', desc:'Complete ad campaigns for Facebook, Google, TikTok, Instagram & LinkedIn.', descAr:'حملات إعلانية كاملة لـ Facebook وGoogle وTikTok وInstagram.', cat:'mkt', tag:'Marketing', tagAr:'تسويق', tagClass:'tag-mkt', fields:[
-    {id:'businessName',label:'Business Name',labelAr:'اسم الشركة',type:'text',required:true},
-    {id:'product',label:'Product / Service',labelAr:'المنتج/الخدمة',type:'text',required:true},
-    {id:'targetAudience',label:'Target Audience',labelAr:'الجمهور المستهدف',type:'text',required:true},
-    {id:'keyBenefit',label:'Key Benefit / USP',labelAr:'الميزة الرئيسية',type:'text',required:true},
-    {id:'goal',label:'Campaign Goal',labelAr:'هدف الحملة',type:'select',options:['Lead Generation','Sales / Conversions','Brand Awareness','App Downloads','Event Registration']},
+  
   ]},
   { id:'seo_keywords', icon:'🔍', name:'SEO Keyword Map', nameAr:'خريطة كلمات SEO', desc:'Full keyword strategy with 60+ keywords, content clusters & 90-day roadmap.', descAr:'استراتيجية كلمات مفتاحية كاملة مع 60+ كلمة مفتاحية.', cat:'mkt', tag:'Marketing', tagAr:'تسويق', tagClass:'tag-mkt', fields:[
     {id:'businessName',label:'Business Name',labelAr:'اسم الشركة',type:'text',required:true},
@@ -191,19 +137,8 @@ const TOOLS = [
     {id:'location',label:'Target Location',labelAr:'الموقع الجغرافي المستهدف',type:'text',placeholder:'e.g. Dubai, Global, US'},
     {id:'competitors',label:'Known Competitors',labelAr:'المنافسون المعروفون',type:'text',placeholder:'e.g. competitor1.com, competitor2.com'},
   ]},
-  { id:'content_calendar', icon:'📅', name:'30-Day Content Calendar', nameAr:'تقويم محتوى 30 يوم', desc:'Daily social content for all platforms with captions, hashtags & posting times.', descAr:'محتوى اجتماعي يومي لجميع المنصات مع تسميات توضيحية وهاشتاقات.', cat:'mkt', tag:'Marketing', tagAr:'تسويق', tagClass:'tag-mkt', fields:[
-    {id:'businessName',label:'Business Name',labelAr:'اسم الشركة',type:'text',required:true},
-    {id:'industry',label:'Industry',labelAr:'القطاع',type:'text',required:true},
-    {id:'platforms',label:'Platforms',labelAr:'المنصات',type:'text',placeholder:'e.g. Instagram, TikTok, LinkedIn'},
-    {id:'brandVoice',label:'Brand Voice',labelAr:'صوت العلامة',type:'text',placeholder:'e.g. Bold, Friendly, Professional'},
-    {id:'goals',label:'Content Goals',labelAr:'أهداف المحتوى',type:'text',placeholder:'e.g. Brand awareness, Lead generation'},
-  ]},
-  { id:'market_study', icon:'📊', name:'Market Study', nameAr:'دراسة السوق', desc:'Deep audience analysis with demographics, psychographics & buying journey map.', descAr:'تحليل جمهور عميق مع الخصائص الديموغرافية وخريطة رحلة الشراء.', cat:'mkt', tag:'Marketing', tagAr:'تسويق', tagClass:'tag-mkt', fields:[
-    {id:'niche',label:'Industry / Niche',labelAr:'القطاع/المجال',type:'text',required:true},
-    {id:'product',label:'Product / Service',labelAr:'المنتج/الخدمة',type:'text',placeholder:'What are you selling?'},
-    {id:'region',label:'Target Region',labelAr:'المنطقة المستهدفة',type:'text',placeholder:'e.g. MENA, US, Europe'},
-    {id:'budget',label:'Marketing Budget',labelAr:'ميزانية التسويق',type:'text',placeholder:'e.g. $2,000/month'},
-  ]},
+  
+  
   { id:'cold_email', icon:'📧', name:'Cold Email Sequence', nameAr:'تسلسل البريد الإلكتروني البارد', desc:'5-email drip sequence + LinkedIn messages + cold call script + objection handler.', descAr:'5 رسائل بريد إلكتروني + رسائل LinkedIn + نص المكالمة + معالج الاعتراضات.', cat:'sales', tag:'Sales', tagAr:'مبيعات', tagClass:'tag-sales', fields:[
     {id:'senderBusiness',label:'Your Business',labelAr:'شركتك',type:'text',required:true},
     {id:'targetProspect',label:'Target Prospect',labelAr:'العميل المستهدف',type:'text',placeholder:'e.g. SaaS founders, Real estate agents',required:true},
