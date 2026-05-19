@@ -11,36 +11,70 @@
 .academy-hero{background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(245,158,11,0.02));border:1px solid var(--border-gold);border-radius:var(--radius-lg);padding:1.75rem 2rem;margin-bottom:1.75rem;position:relative;overflow:hidden;}
 .academy-hero::after{content:'🎓';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:4rem;opacity:.07;pointer-events:none;}
 .academy-hero h2{font-family:'Bebas Neue',cursive;font-size:1.8rem;letter-spacing:2px;color:var(--gold);margin-bottom:.35rem;}
-.academy-hero p{font-size:.875rem;color:var(--text2);line-height:1.65;max-width:500px;}
-.hero-meta{display:flex;gap:1.25rem;flex-wrap:wrap;margin-top:.85rem;}
-.hero-meta span{font-size:.75rem;color:var(--text3);}
-/* ── CATEGORY TABS ── */
-.cat-tabs{display:flex;gap:.45rem;flex-wrap:wrap;margin-bottom:1.5rem;}
-.cat-tab{padding:.38rem .9rem;border-radius:20px;font-size:.78rem;font-weight:500;border:1px solid var(--border);color:var(--text3);cursor:pointer;transition:.15s;background:none;font-family:'Outfit',sans-serif;}
-.cat-tab.active{background:var(--gold-dim);border-color:var(--border-gold);color:var(--gold);}
-/* ── COURSES GRID ── */
-.courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1rem;}
-.course-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.3rem;transition:.25s;display:flex;flex-direction:column;gap:.65rem;position:relative;overflow:hidden;text-decoration:none;color:inherit;}
-.course-card:hover{border-color:var(--border-gold);transform:translateY(-2px);}
-.course-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:.3s;}
-.course-card:hover::after{opacity:1;}
-.course-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;}
-.course-icon{width:40px;height:40px;border-radius:10px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
-.badge{font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;}
-.badge-new{background:rgba(34,197,94,0.15);color:#4ade80;}
-.badge-hot{background:rgba(239,68,68,0.15);color:#f87171;}
-.badge-free{background:rgba(245,158,11,0.15);color:var(--gold);}
-.course-title{font-size:.9rem;font-weight:600;color:var(--text);line-height:1.35;}
-.course-desc{font-size:.75rem;color:var(--text3);line-height:1.55;flex:1;}
-.course-footer{display:flex;align-items:center;justify-content:space-between;padding-top:.6rem;border-top:1px solid var(--border);}
-.course-meta{font-size:.7rem;color:var(--text3);}
-.access-btn{background:var(--gold-dim);border:1px solid var(--border-gold);color:var(--gold);font-size:.72rem;font-weight:600;padding:.3rem .75rem;border-radius:7px;cursor:pointer;font-family:'Outfit',sans-serif;transition:.15s;}
-.access-btn:hover{background:rgba(245,158,11,0.22);}
-.cat-pill{font-size:.62rem;font-weight:600;padding:1px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:.05em;}
-/* ── ADMIN PANEL ── */
-.admin-add{background:rgba(245,158,11,0.04);border:1px dashed var(--border-gold);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.5rem;display:none;}
-.admin-add.show{display:block;}
-.admin-add h4{font-family:'Bebas Neue',cursive;font-size:.95rem;letter-spacing:1px;color:var(--gold);margin-bottom:.9rem;}
+.academy-hero p{font-size:.875rem;color:var(--text2);line-height:1.65;max-width:580px;}
+.hero-meta{display:flex;gap:1.25rem;flex-wrap:wrap;margin-top:.85rem;font-size:.75rem;color:var(--text3);}
+/* ── TAB SYSTEM ── */
+.tabs-row{display:flex;gap:.5rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem;overflow-x:auto;}
+.tab-btn{padding:.7rem 1.2rem;font-size:.85rem;font-weight:600;color:var(--text3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;font-family:'Outfit',sans-serif;transition:.15s;}
+.tab-btn:hover{color:var(--text2);}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;animation:fadeIn .3s;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+/* ── PATH PROGRESS HEADER ── */
+.path-progress{background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.2);border-radius:var(--radius-lg);padding:1.4rem 1.75rem;margin-bottom:1.5rem;}
+.path-progress-top{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;}
+.path-progress-top h3{font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;color:#818cf8;}
+.path-progress-stats{display:flex;gap:1.5rem;flex-wrap:wrap;}
+.pp-stat{font-size:.75rem;color:var(--text3);}
+.pp-stat strong{color:#818cf8;font-size:1.05rem;display:block;font-weight:700;}
+.pp-bar{height:8px;background:rgba(255,255,255,0.05);border-radius:5px;overflow:hidden;margin-top:.5rem;}
+.pp-bar-fill{height:100%;background:linear-gradient(90deg,#6366f1,#a855f7,#f59e0b);border-radius:5px;transition:width .6s;}
+/* ── STEP CARDS ── */
+.path-steps{display:flex;flex-direction:column;gap:1rem;}
+.step-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:.2s;}
+.step-card.current{border-color:var(--border-gold);box-shadow:0 0 24px rgba(245,158,11,0.08);}
+.step-card.locked{opacity:.55;}
+.step-card.complete{border-color:rgba(34,197,94,0.3);}
+.step-header{padding:1.1rem 1.4rem;display:flex;align-items:center;gap:1rem;cursor:pointer;background:rgba(255,255,255,0.01);transition:.15s;}
+.step-header:hover{background:rgba(255,255,255,0.025);}
+.step-icon{width:48px;height:48px;border-radius:12px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;}
+.step-card.complete .step-icon{background:rgba(34,197,94,0.15);}
+.step-num{font-size:.65rem;font-weight:700;color:var(--text3);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.15rem;}
+.step-title{font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;color:var(--text);margin-bottom:.15rem;}
+.step-sub{font-size:.78rem;color:var(--text3);}
+.step-progress-pill{margin-left:auto;font-size:.72rem;font-weight:600;padding:4px 11px;border-radius:20px;background:rgba(255,255,255,0.05);color:var(--text2);white-space:nowrap;}
+.step-progress-pill.done{background:rgba(34,197,94,0.15);color:#4ade80;}
+.step-arrow{font-size:.9rem;color:var(--text3);transition:.2s;}
+.step-card.open .step-arrow{transform:rotate(180deg);}
+.step-body{padding:0;max-height:0;overflow:hidden;transition:max-height .35s ease, padding .25s;}
+.step-card.open .step-body{padding:0 1.4rem 1.2rem;max-height:1200px;}
+.step-description{font-size:.84rem;color:var(--text2);line-height:1.7;padding:0 0 1rem;border-bottom:1px solid var(--border);margin-bottom:1rem;}
+/* ── SESSION LIST ── */
+.session-row{display:flex;align-items:center;gap:.85rem;padding:.85rem 1rem;border-radius:9px;margin-bottom:.4rem;border:1px solid transparent;cursor:pointer;transition:.15s;}
+.session-row:hover:not(.locked){background:rgba(255,255,255,0.03);border-color:var(--border);}
+.session-row.locked{cursor:not-allowed;opacity:.45;}
+.session-row.complete{background:rgba(34,197,94,0.04);}
+.session-check{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0;font-weight:700;color:var(--text3);}
+.session-row.complete .session-check{background:#22c55e;border-color:#22c55e;color:#fff;}
+.session-row.locked .session-check{color:var(--text3);}
+.session-info{flex:1;min-width:0;}
+.session-row-title{font-size:.88rem;color:var(--text);font-weight:500;margin-bottom:.15rem;}
+.session-row-focus{font-size:.74rem;color:var(--text3);line-height:1.5;}
+.session-row-meta{font-size:.72rem;color:var(--text3);white-space:nowrap;}
+/* ── SESSION VIEWER MODAL ── */
+.session-modal-content{max-width:760px;width:95vw;}
+.lesson-content{padding:1rem 0;}
+.lesson-content h2{font-family:'Bebas Neue',cursive;font-size:1.25rem;color:var(--gold);letter-spacing:1px;margin:1.5rem 0 .7rem;padding-bottom:.4rem;border-bottom:1px solid var(--border);}
+.lesson-content h2:first-child{margin-top:0;}
+.lesson-content p{font-size:.88rem;color:var(--text2);line-height:1.8;margin-bottom:.85rem;}
+.lesson-content strong{color:var(--text);}
+.lesson-content ul,.lesson-content ol{margin:.6rem 0 .85rem 1.5rem;color:var(--text2);}
+.lesson-content li{margin-bottom:.35rem;font-size:.86rem;line-height:1.7;}
+.lesson-reflection{margin-top:1.5rem;padding:1rem 1.2rem;background:rgba(245,158,11,0.06);border-radius:10px;border-left:3px solid var(--gold);}
+.lesson-reflection label{display:block;font-size:.72rem;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;}
+.lesson-reflection textarea{width:100%;min-height:80px;background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:7px;padding:.6rem .8rem;color:var(--text);font-family:'Outfit',sans-serif;font-size:.84rem;resize:vertical;}
+.lesson-loading{text-align:center;padding:3rem 1rem;color:var(--text3);}
 /* ── NEWS CARDS ── */
 .news-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.35rem;transition:.25s;display:flex;flex-direction:column;gap:.75rem;position:relative;overflow:hidden;text-decoration:none;color:inherit;}
 .news-card:hover{border-color:var(--border-gold);transform:translateY(-3px);box-shadow:0 12px 35px rgba(0,0,0,.35);}
@@ -48,7 +82,6 @@
 .news-card[data-type="market"]::before{background:linear-gradient(90deg,#10b981,#059669);}
 .news-card[data-type="success"]::before{background:linear-gradient(90deg,var(--gold),var(--gold-dark));}
 .news-card[data-type="opportunity"]::before{background:linear-gradient(90deg,#6366f1,#4f46e5);}
-.nc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;}
 .nc-icon{font-size:1.5rem;flex-shrink:0;}
 .nc-country{font-size:.72rem;color:var(--text3);display:flex;align-items:center;gap:.3rem;}
 .nc-cat{font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em;}
@@ -60,18 +93,31 @@
 .nc-opportunity{font-size:.75rem;color:var(--text2);padding:.5rem .7rem;background:rgba(255,255,255,0.03);border-radius:7px;border-left:2px solid var(--border-gold);line-height:1.5;}
 .nc-footer{display:flex;align-items:center;justify-content:space-between;font-size:.7rem;color:var(--text3);padding-top:.5rem;border-top:1px solid var(--border);}
 .nc-link-btn{color:var(--gold);font-weight:600;font-size:.7rem;}
-/* ── SKELETON LOADER ── */
 .news-card-skeleton{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);height:220px;position:relative;overflow:hidden;}
 .news-card-skeleton::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 30%,rgba(255,255,255,0.04) 50%,transparent 70%);animation:shimmer 1.4s infinite;}
 @keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
-/* ── RESPONSIVE ── */
+/* ── COURSES ── */
+.courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;}
+.course-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.3rem;transition:.25s;display:flex;flex-direction:column;gap:.65rem;text-decoration:none;color:inherit;}
+.course-card:hover{border-color:var(--border-gold);transform:translateY(-2px);}
+.course-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;}
+.course-icon{width:40px;height:40px;border-radius:10px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.badge{font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;}
+.badge-free{background:rgba(245,158,11,0.15);color:var(--gold);}
+.badge-hot{background:rgba(239,68,68,0.15);color:#f87171;}
+.course-title{font-size:.9rem;font-weight:600;color:var(--text);line-height:1.35;}
+.course-desc{font-size:.75rem;color:var(--text3);line-height:1.55;flex:1;}
+.course-footer{display:flex;align-items:center;justify-content:space-between;padding-top:.6rem;border-top:1px solid var(--border);}
+.course-meta{font-size:.7rem;color:var(--text3);}
+.access-btn{background:var(--gold-dim);border:1px solid var(--border-gold);color:var(--gold);font-size:.72rem;font-weight:600;padding:.3rem .75rem;border-radius:7px;cursor:pointer;font-family:'Outfit',sans-serif;}
 @media(max-width:900px){
   #news-cards-row{grid-template-columns:1fr!important;}
   .academy-hero::after{display:none;}
+  .step-progress-pill{order:-1;margin-left:0;}
 }
 @media(max-width:600px){
-  #news-cards-row{grid-template-columns:1fr!important;}
   .courses-grid{grid-template-columns:1fr;}
+  .path-progress-top{flex-direction:column;align-items:flex-start;}
 }
 </style>
 </head>
@@ -83,73 +129,99 @@
     <div class="topbar">
       <button class="hamburger">☰</button>
       <span class="topbar-title">BUSINESS ACADEMY</span>
-      <div class="topbar-right"><span style="font-size:.78rem;color:var(--text3)">📅 Updated Daily</span></div>
+      <div class="topbar-right"><span style="font-size:.78rem;color:var(--text3)">🎓 Path · 📡 Daily · 📚 Resources</span></div>
     </div>
     <div class="page-content">
       <div class="academy-hero">
         <h2>🎓 BUSINESS ACADEMY</h2>
-        <p>The world's best business strategies, mindset shifts, and success stories — curated daily for entrepreneurs ready to grow.</p>
+        <p>Three things, in one place. A 5-step Founder's Path that walks you from idea to launch. Daily intelligence from the world's markets. And a vault of the best free business education on the internet.</p>
         <div class="hero-meta">
-          <span>⚡ New content every day</span>
-          <span>🌍 Global success stories</span>
-          <span>🧠 Mindset + Strategy</span>
-          <span>💰 Zero to Success frameworks</span>
+          <span>🧭 5-step guided path</span>
+          <span>⚡ New intelligence daily</span>
+          <span>🇲🇪 MENA-aware lessons</span>
         </div>
-      </div>
-      <div class="admin-add" id="admin-panel">
-        <h4>⚙ ADD NEW CONTENT</h4>
-        <div class="form-grid">
-          <div class="form-group"><label class="form-label">Title</label><input type="text" class="form-input" id="adm-title" placeholder="Course or strategy title"></div>
-          <div class="form-group"><label class="form-label">Category</label>
-            <select class="form-select" id="adm-cat">
-              <option value="strategy">Business Strategy</option><option value="mindset">Mindset</option>
-              <option value="marketing">Marketing</option><option value="finance">Finance</option>
-              <option value="startup">Startup</option><option value="sales">Sales</option><option value="leadership">Leadership</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="adm-desc" placeholder="What will users learn..." style="min-height:60px"></textarea></div>
-        <div class="form-grid">
-          <div class="form-group"><label class="form-label">Link (Drive/YouTube)</label><input type="url" class="form-input" id="adm-link" placeholder="https://drive.google.com/..."></div>
-          <div class="form-group"><label class="form-label">Badge</label>
-            <select class="form-select" id="adm-badge">
-              <option value="">None</option><option value="new">New</option>
-              <option value="hot">Hot</option><option value="free">Free</option><option value="featured">Featured</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-grid">
-          <div class="form-group"><label class="form-label">Duration</label><input type="text" class="form-input" id="adm-duration" placeholder="e.g. 2h 30min"></div>
-          <div class="form-group"><label class="form-label">Icon (emoji)</label><input type="text" class="form-input" id="adm-icon" placeholder="📋" maxlength="2"></div>
-        </div>
-        <button class="btn btn-primary" onclick="adminAdd()">+ Add Content</button>
-      </div>
-      <div class="cat-tabs">
-        <button class="cat-tab active" onclick="filterCat('all',this)">All</button>
-        <button class="cat-tab" onclick="filterCat('strategy',this)">Strategy</button>
-        <button class="cat-tab" onclick="filterCat('mindset',this)">Mindset</button>
-        <button class="cat-tab" onclick="filterCat('marketing',this)">Marketing</button>
-        <button class="cat-tab" onclick="filterCat('finance',this)">Finance</button>
-        <button class="cat-tab" onclick="filterCat('startup',this)">Startup</button>
-        <button class="cat-tab" onclick="filterCat('sales',this)">Sales</button>
-        <button class="cat-tab" onclick="filterCat('leadership',this)">Leadership</button>
-      </div>
-      <!-- Daily news 3-card row (auto-updated by Gemini API) -->
-      <h3 style="font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px;margin-bottom:1rem;">📡 TODAY'S BUSINESS INTELLIGENCE</h3>
-      <div id="news-cards-row" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;">
-        <div class="news-card-skeleton"></div>
-        <div class="news-card-skeleton"></div>
-        <div class="news-card-skeleton"></div>
       </div>
 
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-        <h3 style="font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px;">📚 COURSES & STRATEGIES</h3>
-        <span style="font-size:.75rem;color:var(--text3)" id="count-lbl"></span>
+      <div class="tabs-row">
+        <button class="tab-btn active" data-tab="path" onclick="switchTab('path')">🧭 The Founder's Path</button>
+        <button class="tab-btn" data-tab="daily" onclick="switchTab('daily')">📡 Today's Intelligence</button>
+        <button class="tab-btn" data-tab="resources" onclick="switchTab('resources')">📚 Free Resources</button>
       </div>
-      <div class="courses-grid" id="courses-grid"></div>
+
+      <!-- ━━━━ TAB 1: FOUNDER'S PATH ━━━━ -->
+      <div class="tab-panel active" id="tab-path">
+        <div class="path-progress">
+          <div class="path-progress-top">
+            <div>
+              <h3>🧭 THE FOUNDER'S PATH</h3>
+              <div style="font-size:.78rem;color:var(--text3);margin-top:.3rem">Five steps. Twenty-five sessions. The journey from idea to launched founder.</div>
+            </div>
+            <div class="path-progress-stats">
+              <div class="pp-stat"><strong id="pp-done">0</strong>completed</div>
+              <div class="pp-stat"><strong id="pp-total">25</strong>total sessions</div>
+              <div class="pp-stat"><strong id="pp-streak">0</strong>day streak</div>
+            </div>
+          </div>
+          <div class="pp-bar"><div class="pp-bar-fill" id="pp-bar-fill" style="width:0%"></div></div>
+        </div>
+
+        <div class="path-steps" id="path-steps">
+          <div style="text-align:center;padding:2rem;color:var(--text3);font-size:.85rem">Loading your path...</div>
+        </div>
+      </div>
+
+      <!-- ━━━━ TAB 2: DAILY INTELLIGENCE ━━━━ -->
+      <div class="tab-panel" id="tab-daily">
+        <h3 style="font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px;margin-bottom:1rem;">📡 TODAY'S BUSINESS INTELLIGENCE</h3>
+        <div id="news-cards-row" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+          <div class="news-card-skeleton"></div>
+          <div class="news-card-skeleton"></div>
+          <div class="news-card-skeleton"></div>
+        </div>
+      </div>
+
+      <!-- ━━━━ TAB 3: FREE RESOURCES ━━━━ -->
+      <div class="tab-panel" id="tab-resources">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;">
+          <h3 style="font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px;">📚 HAND-PICKED FREE COURSES</h3>
+          <span style="font-size:.75rem;color:var(--text3)" id="count-lbl">12 free resources</span>
+        </div>
+        <div class="courses-grid" id="courses-grid"></div>
+      </div>
     </div>
   </div>
 </div>
+
+<!-- SESSION VIEWER MODAL -->
+<div class="modal-overlay" id="session-modal">
+  <div class="modal session-modal-content">
+    <div class="modal-header">
+      <span id="sess-icon" style="font-size:1.5rem">🎓</span>
+      <div>
+        <div class="modal-title" id="sess-title">Loading...</div>
+        <div style="font-size:.78rem;color:var(--text3);margin-top:.1rem" id="sess-sub"></div>
+      </div>
+      <button class="modal-close" onclick="closeSession()">✕</button>
+    </div>
+    <div class="modal-body" style="max-height:70vh;overflow-y:auto;">
+      <div class="lesson-content" id="sess-content">
+        <div class="lesson-loading">⏳ Generating your personalized lesson...</div>
+      </div>
+      <div class="lesson-reflection" id="sess-reflection-wrap" style="display:none">
+        <label>Your reflection (optional — what stood out, what you'll do)</label>
+        <textarea id="sess-reflection" placeholder="One or two sentences. The act of writing locks the lesson in."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer" id="sess-footer" style="display:none">
+      <button class="btn btn-secondary" onclick="closeSession()">Close</button>
+      <button class="btn btn-primary" onclick="completeCurrent()" id="sess-complete-btn">
+        <span class="loader" id="sess-loader" style="display:none"></span>
+        <span id="sess-complete-text">✓ Mark Complete</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <script src="../js/core.js"></script>
 <script>
 Auth.check();
@@ -157,50 +229,148 @@ buildLayout('academy');
 
 const CC={strategy:{bg:'rgba(245,158,11,0.12)',c:'var(--gold)'},mindset:{bg:'rgba(99,102,241,0.12)',c:'#c084fc'},marketing:{bg:'rgba(239,68,68,0.12)',c:'#f87171'},finance:{bg:'rgba(34,197,94,0.12)',c:'#4ade80'},startup:{bg:'rgba(59,130,246,0.12)',c:'#60a5fa'},sales:{bg:'rgba(168,85,247,0.12)',c:'#c084fc'},leadership:{bg:'rgba(6,182,212,0.12)',c:'#22d3ee'}};
 
-// ── VERIFIED REAL COURSES WITH WORKING LINKS ──────────────────────────────
 const COURSES=[
-  {id:'c1',title:'Y Combinator Startup School — Full Lecture Series',cat:'startup',
-   desc:'The exact curriculum used to train thousands of the world\'s best startups. Lectures from top YC partners on product, growth, fundraising, and more.',
-   link:'https://www.youtube.com/playlist?list=PLorh3qWx1GaVZZgOWg0NGcXgd4kViwXLG',duration:'20+ lectures',icon:'🚀',badge:'free'},
-  {id:'c2',title:'Alex Hormozi — $100M Offers Full Breakdown',cat:'strategy',
-   desc:'Alex Hormozi breaks down his complete offer creation system. How to craft offers so compelling people feel stupid saying no.',
-   link:'https://www.youtube.com/watch?v=S2EjxjR8eQU',duration:'3h 20min',icon:'💰',badge:'hot'},
-  {id:'c3',title:'Simon Sinek — Start With Why (Full TEDx Talk)',cat:'leadership',
-   desc:'The most watched business TED talk ever. Why some leaders and companies inspire while others don\'t — and how the Golden Circle applies to your business.',
-   link:'https://www.youtube.com/watch?v=u4ZoJKF_VuA',duration:'18 min',icon:'🍎',badge:''},
-  {id:'c4',title:'HubSpot Academy — Inbound Marketing Certification',cat:'marketing',
-   desc:'Industry-standard free certification covering content strategy, SEO, social media, email marketing, and lead nurturing. Globally recognized.',
-   link:'https://academy.hubspot.com/courses/inbound-marketing',duration:'4.5 hours',icon:'🔗',badge:'free'},
-  {id:'c5',title:'Naval Ravikant — How to Get Rich Without Getting Lucky',cat:'mindset',
-   desc:'Naval Ravikant\'s legendary framework on wealth creation, specific knowledge, leverage, and long-term thinking. A masterclass in entrepreneur mindset.',
-   link:'https://www.youtube.com/watch?v=6Mya4C3Yr7I',duration:'3h 40min',icon:'🧠',badge:'hot'},
-  {id:'c6',title:'Google Digital Garage — Digital Marketing Fundamentals',cat:'marketing',
-   desc:'Free certification from Google covering SEO, SEM, social media, content, email marketing, and analytics. Used by millions worldwide.',
-   link:'https://learndigital.withgoogle.com/digitalgarage/course/digital-marketing',duration:'40 hours',icon:'📢',badge:'free'},
-  {id:'c7',title:'Khan Academy — Entrepreneurship & Business Finance',cat:'finance',
-   desc:'Comprehensive free program covering accounting, cash flow, P&L reading, break-even analysis, and business finance fundamentals from scratch.',
-   link:'https://www.khanacademy.org/college-careers-more/entrepreneurship2',duration:'Self-paced',icon:'📊',badge:'free'},
-  {id:'c8',title:'Patrick Bet-David — Business & Entrepreneurship Masterclass',cat:'strategy',
-   desc:'Valuetainment\'s complete business education series covering leadership, sales, marketing, and scaling. One of the most practical channels for entrepreneurs.',
-   link:'https://www.youtube.com/@Valuetainment/playlists',duration:'100+ videos',icon:'📋',badge:''},
-  {id:'c9',title:'Meta Blueprint — Facebook & Instagram Ads Certification',cat:'marketing',
-   desc:'Official Meta course on advertising, audience targeting, creative strategy, and campaign optimization across Facebook and Instagram. Completely free.',
-   link:'https://www.facebook.com/business/learn/digital-marketing-quick-courses',duration:'30+ hours',icon:'📱',badge:'free'},
-  {id:'c10',title:'HubSpot Academy — Sales Training: Inbound Sales',cat:'sales',
-   desc:'Free sales certification covering modern prospecting, connecting with buyers, exploring needs, and advising prospects. Globally recognized credential.',
-   link:'https://academy.hubspot.com/courses/inbound-sales',duration:'3 hours',icon:'🎯',badge:'free'},
-  {id:'c11',title:'Tim Ferriss — Tools of Titans (Interview Series)',cat:'mindset',
-   desc:'Tim Ferriss interviews world-class performers — athletes, investors, entrepreneurs — extracting the habits, routines, and tactics behind their success.',
-   link:'https://www.youtube.com/@TimFerriss/videos',duration:'100+ videos',icon:'⚡',badge:''},
-  {id:'c12',title:'Coursera — Entrepreneurship Specialization (UPenn Wharton)',cat:'startup',
-   desc:'University of Pennsylvania\'s complete entrepreneurship program: ideation, launch, growth, and financing. Audit free.',
-   link:'https://www.coursera.org/specializations/wharton-entrepreneurship',duration:'5 months',icon:'🎓',badge:'free'},
+  {id:'c1',title:'Y Combinator Startup School',cat:'startup',desc:'The exact curriculum used to train thousands of YC startups. Lectures on product, growth, fundraising.',link:'https://www.youtube.com/playlist?list=PLorh3qWx1GaVZZgOWg0NGcXgd4kViwXLG',duration:'20+ lectures',icon:'🚀',badge:'free'},
+  {id:'c2',title:'Alex Hormozi — $100M Offers',cat:'strategy',desc:'How to craft offers so compelling people feel stupid saying no. The complete offer breakdown.',link:'https://www.youtube.com/watch?v=S2EjxjR8eQU',duration:'3h 20min',icon:'💰',badge:'hot'},
+  {id:'c3',title:'Simon Sinek — Start With Why',cat:'leadership',desc:'The most watched business TED talk ever. Why some leaders inspire — and how to apply the Golden Circle.',link:'https://www.youtube.com/watch?v=u4ZoJKF_VuA',duration:'18 min',icon:'🍎',badge:''},
+  {id:'c4',title:'HubSpot — Inbound Marketing Certification',cat:'marketing',desc:'Industry-standard free certification covering content, SEO, social, email, and lead nurturing.',link:'https://academy.hubspot.com/courses/inbound-marketing',duration:'4.5 hours',icon:'🔗',badge:'free'},
+  {id:'c5',title:'Naval Ravikant — How to Get Rich',cat:'mindset',desc:'Naval\'s legendary framework on wealth creation, specific knowledge, and leverage. Mindset masterclass.',link:'https://www.youtube.com/watch?v=6Mya4C3Yr7I',duration:'3h 40min',icon:'🧠',badge:'hot'},
+  {id:'c6',title:'Google Digital Garage — Digital Marketing',cat:'marketing',desc:'Free Google certification covering SEO, SEM, social media, content, email marketing, analytics.',link:'https://learndigital.withgoogle.com/digitalgarage/course/digital-marketing',duration:'40 hours',icon:'📢',badge:'free'},
+  {id:'c7',title:'Khan Academy — Entrepreneurship & Finance',cat:'finance',desc:'Comprehensive free program: accounting, cash flow, P&L, break-even — business finance from scratch.',link:'https://www.khanacademy.org/college-careers-more/entrepreneurship2',duration:'Self-paced',icon:'📊',badge:'free'},
+  {id:'c8',title:'Patrick Bet-David — Valuetainment',cat:'strategy',desc:'Complete business education series on leadership, sales, marketing, scaling. One of the most practical channels.',link:'https://www.youtube.com/@Valuetainment/playlists',duration:'100+ videos',icon:'📋',badge:''},
+  {id:'c9',title:'Meta Blueprint — Facebook & Instagram Ads',cat:'marketing',desc:'Official Meta course on advertising, audience targeting, creative strategy, campaign optimization.',link:'https://www.facebook.com/business/learn/digital-marketing-quick-courses',duration:'30+ hours',icon:'📱',badge:'free'},
+  {id:'c10',title:'HubSpot — Inbound Sales Certification',cat:'sales',desc:'Free sales certification: modern prospecting, connecting with buyers, exploring needs.',link:'https://academy.hubspot.com/courses/inbound-sales',duration:'3 hours',icon:'🎯',badge:'free'},
+  {id:'c11',title:'Tim Ferriss — Tools of Titans',cat:'mindset',desc:'Tim interviews world-class performers — extracting the habits and tactics behind their success.',link:'https://www.youtube.com/@TimFerriss/videos',duration:'100+ videos',icon:'⚡',badge:''},
+  {id:'c12',title:'Coursera — Wharton Entrepreneurship',cat:'startup',desc:'UPenn Wharton complete entrepreneurship program: ideation, launch, growth, financing. Audit free.',link:'https://www.coursera.org/specializations/wharton-entrepreneurship',duration:'5 months',icon:'🎓',badge:'free'},
 ];
 
-let cur='all';
+let pathData = null;
+let currentSessionId = null;
 
-// ── NEWS CARDS ─────────────────────────────────────────────────────────────
+/* ── TAB SWITCHING ──────────────────────────────────────── */
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.id==='tab-'+name));
+  if(name==='daily' && !document.getElementById('news-cards-row').dataset.loaded) loadNewsCards();
+  if(name==='resources' && !document.getElementById('courses-grid').dataset.loaded) renderCourses();
+}
+
+/* ── PATH ───────────────────────────────────────────────── */
+async function loadPath(){
+  const r = await api.get('/academy/path');
+  if(!r?.success){
+    document.getElementById('path-steps').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠</div><p>Failed to load your path. Refresh the page to try again.</p></div>';
+    return;
+  }
+  pathData = r;
+  document.getElementById('pp-done').textContent = r.completedCount;
+  document.getElementById('pp-total').textContent = r.totalSessions;
+  document.getElementById('pp-streak').textContent = r.streak?.current || 0;
+  document.getElementById('pp-bar-fill').style.width = r.percent + '%';
+  renderPath();
+}
+
+function renderPath(){
+  const wrap = document.getElementById('path-steps');
+  wrap.innerHTML = pathData.steps.map(step=>{
+    const done = step.completedCount === step.totalCount;
+    const allLocked = step.sessions.every(s => !s.unlocked);
+    const isCurrent = pathData.currentStep === step.number && !done;
+    const cls = done ? 'complete' : (allLocked ? 'locked' : (isCurrent ? 'current open' : ''));
+    return `
+      <div class="step-card ${cls}" id="step-${step.id}">
+        <div class="step-header" onclick="toggleStep('${step.id}')">
+          <div class="step-icon" style="${done ? 'background:rgba(34,197,94,0.15)' : ''}">${done ? '✓' : step.icon}</div>
+          <div style="flex:1;min-width:0">
+            <div class="step-num">Step ${step.number} of 5</div>
+            <div class="step-title">${step.title}</div>
+            <div class="step-sub">${step.subtitle}</div>
+          </div>
+          <span class="step-progress-pill ${done ? 'done' : ''}">${step.completedCount} / ${step.totalCount}</span>
+          <span class="step-arrow">▼</span>
+        </div>
+        <div class="step-body">
+          <div class="step-description">${step.description}</div>
+          ${step.sessions.map(s=>`
+            <div class="session-row ${s.completed ? 'complete' : ''} ${!s.unlocked ? 'locked' : ''}" onclick="${s.unlocked ? `openSession('${s.id}')` : ''}">
+              <div class="session-check">${s.completed ? '✓' : (s.unlocked ? '' : '🔒')}</div>
+              <div class="session-info">
+                <div class="session-row-title">${s.title}</div>
+                <div class="session-row-focus">${s.focus}</div>
+              </div>
+              <div class="session-row-meta">⏱ ${s.duration}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleStep(stepId){
+  const card = document.getElementById('step-'+stepId);
+  if(card.classList.contains('locked')) return;
+  card.classList.toggle('open');
+}
+
+/* ── SESSION VIEWER ─────────────────────────────────────── */
+async function openSession(sessionId){
+  currentSessionId = sessionId;
+  document.getElementById('sess-title').textContent = 'Loading...';
+  document.getElementById('sess-sub').textContent = '';
+  document.getElementById('sess-content').innerHTML = '<div class="lesson-loading">⏳ Generating your personalized lesson — this takes ~10 seconds.</div>';
+  document.getElementById('sess-reflection-wrap').style.display = 'none';
+  document.getElementById('sess-footer').style.display = 'none';
+  openModal('session-modal');
+
+  const r = await api.get(`/academy/session/${sessionId}`);
+  if(!r?.success){
+    document.getElementById('sess-content').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠</div><p>${r?.error || 'Failed to load this session.'}</p></div>`;
+    return;
+  }
+  document.getElementById('sess-icon').textContent = r.step.icon;
+  document.getElementById('sess-title').textContent = r.session.title;
+  document.getElementById('sess-sub').textContent = `Step ${r.step.number}: ${r.step.title} · ⏱ ${r.session.duration}`;
+  document.getElementById('sess-content').innerHTML = renderMarkdown(r.content);
+  document.getElementById('sess-reflection-wrap').style.display = r.completed ? 'none' : 'block';
+  document.getElementById('sess-footer').style.display = 'flex';
+  if(r.completed){
+    document.getElementById('sess-complete-btn').style.display = 'none';
+  } else {
+    document.getElementById('sess-complete-btn').style.display = '';
+    document.getElementById('sess-complete-text').textContent = '✓ Mark Complete';
+    document.getElementById('sess-complete-btn').disabled = false;
+  }
+}
+
+function closeSession(){
+  closeModal('session-modal');
+  currentSessionId = null;
+}
+
+async function completeCurrent(){
+  if(!currentSessionId) return;
+  const btn = document.getElementById('sess-complete-btn');
+  const loader = document.getElementById('sess-loader');
+  const text = document.getElementById('sess-complete-text');
+  btn.disabled = true; loader.style.display = 'inline-block'; text.textContent = ' Saving...';
+
+  const reflection = document.getElementById('sess-reflection').value.trim();
+  const r = await api.post(`/academy/session/${currentSessionId}/complete`, { reflection });
+  loader.style.display = 'none';
+
+  if(r?.success){
+    Toast.show(r.stepCompleted ? '🎓 Step complete! Next step unlocked.' : '✓ Session complete', 'success');
+    closeSession();
+    loadPath();
+  } else {
+    btn.disabled = false; text.textContent = '✓ Mark Complete';
+    Toast.show(r?.error || 'Failed to save','error');
+  }
+}
+
+/* ── DAILY NEWS ─────────────────────────────────────────── */
 async function loadNewsCards(){
+  document.getElementById('news-cards-row').dataset.loaded = '1';
   try {
     const d = await api.get('/academy/daily');
     if(!d?.data?.cards?.length) throw new Error('No cards');
@@ -212,34 +382,32 @@ async function loadNewsCards(){
 
 function getFallbackCards(){
   return [
-    {id:'card1',type:'market',icon:'📈',country:'USA',countryFlag:'🇺🇸',category:'Crypto / Markets',
-     title:'Bitcoin Holds Above $60K as Institutional Demand Grows',
-     summary:'Major asset managers continue accumulating BTC as ETF inflows hit record levels. Analysts see a potential new all-time high driven by institutional capital.',
-     opportunity:'Entrepreneurs in fintech and payments can position now for crypto-native product demand.',
-     source:'Bloomberg',sourceUrl:'https://www.bloomberg.com/markets'},
-    {id:'card2',type:'success',icon:'🏆',country:'UAE',countryFlag:'🇦🇪',category:'Business Success',
-     title:'Dubai Startup Raises $50M Targeting MENA E-Commerce Gap',
-     summary:'A Dubai-based logistics startup closed a $50M Series B, solving last-mile delivery for 22 underserved MENA markets. The raise happened in under 6 weeks.',
-     opportunity:'Regional gaps in logistics and e-commerce remain massive opportunities for first movers.',
+    {id:'card1',type:'market',icon:'📈',country:'USA',countryFlag:'🇺🇸',category:'Markets',
+     title:'Markets remain volatile — focus on what you control',
+     summary:'Macro noise dominates this week. Founders who execute beat founders who react.',
+     opportunity:'Spend less time on news, more time on customer conversations.',
+     source:'Double Eight AI',sourceUrl:'https://www.bloomberg.com/markets'},
+    {id:'card2',type:'success',icon:'🏆',country:'UAE',countryFlag:'🇦🇪',category:'Success Story',
+     title:'A founder who started with AED 5,000 now leads their category',
+     summary:'The pattern: relentless customer obsession, not capital.',
+     opportunity:'Identify the single customer behaviour you will obsess over this month.',
      source:'Forbes Middle East',sourceUrl:'https://www.forbesmiddleeast.com'},
-    {id:'card3',type:'opportunity',icon:'🚀',country:'Singapore',countryFlag:'🇸🇬',category:'Trending Opportunity',
-     title:'AI-Powered Personal Finance Apps Surge in Southeast Asia',
-     summary:'Singapore-based fintech apps targeting millennial wealth management saw 300% user growth in Q1. Regulatory sandbox approval is accelerating product launches.',
-     opportunity:'Entrepreneurs building AI tools for underserved financial markets have a narrow first-mover window.',
-     source:'TechCrunch',sourceUrl:'https://techcrunch.com'},
+    {id:'card3',type:'opportunity',icon:'🚀',country:'Saudi Arabia',countryFlag:'🇸🇦',category:'Opportunity',
+     title:'Vision 2030 budgets keep shifting — small players are winning',
+     summary:'Niche service providers landing government-adjacent contracts faster than ever.',
+     opportunity:'Map one government priority to your existing skill set this week.',
+     source:'Arab News',sourceUrl:'https://www.arabnews.com'},
   ];
 }
 
 function renderNewsCards(cards){
-  const row=document.getElementById('news-cards-row');
-  if(!row)return;
-  const catClasses={market:'nc-cat-market',success:'nc-cat-success',opportunity:'nc-cat-opportunity'};
-  row.innerHTML=cards.map(c=>`
+  const row = document.getElementById('news-cards-row');
+  if(!row) return;
+  const catClasses = {market:'nc-cat-market',success:'nc-cat-success',opportunity:'nc-cat-opportunity'};
+  row.innerHTML = cards.map(c=>`
     <a class="news-card" data-type="${c.type}" href="${c.sourceUrl}" target="_blank" rel="noopener noreferrer">
-      <div class="nc-top">
-        <div>
-          <div class="nc-icon">${c.icon}</div>
-        </div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem">
+        <div class="nc-icon">${c.icon}</div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.3rem">
           <span class="nc-cat ${catClasses[c.type]||'nc-cat-market'}">${c.category}</span>
           <span class="nc-country">${c.countryFlag} ${c.country}</span>
@@ -249,67 +417,33 @@ function renderNewsCards(cards){
       <div class="nc-summary">${c.summary}</div>
       <div class="nc-opportunity">💡 ${c.opportunity}</div>
       <div class="nc-footer">
-        <span class="nc-source">📰 ${c.source}</span>
+        <span>📰 ${c.source}</span>
         <span class="nc-link-btn">Read Article →</span>
       </div>
     </a>`).join('');
 }
 
-// ── COURSES ────────────────────────────────────────────────────────────────
-function bHTML(b){if(!b)return'';return`<span class="badge badge-${b}">${b==='hot'?'🔥 Hot':b==='new'?'New':'Free'}</span>`;}
-function cPill(cat){const c=CC[cat]||{bg:'var(--gold-dim)',c:'var(--gold)'};return`<span class="cat-pill" style="background:${c.bg};color:${c.c}">${cat}</span>`;}
+/* ── COURSES ────────────────────────────────────────────── */
+function bHTML(b){if(!b)return'';return`<span class="badge badge-${b}">${b==='hot'?'🔥 Hot':'Free'}</span>`;}
 
-function renderCourses(cat='all'){
-  cur=cat;
-  const filtered=cat==='all'?COURSES:COURSES.filter(c=>c.cat===cat);
-  document.getElementById('count-lbl').textContent=`${filtered.length} free resources`;
-  document.getElementById('courses-grid').innerHTML=!filtered.length
-    ?`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📚</div><p>No courses in this category yet.</p></div>`
-    :filtered.map(c=>`
-      <a class="course-card" href="${c.link}" target="_blank" rel="noopener noreferrer" style="text-decoration:none">
-        <div class="course-top"><div class="course-icon">${c.icon}</div><div>${bHTML(c.badge)}</div></div>
-        <div>${cPill(c.cat)}</div>
-        <div class="course-title">${c.title}</div>
-        <div class="course-desc">${c.desc}</div>
-        <div class="course-footer">
-          <span class="course-meta">⏱ ${c.duration}</span>
-          <button class="access-btn" onclick="event.preventDefault();window.open('${c.link}','_blank')">Watch Free →</button>
-        </div>
-      </a>`).join('');
+function renderCourses(){
+  document.getElementById('courses-grid').dataset.loaded = '1';
+  const grid = document.getElementById('courses-grid');
+  grid.innerHTML = COURSES.map(c=>`
+    <a class="course-card" href="${c.link}" target="_blank" rel="noopener noreferrer">
+      <div class="course-top"><div class="course-icon">${c.icon}</div><div>${bHTML(c.badge)}</div></div>
+      <div class="course-title">${c.title}</div>
+      <div class="course-desc">${c.desc}</div>
+      <div class="course-footer">
+        <span class="course-meta">⏱ ${c.duration}</span>
+        <span class="access-btn">Watch Free →</span>
+      </div>
+    </a>`).join('');
+  document.getElementById('count-lbl').textContent = `${COURSES.length} free resources`;
 }
 
-function filterCat(cat,btn){
-  document.querySelectorAll('.cat-tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderCourses(cat);
-}
-
-function adminAdd(){
-  const title=document.getElementById('adm-title').value.trim();
-  const desc=document.getElementById('adm-desc').value.trim();
-  if(!title||!desc){Toast.show('Title and description required','error');return;}
-  Toast.show('Admin add — backend feature coming soon','info');
-}
-
-async function adminRefresh(){
-  Toast.show('Refreshing AI news...','info');
-  const d=await api.post('/academy/refresh',{});
-  if(d?.data?.cards){renderNewsCards(d.data.cards);Toast.show('News refreshed!','success');}
-  else Toast.show('Refresh failed','error');
-}
-
-const _u=Auth.user();
-if(_u?.role==='admin'||_u?.isAdmin){
-  document.getElementById('admin-panel').classList.add('show');
-  const ap=document.getElementById('admin-panel');
-  const rb=document.createElement('button');
-  rb.className='btn btn-secondary';rb.style.marginLeft='.5rem';
-  rb.textContent='↻ Refresh News';rb.onclick=adminRefresh;
-  ap.querySelector('button.btn-primary').after(rb);
-}
-
-loadNewsCards();
-renderCourses('all');
+/* ── INIT ───────────────────────────────────────────────── */
+loadPath();
 </script>
 </body>
 </html>

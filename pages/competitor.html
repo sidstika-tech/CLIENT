@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Competitor Tracker — Double Eight AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<style>
+/* ── COMPETITOR HERO ── */
+.comp-hero{background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(245,158,11,0.04));border:1px solid var(--border-gold);border-radius:var(--radius-lg);padding:1.75rem 2rem;margin-bottom:1.75rem;position:relative;overflow:hidden;}
+.comp-hero::after{content:'⚔';position:absolute;right:1.75rem;top:50%;transform:translateY(-50%);font-size:5rem;opacity:.06;pointer-events:none;}
+.comp-hero h2{font-family:'Bebas Neue',cursive;font-size:1.8rem;letter-spacing:2px;color:var(--gold);margin-bottom:.35rem;}
+.comp-hero p{font-size:.875rem;color:var(--text2);line-height:1.65;max-width:580px;}
+.hero-stats{display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:1rem;font-size:.78rem;color:var(--text3);}
+.hero-stats .stat{display:flex;align-items:center;gap:.4rem;}
+.hero-stats .stat strong{color:var(--gold);font-weight:600;}
+.comp-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.1rem;}
+/* ── COMPETITORS GRID ── */
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1rem;}
+.comp-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.4rem;display:flex;flex-direction:column;gap:.8rem;transition:.2s;position:relative;overflow:hidden;}
+.comp-card:hover{border-color:var(--border-gold);}
+.comp-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.4;}
+.comp-card.threat-critical::before{background:#ef4444;opacity:.8;}
+.comp-card.threat-high::before{background:#f59e0b;opacity:.8;}
+.comp-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;}
+.comp-name{font-size:1rem;font-weight:600;color:var(--text);}
+.comp-meta{font-size:.72rem;color:var(--text3);margin-top:.2rem;}
+.comp-meta a{color:var(--gold);text-decoration:none;}
+.comp-meta a:hover{text-decoration:underline;}
+.threat-badge{font-size:.62rem;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;}
+.tb-low{background:rgba(34,197,94,0.12);color:#4ade80;}
+.tb-medium{background:rgba(245,158,11,0.12);color:var(--gold);}
+.tb-high{background:rgba(239,68,68,0.12);color:#f87171;}
+.tb-critical{background:rgba(239,68,68,0.2);color:#fca5a5;}
+.tb-none{background:rgba(99,102,241,0.1);color:#a5b4fc;}
+.comp-summary{font-size:.78rem;color:var(--text2);line-height:1.6;padding:.7rem .85rem;background:rgba(255,255,255,0.02);border-left:2px solid var(--border-gold);border-radius:6px;}
+.comp-summary.no-intel{color:var(--text3);font-style:italic;border-left-color:var(--border);}
+.comp-move{font-size:.78rem;color:var(--text);padding:.65rem .85rem;background:rgba(245,158,11,0.06);border-radius:7px;line-height:1.55;}
+.comp-move strong{color:var(--gold);display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem;}
+.comp-card-footer{display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding-top:.6rem;border-top:1px solid var(--border);font-size:.72rem;color:var(--text3);}
+.comp-card-actions{display:flex;gap:.4rem;}
+.btn-icon{background:none;border:1px solid var(--border);width:32px;height:32px;border-radius:7px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--text3);transition:.15s;}
+.btn-icon:hover{border-color:var(--border-gold);color:var(--gold);}
+/* ── EMPTY STATE ── */
+.empty-comp{text-align:center;padding:3rem 2rem;background:var(--surface);border:1px dashed var(--border-gold);border-radius:var(--radius-lg);}
+.empty-comp .icon{font-size:3rem;margin-bottom:1rem;opacity:.6;}
+.empty-comp h3{font-family:'Bebas Neue',cursive;font-size:1.25rem;letter-spacing:1px;color:var(--text);margin-bottom:.5rem;}
+.empty-comp p{font-size:.85rem;color:var(--text3);max-width:480px;margin:0 auto 1.25rem;line-height:1.6;}
+/* ── INTEL HISTORY MODAL ── */
+.intel-entry{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.15rem;margin-bottom:.8rem;}
+.intel-entry-top{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.6rem;}
+.intel-week{font-size:.74rem;color:var(--text3);}
+.intel-summary{font-size:.82rem;color:var(--text2);line-height:1.65;margin-bottom:.7rem;}
+.intel-signals{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.7rem;}
+.intel-signal{padding:.55rem .7rem;background:rgba(255,255,255,0.02);border-radius:6px;font-size:.72rem;line-height:1.5;}
+.intel-signal strong{display:block;color:var(--gold);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem;}
+.intel-signal .empty{color:var(--text3);font-style:italic;}
+.intel-move{font-size:.78rem;color:var(--text);padding:.65rem .85rem;background:rgba(245,158,11,0.08);border-radius:7px;line-height:1.55;border-left:2px solid var(--gold);}
+.intel-move strong{color:var(--gold);display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem;}
+@media(max-width:600px){
+  .comp-grid{grid-template-columns:1fr;}
+  .intel-signals{grid-template-columns:1fr;}
+  .comp-hero::after{display:none;}
+}
+</style>
+</head>
+<body>
+<div class="app-grid-bg"></div><div class="page-particles"></div>
+<div class="app">
+  <aside class="sidebar"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="hamburger">☰</button>
+      <span class="topbar-title">COMPETITOR TRACKER</span>
+      <div class="topbar-right">
+        <span style="font-size:.78rem;color:var(--text3)">📡 Weekly briefings — every Monday</span>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="comp-hero">
+        <h2>⚔ KNOW YOUR BATTLEFIELD</h2>
+        <p>Track up to 10 competitors. Every Monday at 9 AM, your phone tells you what moved in your market — pricing shifts, new offers, hiring signals — and the exact move you should make this week. The founders who win don't watch news. They watch the people next to them.</p>
+        <div class="hero-stats">
+          <span class="stat">📌 <span><strong id="stat-count">0</strong> tracked</span></span>
+          <span class="stat">🗓 <span>Next briefing: <strong id="stat-next">Monday</strong></span></span>
+          <span class="stat">⚔ <span><strong id="stat-critical">0</strong> high-threat</span></span>
+        </div>
+        <div class="comp-actions">
+          <button class="btn btn-primary" onclick="openAdd()">+ Track New Competitor</button>
+          <button class="btn btn-secondary" onclick="previewDigest()" id="preview-btn">📡 Generate My Briefing Now</button>
+        </div>
+      </div>
+
+      <div id="comp-list-wrap"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD COMPETITOR MODAL -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header">
+      <span style="font-size:1.5rem">⚔</span>
+      <div>
+        <div class="modal-title">Track a Competitor</div>
+        <div style="font-size:.8rem;color:var(--text3);margin-top:.1rem">The more specific you are, the sharper your weekly briefings will be.</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('add-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Competitor Name <span style="color:var(--red)">*</span></label>
+        <input type="text" class="form-input" id="cf-name" placeholder="e.g. Talabat, Careem, or the local shop down the street">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Website</label>
+        <input type="text" class="form-input" id="cf-website" placeholder="https://example.com">
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Country / HQ</label>
+          <input type="text" class="form-input" id="cf-country" placeholder="UAE, Saudi Arabia, Egypt...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Industry</label>
+          <input type="text" class="form-input" id="cf-industry" placeholder="Food delivery, fintech, e-commerce...">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">What do they do? (In your words)</label>
+        <textarea class="form-textarea" id="cf-description" placeholder="e.g. They sell handmade leather bags to women aged 25-40 in Dubai via Instagram, around AED 200-500 per piece." style="min-height:70px"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Why are you tracking them? <span style="color:var(--text3);font-weight:400">(optional but powerful)</span></label>
+        <textarea class="form-textarea" id="cf-why" placeholder="e.g. They are the closest direct competitor and they keep stealing my Instagram followers." style="min-height:60px"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('add-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addCompetitor()" id="add-btn">
+        <span class="loader" id="add-loader" style="display:none"></span>
+        <span id="add-text">+ Start Tracking</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- INTEL HISTORY MODAL -->
+<div class="modal-overlay" id="intel-modal">
+  <div class="modal" style="max-width:760px">
+    <div class="modal-header">
+      <span style="font-size:1.5rem">📡</span>
+      <div>
+        <div class="modal-title" id="intel-title">Intel History</div>
+        <div style="font-size:.8rem;color:var(--text3);margin-top:.1rem" id="intel-sub">Past briefings — newest first.</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('intel-modal')">✕</button>
+    </div>
+    <div class="modal-body" id="intel-body" style="max-height:70vh;overflow-y:auto;"></div>
+  </div>
+</div>
+
+<script src="../js/core.js"></script>
+<script>
+Auth.check();
+buildLayout('competitor');
+
+let competitors = [];
+
+function nextMondayLabel(){
+  const now=new Date();
+  const day=now.getDay();
+  const diff=(day===1&&now.getHours()<9)?0:((8-day)%7||7);
+  const nm=new Date(now); nm.setDate(now.getDate()+diff);
+  return nm.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+}
+
+async function loadCompetitors(){
+  const data = await api.get('/competitors');
+  competitors = data?.competitors || [];
+  renderList();
+  updateStats();
+}
+
+function updateStats(){
+  document.getElementById('stat-count').textContent = competitors.length;
+  document.getElementById('stat-next').textContent = nextMondayLabel();
+  const critical = competitors.filter(c => {
+    const latest = c.intel?.[0];
+    return latest && (latest.threatLevel === 'critical' || latest.threatLevel === 'high');
+  }).length;
+  document.getElementById('stat-critical').textContent = critical;
+}
+
+function threatBadge(level){
+  if(!level) return '<span class="threat-badge tb-none">Awaiting briefing</span>';
+  const cls = {low:'tb-low',medium:'tb-medium',high:'tb-high',critical:'tb-critical'}[level]||'tb-medium';
+  const label = {low:'Low threat',medium:'Medium',high:'High threat',critical:'Critical'}[level]||level;
+  return `<span class="threat-badge ${cls}">${label}</span>`;
+}
+
+function renderList(){
+  const wrap = document.getElementById('comp-list-wrap');
+  if(!competitors.length){
+    wrap.innerHTML = `
+      <div class="empty-comp">
+        <div class="icon">⚔</div>
+        <h3>YOUR BATTLEFIELD IS EMPTY</h3>
+        <p>You can't outmaneuver someone you're not watching. Add the 2-3 competitors who keep you up at night — we'll send you a personalized briefing every Monday morning.</p>
+        <button class="btn btn-primary" onclick="openAdd()">+ Track Your First Competitor</button>
+      </div>`;
+    return;
+  }
+  wrap.innerHTML = `<div class="comp-grid">${competitors.map(renderCard).join('')}</div>`;
+}
+
+function renderCard(c){
+  const latest = c.intel?.[0];
+  const threatCls = latest ? `threat-${latest.threatLevel}` : '';
+  const summary = latest ? latest.summary : 'No briefing yet. Click "Analyze Now" to generate your first intel, or wait until Monday for the automated weekly digest.';
+  const move = latest?.yourMove || '';
+  const lastDate = c.lastAnalyzedAt ? timeAgo(c.lastAnalyzedAt) : 'never';
+  const website = c.website ? `<a href="${c.website}" target="_blank" rel="noopener noreferrer">${c.website.replace(/^https?:\/\//,'').slice(0,40)}</a>` : '';
+  return `
+    <div class="comp-card ${threatCls}">
+      <div class="comp-card-top">
+        <div>
+          <div class="comp-name">${c.name}</div>
+          <div class="comp-meta">
+            ${c.country ? c.country + ' · ' : ''}${c.industry || 'no industry set'}${website ? ' · ' + website : ''}
+          </div>
+        </div>
+        ${threatBadge(latest?.threatLevel)}
+      </div>
+      <div class="comp-summary ${latest ? '' : 'no-intel'}">${summary}</div>
+      ${move ? `<div class="comp-move"><strong>Your move this week</strong>${move}</div>` : ''}
+      <div class="comp-card-footer">
+        <span>Last analyzed: ${lastDate}</span>
+        <div class="comp-card-actions">
+          <button class="btn-icon" title="View intel history" onclick="viewIntel('${c._id}')">📂</button>
+          <button class="btn-icon" title="Analyze now" onclick="analyzeNow('${c._id}',this)">⚡</button>
+          <button class="btn-icon" title="Remove" onclick="removeComp('${c._id}')" style="color:#f87171">✕</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function openAdd(){
+  document.getElementById('cf-name').value='';
+  document.getElementById('cf-website').value='';
+  document.getElementById('cf-country').value='';
+  document.getElementById('cf-industry').value='';
+  document.getElementById('cf-description').value='';
+  document.getElementById('cf-why').value='';
+  openModal('add-modal');
+}
+
+async function addCompetitor(){
+  const name = document.getElementById('cf-name').value.trim();
+  if(!name){ Toast.show('Competitor name is required','error'); return; }
+
+  const btn = document.getElementById('add-btn');
+  const loader = document.getElementById('add-loader');
+  const text = document.getElementById('add-text');
+  btn.disabled = true; loader.style.display='inline-block'; text.textContent=' Adding...';
+
+  const payload = {
+    name,
+    website: document.getElementById('cf-website').value.trim(),
+    country: document.getElementById('cf-country').value.trim(),
+    industry: document.getElementById('cf-industry').value.trim(),
+    description: document.getElementById('cf-description').value.trim(),
+    whyTracking: document.getElementById('cf-why').value.trim(),
+  };
+
+  const r = await api.post('/competitors', payload);
+  btn.disabled=false; loader.style.display='none'; text.textContent='+ Start Tracking';
+
+  if(r?.success){
+    closeModal('add-modal');
+    Toast.show(`${name} is now being tracked. Your first briefing arrives next Monday — or click "Analyze Now" to see it today.`, 'success');
+    loadCompetitors();
+  } else {
+    Toast.show(r?.error || 'Failed to add competitor','error');
+  }
+}
+
+async function analyzeNow(id, btn){
+  if(btn){
+    btn.disabled=true;
+    btn.innerHTML='<div class="typing-dots" style="padding:0"><span></span><span></span><span></span></div>';
+  }
+  Toast.show('Generating intelligence briefing... this takes ~10 seconds','info');
+  const r = await api.post(`/competitors/${id}/analyze`,{});
+  if(r?.success){
+    Toast.show('Briefing ready — check the card.','success');
+    loadCompetitors();
+  } else {
+    Toast.show(r?.error || 'Analysis failed','error');
+    if(btn){ btn.disabled=false; btn.innerHTML='⚡'; }
+  }
+}
+
+async function removeComp(id){
+  if(!confirm('Stop tracking this competitor? Their intel history will be deleted.')) return;
+  const r = await api.del(`/competitors/${id}`);
+  if(r?.success){ Toast.show('Removed','success'); loadCompetitors(); }
+  else Toast.show('Failed to remove','error');
+}
+
+function viewIntel(id){
+  const c = competitors.find(x=>x._id===id);
+  if(!c) return;
+  document.getElementById('intel-title').textContent = `${c.name} — Intel History`;
+  document.getElementById('intel-sub').textContent = `${c.intel?.length || 0} briefings on file`;
+  const body = document.getElementById('intel-body');
+  if(!c.intel?.length){
+    body.innerHTML = `<div class="empty-state"><div class="empty-icon">📡</div><p>No briefings yet for ${c.name}.</p></div>`;
+  } else {
+    body.innerHTML = c.intel.map(e=>{
+      const wk = e.weekOf ? new Date(e.weekOf).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : '';
+      const sig = e.signals || {};
+      return `
+        <div class="intel-entry">
+          <div class="intel-entry-top">
+            <span class="intel-week">📅 Week of ${wk}</span>
+            ${threatBadge(e.threatLevel)}
+          </div>
+          <div class="intel-summary">${e.summary || ''}</div>
+          <div class="intel-signals">
+            <div class="intel-signal"><strong>💰 Pricing</strong>${sig.pricing || '<span class="empty">no signal</span>'}</div>
+            <div class="intel-signal"><strong>🚀 Product</strong>${sig.product || '<span class="empty">no signal</span>'}</div>
+            <div class="intel-signal"><strong>📢 Marketing</strong>${sig.marketing || '<span class="empty">no signal</span>'}</div>
+            <div class="intel-signal"><strong>👥 Hiring</strong>${sig.hiring || '<span class="empty">no signal</span>'}</div>
+            <div class="intel-signal" style="grid-column:1/-1"><strong>💵 Funding / Partnerships</strong>${sig.funding || '<span class="empty">no signal</span>'}</div>
+          </div>
+          ${e.yourMove ? `<div class="intel-move"><strong>Your move</strong>${e.yourMove}</div>` : ''}
+        </div>`;
+    }).join('');
+  }
+  openModal('intel-modal');
+}
+
+async function previewDigest(){
+  if(!competitors.length){ Toast.show('Add a competitor first','error'); return; }
+  const btn = document.getElementById('preview-btn');
+  btn.disabled = true; btn.textContent = '⏳ Generating briefings...';
+  Toast.show('Analyzing all your competitors — this may take 30-60 seconds.','info');
+  const r = await api.get('/competitors/preview-digest');
+  btn.disabled = false; btn.textContent = '📡 Generate My Briefing Now';
+  if(r?.success){
+    Toast.show(`Briefing complete. ${r.items?.length || 0} competitors analyzed. Check your notifications bell.`,'success');
+    loadCompetitors();
+  } else {
+    Toast.show(r?.error || 'Failed','error');
+  }
+}
+
+loadCompetitors();
+</script>
+</body>
+</html>

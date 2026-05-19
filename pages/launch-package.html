@@ -382,7 +382,7 @@ async function generateAll() {
 // ── GENERATE SINGLE ───────────────────────────────────────────────────────
 async function generateSingle(itemId, silent = false) {
   const item = packageItems.find(i => i.id === itemId);
-  if (!item || item.status === 'generating') return;
+  if (!item) return;
 
   // Update UI to generating state
   item.status = 'generating';

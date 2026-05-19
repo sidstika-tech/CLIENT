@@ -1,5 +1,27 @@
 /* ── DOUBLE EIGHT AI — CORE JS ─────────────────────────────────────────── */
-const API = 'https://api.doubleeight.online/api';
+/* API base — auto-detects environment:
+   • localhost / 127.0.0.1 / file://  →  http://localhost:5000/api  (local dev server)
+   • anything else                    →  https://api.doubleeight.online/api  (production)
+   To override: set window.__API_BASE__ before loading core.js, OR
+   localStorage.setItem('d8_api', 'http://your-custom-host:port/api'). */
+const API = (() => {
+  if (typeof window !== 'undefined') {
+    // 1. Manual override via localStorage (highest priority — survives reloads)
+    const override = (function(){ try { return localStorage.getItem('d8_api'); } catch { return null; } })();
+    if (override) return override;
+    // 2. Window global injected before this script
+    if (window.__API_BASE__) return window.__API_BASE__;
+    // 3. Auto-detect: localhost / 127.0.0.1 / loopback → local backend
+    const h = window.location.hostname;
+    if (h === 'localhost' || h === '127.0.0.1' || h === '0.0.0.0' || h === '' /* file:// */) {
+      return 'http://localhost:5000/api';
+    }
+  }
+  // 4. Default: production
+  return 'https://api.doubleeight.online/api';
+})();
+// Useful for debugging — opens devtools and reveals which API the page is talking to
+if (typeof window !== 'undefined') window.__API__ = API;
 
 /* ── AUTH ── */
 const Auth = {
@@ -16,26 +38,22 @@ const api = {
   async get(path) {
     const r = await fetch(`${API}${path}`, { headers: this.headers() });
     if(r.status===401) { Auth.logout(); return; }
-    const text = await r.text();
-    try { return JSON.parse(text); } catch { throw new Error(`Server error (${r.status}): ${text.slice(0,150)}`); }
+    return r.json();
   },
   async post(path, body) {
     const r = await fetch(`${API}${path}`, { method:'POST', headers: this.headers(), body: JSON.stringify(body) });
     if(r.status===401) { Auth.logout(); return; }
-    const text = await r.text();
-    try { return JSON.parse(text); } catch { throw new Error(`Server error (${r.status}): ${text.slice(0,150)}`); }
+    return r.json();
   },
   async put(path, body) {
     const r = await fetch(`${API}${path}`, { method:'PUT', headers: this.headers(), body: JSON.stringify(body) });
     if(r.status===401) { Auth.logout(); return; }
-    const text = await r.text();
-    try { return JSON.parse(text); } catch { throw new Error(`Server error (${r.status}): ${text.slice(0,150)}`); }
+    return r.json();
   },
   async del(path) {
     const r = await fetch(`${API}${path}`, { method:'DELETE', headers: this.headers() });
     if(r.status===401) { Auth.logout(); return; }
-    const text = await r.text();
-    try { return JSON.parse(text); } catch { throw new Error(`Server error (${r.status}): ${text.slice(0,150)}`); }
+    return r.json();
   },
   async streamPost(path, body, onChunk) {
     const r = await fetch(`${API}${path}`, { method:'POST', headers: this.headers(), body: JSON.stringify(body) });
@@ -69,6 +87,7 @@ const T = {
     'nav.dashboard':'Dashboard', 'nav.dna':'Business DNA', 'nav.package':'Launch Package', 'nav.chat':'AI Advisor', 'nav.tools':'All Tools',
     'nav.generator':'Business Generator', 'nav.market':'Market Research',
     'nav.marketing':'Marketing Builder', 'nav.prompt':'Prompt Writer',
+    'nav.competitor':'Competitor Tracker',
     'nav.vault':'Project Vault', 'nav.billing':'Billing & Plans', 'nav.settings':'Settings', 'nav.learn':'LEARN & GROW', 'nav.academy':'Business Academy', 'nav.community':'Community',
     // Common
     'btn.generate':'⚡ Generate', 'btn.generating':'Generating...', 'btn.copy':'Copy',
@@ -159,6 +178,7 @@ const T = {
     'nav.dashboard':'لوحة التحكم', 'nav.dna':'هويتي التجارية', 'nav.package':'حزمة الإطلاق', 'nav.chat':'المستشار الذكي', 'nav.tools':'كل الأدوات',
     'nav.generator':'مولّد الأعمال', 'nav.market':'أبحاث السوق',
     'nav.marketing':'بناء التسويق', 'nav.prompt':'كاتب البرومبت',
+    'nav.competitor':'متعقّب المنافسين',
     'nav.vault':'خزنة المشاريع', 'nav.billing':'الفواتير والخطط', 'nav.settings':'الإعدادات', 'nav.learn':'تعلّم وانمُ', 'nav.academy':'أكاديمية الأعمال', 'nav.community':'المجتمع',
     // Common
     'btn.generate':'⚡ توليد', 'btn.generating':'جارٍ التوليد...', 'btn.copy':'نسخ',
@@ -313,6 +333,7 @@ function buildLayout(pageId) {
     ]},
     { group: t('nav.tools_group'), items:[
       { id:'tools', icon:'◫', labelKey:'nav.tools', href:'tools.html' },
+      { id:'competitor', icon:'⚔', labelKey:'nav.competitor', href:'competitor.html' },
     ]},
     { group: t('nav.account'), items:[
       { id:'vault', icon:'▣', labelKey:'nav.vault', href:'vault.html' },
@@ -460,3 +481,201 @@ function timeAgo(d) {
   const lang = localStorage.getItem('d8_lang') || 'en';
   applyDir(lang);
 })();
+
+/* ══════════════════════════════════════════════════════════════════
+   NOTIFICATIONS BELL — auto-injected into every page's topbar
+   Polls /api/notifications/unread-count every 60s.
+   Click → opens a drawer listing all notifications.
+══════════════════════════════════════════════════════════════════ */
+const Notifications = {
+  pollInterval: null,
+  cache: [],
+
+  // Inject CSS once
+  injectStyles() {
+    if (document.getElementById('notif-styles')) return;
+    const s = document.createElement('style');
+    s.id = 'notif-styles';
+    s.textContent = `
+      .notif-bell{position:relative;background:none;border:1px solid var(--border);width:36px;height:36px;border-radius:9px;cursor:pointer;color:var(--text2);font-size:1.05rem;display:flex;align-items:center;justify-content:center;transition:.15s;}
+      .notif-bell:hover{border-color:var(--border-gold);color:var(--gold);}
+      .notif-bell .nb-badge{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:#ef4444;color:#fff;font-size:.62rem;font-weight:700;display:none;align-items:center;justify-content:center;border:2px solid var(--bg2,#0d0d1c);}
+      .notif-bell .nb-badge.show{display:flex;}
+      .notif-drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:990;opacity:0;pointer-events:none;transition:.2s;}
+      .notif-drawer-overlay.open{opacity:1;pointer-events:auto;}
+      .notif-drawer{position:fixed;top:0;right:0;height:100vh;width:380px;max-width:92vw;background:var(--bg2,#0d0d1c);border-left:1px solid var(--border);z-index:991;display:flex;flex-direction:column;transform:translateX(110%);transition:transform .25s;}
+      [dir="rtl"] .notif-drawer{right:auto;left:0;border-left:none;border-right:1px solid var(--border);transform:translateX(-110%);}
+      .notif-drawer.open{transform:translateX(0);}
+      .notif-drawer-header{padding:1.1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:.5rem;}
+      .notif-drawer-header h3{font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px;color:var(--gold);}
+      .notif-drawer-close{background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;}
+      .notif-drawer-close:hover{background:var(--surface);color:var(--text);}
+      .notif-actions{display:flex;gap:.4rem;padding:.6rem 1.25rem;border-bottom:1px solid var(--border);font-size:.74rem;}
+      .notif-actions button{background:none;border:none;color:var(--text3);cursor:pointer;font-family:'Outfit',sans-serif;font-size:.74rem;padding:.25rem .5rem;border-radius:5px;transition:.15s;}
+      .notif-actions button:hover{color:var(--gold);background:var(--surface);}
+      .notif-list{flex:1;overflow-y:auto;padding:.5rem;}
+      .notif-empty{padding:3rem 1.5rem;text-align:center;color:var(--text3);font-size:.85rem;line-height:1.7;}
+      .notif-empty .ne-icon{font-size:2.5rem;margin-bottom:.85rem;opacity:.4;}
+      .notif-item{display:flex;gap:.8rem;padding:.8rem .95rem;border-radius:9px;cursor:pointer;transition:.15s;border:1px solid transparent;margin-bottom:.35rem;position:relative;}
+      .notif-item:hover{background:var(--surface);border-color:var(--border);}
+      .notif-item.unread{background:rgba(245,158,11,0.04);border-color:rgba(245,158,11,0.15);}
+      .notif-item.unread::before{content:'';position:absolute;top:.95rem;right:.7rem;width:7px;height:7px;border-radius:50%;background:var(--gold);}
+      [dir="rtl"] .notif-item.unread::before{right:auto;left:.7rem;}
+      .notif-icon{width:36px;height:36px;border-radius:9px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0;}
+      .notif-content{flex:1;min-width:0;padding-right:.5rem;}
+      .notif-title{font-size:.85rem;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:.25rem;}
+      .notif-body{font-size:.76rem;color:var(--text3);line-height:1.55;white-space:pre-line;max-height:80px;overflow:hidden;}
+      .notif-meta{display:flex;align-items:center;justify-content:space-between;margin-top:.4rem;gap:.5rem;}
+      .notif-time{font-size:.7rem;color:var(--text3);}
+      .notif-action{font-size:.72rem;color:var(--gold);font-weight:600;text-decoration:none;}
+      .notif-action:hover{text-decoration:underline;}
+    `;
+    document.head.appendChild(s);
+  },
+
+  // Inject bell into the topbar-right of every page
+  injectBell() {
+    const right = document.querySelector('.topbar-right');
+    if (!right || document.getElementById('notif-bell')) return;
+    this.injectStyles();
+    const btn = document.createElement('button');
+    btn.id = 'notif-bell';
+    btn.className = 'notif-bell';
+    btn.title = 'Notifications';
+    btn.innerHTML = '🔔<span class="nb-badge" id="notif-badge">0</span>';
+    btn.onclick = () => this.open();
+    right.insertBefore(btn, right.firstChild);
+
+    // Build the drawer
+    if (!document.getElementById('notif-drawer-overlay')) {
+      const overlay = document.createElement('div');
+      overlay.id = 'notif-drawer-overlay';
+      overlay.className = 'notif-drawer-overlay';
+      overlay.onclick = () => this.close();
+      const drawer = document.createElement('aside');
+      drawer.id = 'notif-drawer';
+      drawer.className = 'notif-drawer';
+      drawer.innerHTML = `
+        <div class="notif-drawer-header">
+          <h3>🔔 NOTIFICATIONS</h3>
+          <button class="notif-drawer-close" onclick="Notifications.close()">✕</button>
+        </div>
+        <div class="notif-actions">
+          <button onclick="Notifications.markAllRead()">✓ Mark all as read</button>
+          <button onclick="Notifications.clearAll()" style="margin-left:auto;color:#f87171">Clear all</button>
+        </div>
+        <div class="notif-list" id="notif-list">
+          <div class="notif-empty">Loading…</div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      document.body.appendChild(drawer);
+    }
+  },
+
+  async fetchCount() {
+    try {
+      const r = await api.get('/notifications/unread-count');
+      const badge = document.getElementById('notif-badge');
+      if (!badge) return;
+      const n = r?.count || 0;
+      badge.textContent = n > 99 ? '99+' : n;
+      badge.classList.toggle('show', n > 0);
+    } catch {}
+  },
+
+  async fetchList() {
+    try {
+      const r = await api.get('/notifications?limit=50');
+      this.cache = r?.notifications || [];
+      this.renderList();
+    } catch {
+      this.renderList();
+    }
+  },
+
+  renderList() {
+    const list = document.getElementById('notif-list');
+    if (!list) return;
+    if (!this.cache.length) {
+      list.innerHTML = `
+        <div class="notif-empty">
+          <div class="ne-icon">🔕</div>
+          <div>No notifications yet.</div>
+          <div style="font-size:.75rem;margin-top:.4rem;opacity:.7">Track a competitor or complete an Academy session — your updates appear here.</div>
+        </div>`;
+      return;
+    }
+    list.innerHTML = this.cache.map(n => `
+      <div class="notif-item ${n.read ? '' : 'unread'}" onclick="Notifications.handleClick('${n._id}', ${n.actionUrl ? `'${n.actionUrl}'` : 'null'})">
+        <div class="notif-icon">${n.icon || '◎'}</div>
+        <div class="notif-content">
+          <div class="notif-title">${n.title}</div>
+          <div class="notif-body">${(n.body || '').replace(/</g,'&lt;')}</div>
+          <div class="notif-meta">
+            <span class="notif-time">${timeAgo(n.createdAt)}</span>
+            ${n.actionLabel ? `<span class="notif-action">${n.actionLabel}</span>` : ''}
+          </div>
+        </div>
+      </div>
+    `).join('');
+  },
+
+  async handleClick(id, actionUrl) {
+    await api.put(`/notifications/${id}/read`, {});
+    this.fetchCount();
+    if (actionUrl && actionUrl !== 'null') {
+      // Internal route handling — strip leading /
+      window.location.href = actionUrl.startsWith('/') ? actionUrl.slice(1) : actionUrl;
+    } else {
+      // Just mark as read in UI
+      const item = this.cache.find(c => c._id === id);
+      if (item) item.read = true;
+      this.renderList();
+    }
+  },
+
+  async markAllRead() {
+    await api.put('/notifications/read-all', {});
+    this.cache.forEach(n => n.read = true);
+    this.renderList();
+    this.fetchCount();
+    Toast.show('All marked as read', 'success');
+  },
+
+  async clearAll() {
+    if (!confirm('Clear all notifications? This cannot be undone.')) return;
+    await api.del('/notifications/clear-all');
+    this.cache = [];
+    this.renderList();
+    this.fetchCount();
+    Toast.show('Cleared', 'success');
+  },
+
+  open() {
+    document.getElementById('notif-drawer-overlay')?.classList.add('open');
+    document.getElementById('notif-drawer')?.classList.add('open');
+    this.fetchList();
+  },
+
+  close() {
+    document.getElementById('notif-drawer-overlay')?.classList.remove('open');
+    document.getElementById('notif-drawer')?.classList.remove('open');
+  },
+
+  start() {
+    if (!Auth.token()) return;
+    this.injectBell();
+    this.fetchCount();
+    if (this.pollInterval) clearInterval(this.pollInterval);
+    this.pollInterval = setInterval(() => this.fetchCount(), 60000);
+  },
+};
+
+// Auto-start after sidebar/topbar is built — sits at the end of buildLayout
+const _originalBuildLayout = buildLayout;
+buildLayout = function(pageId) {
+  _originalBuildLayout(pageId);
+  // Topbar exists now — inject the bell
+  setTimeout(() => Notifications.start(), 0);
+};
