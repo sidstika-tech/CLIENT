@@ -110,8 +110,8 @@
 .course-footer{display:flex;align-items:center;justify-content:space-between;padding-top:.6rem;border-top:1px solid var(--border);}
 .course-meta{font-size:.7rem;color:var(--text3);}
 .access-btn{background:var(--gold-dim);border:1px solid var(--border-gold);color:var(--gold);font-size:.72rem;font-weight:600;padding:.3rem .75rem;border-radius:7px;cursor:pointer;font-family:'Outfit',sans-serif;}
-@media(max-width:600px){
-  #news-cards-row{grid-template-columns:1fr!important;}
+@media(max-width:380px){
+ <div id="news-cards-row" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:1rem;">
   .academy-hero::after{display:none;}
   .step-progress-pill{order:-1;margin-left:0;}
   .courses-grid{grid-template-columns:1fr;}
