@@ -101,7 +101,7 @@ const T = {
   en: {
     // Nav
     'nav.main':'MAIN', 'nav.tools_group':'AI TOOLS', 'nav.account':'ACCOUNT',
-    'nav.dashboard':'Dashboard', 'nav.dna':'Business DNA', 'nav.package':'Launch Package', 'nav.chat':'AI Advisor', 'nav.tools':'All Tools',
+    'nav.dashboard':'Dashboard', 'nav.dna':'Business DNA', 'nav.package':'Launch Package', 'nav.chat':'AI Advisor', 'nav.tools':'All Tools', 'nav.image':'Image Generator',
     'nav.generator':'Business Generator', 'nav.market':'Market Research',
     'nav.marketing':'Marketing Builder', 'nav.prompt':'Prompt Writer',
     'nav.competitor':'Competitor Tracker',
@@ -238,7 +238,7 @@ const T = {
   ar: {
     // Nav
     'nav.main':'الرئيسية', 'nav.tools_group':'أدوات الذكاء الاصطناعي', 'nav.account':'الحساب',
-    'nav.dashboard':'لوحة التحكم', 'nav.dna':'هويتي التجارية', 'nav.package':'حزمة الإطلاق', 'nav.chat':'المستشار الذكي', 'nav.tools':'كل الأدوات',
+    'nav.dashboard':'لوحة التحكم', 'nav.dna':'هويتي التجارية', 'nav.package':'حزمة الإطلاق', 'nav.chat':'المستشار الذكي', 'nav.tools':'كل الأدوات', 'nav.image':'مولّد الصور',
     'nav.generator':'مولّد الأعمال', 'nav.market':'أبحاث السوق',
     'nav.marketing':'بناء التسويق', 'nav.prompt':'كاتب البرومبت',
     'nav.competitor':'متعقّب المنافسين',
@@ -442,6 +442,7 @@ function buildLayout(pageId) {
     ]},
     { group: t('nav.tools_group'), items:[
       { id:'tools', icon:'◫', labelKey:'nav.tools', href:'tools.html' },
+      { id:'image', icon:'🎨', labelKey:'nav.image', href:'image.html' },
       { id:'competitor', icon:'⚔', labelKey:'nav.competitor', href:'competitor.html' },
     ]},
     { group: t('nav.account'), items:[
