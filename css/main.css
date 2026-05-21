@@ -553,3 +553,12 @@ html, body { overflow-x: hidden; max-width: 100vw; }
 #website-preview-wrap{margin-top:1rem;}
 #website-preview-frame{width:100%;height:480px;border:1px solid var(--border);border-radius:var(--radius);background:#fff;}
 @media(max-width:800px){.two-col{grid-template-columns:1fr;}.quick-actions{grid-template-columns:1fr 1fr;}}
+@media(max-width:600px){
+  .page-content{overflow-x:hidden;}
+  .main{overflow-x:hidden;}
+  #news-cards-row{grid-template-columns:1fr!important;}
+  .tools-grid{grid-template-columns:1fr!important;}
+  .stats-grid{grid-template-columns:1fr 1fr!important;}
+  .two-col{grid-template-columns:1fr!important;}
+  .quick-actions{grid-template-columns:1fr 1fr!important;}
+}
