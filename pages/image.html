@@ -287,18 +287,10 @@ function closeLightbox() {
 }
 
 async function downloadImage(url, idx) {
-  try {
-    const res = await fetch(url);
-    const blob = await res.blob();
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `d8-image-${Date.now()}-${idx + 1}.png`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-  } catch {
-    // Fallback: open in new tab
-    window.open(url, '_blank');
-  }
+  const a = document.createElement('a');
+  a.href = url; // works directly for both base64 data URLs and public URLs
+  a.download = `d8-image-${Date.now()}-${idx + 1}.png`;
+  a.click();
 }
 
 function handleKey(e) {
