@@ -97,7 +97,7 @@
 .news-card-skeleton::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 30%,rgba(255,255,255,0.04) 50%,transparent 70%);animation:shimmer 1.4s infinite;}
 @keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
 /* ── COURSES ── */
-.courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;}
+.courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:1rem;}
 .course-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.3rem;transition:.25s;display:flex;flex-direction:column;gap:.65rem;text-decoration:none;color:inherit;}
 .course-card:hover{border-color:var(--border-gold);transform:translateY(-2px);}
 .course-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;}
@@ -110,8 +110,7 @@
 .course-footer{display:flex;align-items:center;justify-content:space-between;padding-top:.6rem;border-top:1px solid var(--border);}
 .course-meta{font-size:.7rem;color:var(--text3);}
 .access-btn{background:var(--gold-dim);border:1px solid var(--border-gold);color:var(--gold);font-size:.72rem;font-weight:600;padding:.3rem .75rem;border-radius:7px;cursor:pointer;font-family:'Outfit',sans-serif;}
-@media(max-width:380px){
- <div id="news-cards-row" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:1rem;">
+@media(max-width:600px){
   .academy-hero::after{display:none;}
   .step-progress-pill{order:-1;margin-left:0;}
   .courses-grid{grid-template-columns:1fr;}
@@ -122,12 +121,12 @@
   .step-header{padding:.85rem 1rem;gap:.65rem;}
   .step-icon{width:40px;height:40px;font-size:1.2rem;}
   .step-title{font-size:1.05rem;}
-  .step-body.open,.step-card.open .step-body{padding:0 1rem 1rem;}
+  .step-card.open .step-body{padding:0 1rem 1rem;}
   .session-row{padding:.7rem .75rem;gap:.65rem;}
   .path-progress{padding:1.1rem 1.2rem;}
   .pp-stat strong{font-size:.95rem;}
   .path-steps{gap:.75rem;}
-  .page-content{padding:.75rem;}
+  .page-content{padding:.75rem!important;}
 }
 </style>
 </head>
