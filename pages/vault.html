@@ -49,18 +49,44 @@ function applyTranslations() {
 applyTranslations();
 
 async function loadVault() {
-  const [tools,gen,mr,mkt]=await Promise.all([
-    api.get('/tools/reports'),api.get('/generator/reports'),
-    api.get('/market-research/reports'),api.get('/marketing/reports'),
+  // Single source of truth for tool reports (now properly excludes package items)
+  // plus the launch package endpoint for the 8 package documents
+  const [tools, pkg] = await Promise.all([
+    api.get('/tools/reports'),
+    api.get('/launch-package').catch(() => null),
   ]);
-  allReports=[
-    ...(tools?.reports||[]).map(r=>({...r,source:'tools'})),
-    ...(gen?.reports||[]).map(r=>({...r,source:'generator'})),
-    ...(mr?.reports||[]).map(r=>({...r,source:'market'})),
-    ...(mkt?.reports||[]).map(r=>({...r,source:'marketing'})),
-  ].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
-  const isAr=localStorage.getItem('d8_lang')==='ar';
-  document.getElementById('vault-count').textContent=`${allReports.length} ${isAr?'تقارير':'reports'}`;
+
+  // Tool reports (everything except package items)
+  const toolReports = (tools?.reports || []).map(r => ({ ...r, source: 'tools' }));
+
+  // Launch Package reports — pull from package items that have a reportId
+  const packageReports = [];
+  if (pkg?.items) {
+    for (const item of pkg.items) {
+      if (item.reportId) {
+        packageReports.push({
+          _id: item.reportId,
+          title: item.label + ' — ' + (pkg.dna?.matchResult?.businessMatch || ''),
+          type: item.id,
+          createdAt: pkg.dna?.completedAt || new Date(),
+          source: 'package',
+        });
+      }
+    }
+  }
+
+  // Dedup safety net: never show the same _id twice
+  const seen = new Set();
+  allReports = [...toolReports, ...packageReports]
+    .filter(r => {
+      if (seen.has(String(r._id))) return false;
+      seen.add(String(r._id));
+      return true;
+    })
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  const isAr = localStorage.getItem('d8_lang') === 'ar';
+  document.getElementById('vault-count').textContent = `${allReports.length} ${isAr ? 'تقارير' : 'reports'}`;
   renderVault(allReports);
 }
 function filterVault(type,btn) {

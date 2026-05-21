@@ -234,31 +234,50 @@ async function loadPlan() {
   if(plan==='free') document.getElementById('limit-warning').style.display='block';
 }
 
-function choosePlan(planId, freeOffer) {
-  selectedPlanId=planId; isFreeOffer=freeOffer;
-  const p=PLANS.find(pl=>pl.id===planId);
-  const ar=isAr();
-  document.getElementById('pay-modal-title').textContent = freeOffer?t('bill.pay_free_title'):`${ar?'ترقية إلى':'UPGRADE TO'} ${ar?p.nameAr:p.name.toUpperCase()}`;
-  document.getElementById('pay-modal-sub').textContent = freeOffer
-    ? `${ar?p.nameAr:'Pro Plan'} — ${ar?'الشهر الأول مجاناً، ثم 19$/شهر. ألغِ في أي وقت.':'First month free, then $19/month. Cancel anytime.'}`
-    : `${ar?p.nameAr:p.name} — ${p.price}${ar?p.periodAr:p.period}`;
-  document.getElementById('offer-note').style.display = freeOffer?'block':'none';
-  document.getElementById('offer-note').textContent = freeOffer ? t('bill.pay_free_note') : '';
-  document.getElementById('pay-btn').textContent = freeOffer ? t('bill.pay_activate') : t('bill.pay_confirm');
+async function choosePlan(planId, freeOffer) {
+  selectedPlanId = planId;
+  isFreeOffer = freeOffer;
 
-  const cards=getSavedCards();
-  const pickEl=document.getElementById('pay-cards-list');
-  const tabsEl=document.getElementById('pay-tabs');
-  if(cards.length) {
-    tabsEl.style.display='flex';
-    pickEl.innerHTML = cards.map((c,i)=>`
-      <div class="saved-card-opt ${i===0?'selected':''}" onclick="selectSavedCard(${i},this)">
-        <div class="card-logo-sm ${c.brand}">${c.brand==='visa'?'VISA':c.brand==='mc'?'MC':'CARD'}</div>
+  // ── FREE MONTH: NO CARD REQUIRED ──
+  // Free trial activates instantly. User stays on Pro features for 30 days,
+  // but usage limits still follow the Pro plan (so quotas aren't unlimited).
+  if (freeOffer) {
+    const ar = isAr();
+    if (!confirm(ar
+      ? '🎁 سيتم تفعيل الشهر الأول مجاناً — بدون بطاقة ائتمان. ستحصل على كل مميزات Pro لمدة 30 يوماً، وعند انتهاء التجربة ستعود تلقائياً إلى الخطة المجانية. هل تريد المتابعة؟'
+      : '🎁 Your first month will be activated FREE — no credit card required. You get all Pro features for 30 days. When the trial ends, you automatically return to the Free plan. Continue?'
+    )) return;
+    try {
+      const d = await api.post('/membership/upgrade', { plan: planId, freeMonth: true, noCard: true });
+      if (d?.error) throw new Error(d.error);
+      Toast.show(ar ? '🎁 الشهر المجاني مفعّل! استمتع بكل مميزات Pro لمدة 30 يوماً.' : '🎁 Free month activated! Enjoy all Pro features for 30 days.', 'success', 5000);
+      setTimeout(() => loadPlan(), 800);
+    } catch (e) {
+      Toast.show(e.message || 'Activation failed', 'error');
+    }
+    return;
+  }
+
+  const p = PLANS.find(pl => pl.id === planId);
+  const ar = isAr();
+  document.getElementById('pay-modal-title').textContent = `${ar ? 'ترقية إلى' : 'UPGRADE TO'} ${ar ? p.nameAr : p.name.toUpperCase()}`;
+  document.getElementById('pay-modal-sub').textContent = `${ar ? p.nameAr : p.name} — ${p.price}${ar ? p.periodAr : p.period}`;
+  document.getElementById('offer-note').style.display = 'none';
+  document.getElementById('pay-btn').textContent = t('bill.pay_confirm');
+
+  const cards = getSavedCards();
+  const pickEl = document.getElementById('pay-cards-list');
+  const tabsEl = document.getElementById('pay-tabs');
+  if (cards.length) {
+    tabsEl.style.display = 'flex';
+    pickEl.innerHTML = cards.map((c, i) => `
+      <div class="saved-card-opt ${i === 0 ? 'selected' : ''}" onclick="selectSavedCard(${i},this)">
+        <div class="card-logo-sm ${c.brand}">${c.brand === 'visa' ? 'VISA' : c.brand === 'mc' ? 'MC' : 'CARD'}</div>
         <div><div style="font-size:.85rem;font-weight:500">•••• ${c.last4}</div><div style="font-size:.72rem;color:var(--text3)">Exp ${c.expiry}</div></div>
       </div>`).join('');
-  } else { tabsEl.style.display='none'; }
+  } else { tabsEl.style.display = 'none'; }
   const firstTab = document.querySelector('.tab-btn');
-  if(firstTab) switchPayTab('new', firstTab);
+  if (firstTab) switchPayTab('new', firstTab);
   openModal('payment-modal');
 }
 

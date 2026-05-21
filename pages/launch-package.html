@@ -354,7 +354,11 @@ function renderCard(item, idx) {
     </div>`;
 }
 
-// ── GENERATE ALL ──────────────────────────────────────────────────────────
+// ── GENERATE ALL — BACKGROUND ───────────────────────────────────────────
+// Starts the job server-side, then polls every 2s.
+// Generation continues even if the user closes the tab.
+let pollInterval = null;
+
 async function generateAll() {
   if (isGeneratingAll) return;
   isGeneratingAll = true;
@@ -364,19 +368,83 @@ async function generateAll() {
   const text = document.getElementById('gen-all-text');
   if (btn) { btn.disabled = true; }
   if (icon) icon.innerHTML = '<span class="loader" style="width:16px;height:16px;border-width:2px"></span>';
-  if (text) text.textContent = 'Generating your business...';
+  if (text) text.textContent = 'Starting in background...';
 
-  // Get pending items in order
-  const pending = packageItems.filter(i => i.status !== 'done');
+  const lang = localStorage.getItem('d8_lang') || 'en';
 
-  for (const item of pending) {
-    await generateSingle(item.id, true); // silent=true (no toast each time)
-    // Small pause between generations to not overwhelm the API
-    await new Promise(r => setTimeout(r, 800));
+  const r = await api.post('/launch-package/generate-all-background', { language: lang });
+  if (!r?.success) {
+    Toast.show(r?.error || 'Failed to start generation', 'error');
+    isGeneratingAll = false;
+    if (btn) btn.disabled = false;
+    return;
   }
 
-  isGeneratingAll = false;
-  Toast.show('🎉 All documents generated! Your business is ready.', 'success', 5000);
+  Toast.show('🚀 Generating in background — you can close this tab. Progress saves automatically.', 'success', 6000);
+  startPolling();
+}
+
+function startPolling() {
+  if (pollInterval) clearInterval(pollInterval);
+
+  const tick = async () => {
+    const s = await api.get('/launch-package/status');
+    if (!s?.success) return;
+
+    // Mark completed items as done
+    if (Array.isArray(s.completedTypes)) {
+      packageItems.forEach(item => {
+        if (s.completedTypes.includes(item.id) && item.status !== 'done') {
+          item.status = 'done';
+          // Refresh that card by reloading full package data once below
+        }
+      });
+    }
+
+    // Update text + UI
+    const text = document.getElementById('gen-all-text');
+    if (s.job && s.job.status === 'running') {
+      if (text) text.textContent = `Generating ${s.job.currentLabel || '...'} (${s.completedCount}/${s.total})`;
+      // Mark current item as generating
+      packageItems.forEach(item => {
+        if (item.id === s.job.currentItemId && item.status !== 'done') item.status = 'generating';
+      });
+    }
+
+    // Re-render cards to reflect current state
+    packageItems.forEach(item => updateCard(item));
+    updateProgress();
+
+    if (!s.job || s.job.status === 'completed' || s.job.status === 'failed' || s.job.status === 'cancelled') {
+      clearInterval(pollInterval);
+      pollInterval = null;
+      isGeneratingAll = false;
+      // Reload from server to get fresh reportIds for each completed item
+      const fresh = await api.get('/launch-package');
+      if (fresh?.success) {
+        packageItems = fresh.items;
+        renderPage();
+      }
+      if (s.job?.status === 'completed') {
+        Toast.show('🎉 All documents generated! Your business is ready.', 'success', 5000);
+      } else if (s.job?.error) {
+        Toast.show('Some items failed — click ↺ Regenerate on any pending card.', 'error', 5000);
+      }
+    }
+  };
+
+  tick(); // run immediately
+  pollInterval = setInterval(tick, 2000);
+}
+
+// On page load: if a job is already running on the server, resume polling.
+async function checkForExistingJob() {
+  const s = await api.get('/launch-package/status');
+  if (s?.job && s.job.status === 'running') {
+    isGeneratingAll = true;
+    Toast.show('Generation in progress — resuming live updates', 'info');
+    startPolling();
+  }
 }
 
 // ── GENERATE SINGLE ───────────────────────────────────────────────────────
@@ -384,12 +452,12 @@ async function generateSingle(itemId, silent = false) {
   const item = packageItems.find(i => i.id === itemId);
   if (!item) return;
 
-  // Update UI to generating state
   item.status = 'generating';
   updateCard(item);
 
   try {
-    const d = await api.post('/launch-package/generate-item', { itemId });
+    const lang = localStorage.getItem('d8_lang') || 'en';
+    const d = await api.post('/launch-package/generate-item', { itemId, language: lang });
     if (!d?.success) throw new Error(d?.error || 'Generation failed');
 
     item.status = 'done';
@@ -482,7 +550,7 @@ function escAttr(str) {
   return String(str).replace(/'/g,"&#39;").replace(/"/g,'&quot;');
 }
 
-init();
+init().then(() => checkForExistingJob());
 </script>
 </body>
 </html>

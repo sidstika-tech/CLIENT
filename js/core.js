@@ -32,21 +32,38 @@ const Auth = {
   check: () => { if(!localStorage.getItem('d8_token')) window.location.href='/index.html'; }
 };
 
-/* ── API CLIENT ── */
+/* ── API CLIENT ──
+   Auto-sends current UI language with EVERY request so the backend
+   can generate Arabic content when the user is in Arabic mode. */
 const api = {
-  headers: () => ({ 'Content-Type':'application/json', 'Authorization': `Bearer ${Auth.token()}` }),
+  lang: () => localStorage.getItem('d8_lang') || 'en',
+  headers: () => ({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${Auth.token()}`,
+    'X-Language': api.lang(),    // For backend to read
+    'Accept-Language': api.lang(),
+  }),
+  // Helper that auto-injects language into the body of every POST/PUT
+  withLang: (body) => {
+    if (!body || typeof body !== 'object') return body;
+    if (body.language === undefined) body.language = api.lang();
+    if (body.inputs && typeof body.inputs === 'object' && body.inputs.language === undefined) {
+      body.inputs.language = api.lang();
+    }
+    return body;
+  },
   async get(path) {
     const r = await fetch(`${API}${path}`, { headers: this.headers() });
     if(r.status===401) { Auth.logout(); return; }
     return r.json();
   },
   async post(path, body) {
-    const r = await fetch(`${API}${path}`, { method:'POST', headers: this.headers(), body: JSON.stringify(body) });
+    const r = await fetch(`${API}${path}`, { method:'POST', headers: this.headers(), body: JSON.stringify(this.withLang(body || {})) });
     if(r.status===401) { Auth.logout(); return; }
     return r.json();
   },
   async put(path, body) {
-    const r = await fetch(`${API}${path}`, { method:'PUT', headers: this.headers(), body: JSON.stringify(body) });
+    const r = await fetch(`${API}${path}`, { method:'PUT', headers: this.headers(), body: JSON.stringify(this.withLang(body || {})) });
     if(r.status===401) { Auth.logout(); return; }
     return r.json();
   },
@@ -171,6 +188,52 @@ const T = {
     'vault.no_reports':'No reports yet in this category', 'vault.loading':'Loading your reports...',
     // Prompt
     'prompt.title':'PROMPT WRITER',
+    // DNA
+    'dna.title':'BUSINESS DNA', 'dna.intro':'8 questions to reveal the business that fits you in your market',
+    'dna.q.name':"What is your name?", 'dna.q.country':"Which country will you build this in?",
+    'dna.q.city':"Which city?", 'dna.q.industry':"What industry do you want to enter?",
+    'dna.q.skills':"What are your skills and background?", 'dna.q.budget':"What's your available budget?",
+    'dna.q.time':"How many hours per week can you dedicate?", 'dna.q.experience':"What's your business experience?",
+    'dna.q.goal':"What's your main goal for the next year?",
+    'dna.btn.analyze':'🧬 Analyze My Business DNA', 'dna.btn.regen':'↻ Re-analyze',
+    'dna.match':'YOUR BUSINESS MATCH', 'dna.score':'READINESS SCORE',
+    'dna.steps':'YOUR 5 STARTING STEPS', 'dna.next':'FIRST MILESTONE',
+    'dna.advantage':'YOUR UNFAIR ADVANTAGE', 'dna.risk':'BIGGEST RISK', 'dna.investors':'INVESTORS TO CONTACT',
+    // Launch Package
+    'pkg.title':'LAUNCH PACKAGE', 'pkg.subtitle':'8 professional documents — built from your DNA',
+    'pkg.generate_all':'⚡ Generate All 8 Documents',
+    'pkg.generating_bg':'Generating in background — you can close this tab',
+    'pkg.done':'✓ Ready to view', 'pkg.pending':'Not generated yet', 'pkg.generating':'Generating...',
+    'pkg.failed':'Failed — click to retry', 'pkg.view':'📖 View Report',
+    'pkg.regen':'↺ Regenerate', 'pkg.gen':'⚡ Generate',
+    'pkg.ready':'YOUR BUSINESS IS READY TO LAUNCH', 'pkg.no_dna':'Complete your Business DNA first',
+    // Competitor Tracker
+    'comp.title':'COMPETITOR TRACKER', 'comp.hero':'⚔ KNOW YOUR BATTLEFIELD',
+    'comp.add':'+ Track New Competitor', 'comp.preview':'📡 Generate My Briefing Now',
+    'comp.tracked':'tracked', 'comp.next':'Next briefing', 'comp.critical':'high-threat',
+    'comp.empty_title':'YOUR BATTLEFIELD IS EMPTY', 'comp.empty_desc':"You can't outmaneuver someone you're not watching. Add 2-3 competitors who keep you up at night — we'll send you a weekly briefing.",
+    'comp.empty_btn':'+ Track Your First Competitor',
+    'comp.name':'Competitor Name', 'comp.website':'Website',
+    'comp.country':'Country / HQ', 'comp.industry':'Industry',
+    'comp.desc':'What do they do?', 'comp.why':'Why are you tracking them?',
+    'comp.start_tracking':'+ Start Tracking', 'comp.no_intel':'No briefing yet. Click "Analyze Now" or wait until Monday.',
+    'comp.your_move':'Your move this week', 'comp.last_analyzed':'Last analyzed',
+    'comp.intel_history':'Intel History', 'comp.threat_low':'Low threat',
+    'comp.threat_medium':'Medium', 'comp.threat_high':'High threat', 'comp.threat_critical':'Critical',
+    'comp.threat_none':'Awaiting briefing',
+    // Academy
+    'aca.title':'BUSINESS ACADEMY', 'aca.hero':'🎓 BUSINESS ACADEMY',
+    'aca.tab_path':"🧭 The Founder's Path", 'aca.tab_daily':"📡 Today's Intelligence", 'aca.tab_resources':'📚 Free Resources',
+    'aca.path_title':"🧭 THE FOUNDER'S PATH", 'aca.path_sub':'Five steps. Twenty-five sessions. The journey from idea to launched founder.',
+    'aca.completed':'completed', 'aca.total_sessions':'total sessions', 'aca.streak':'day streak',
+    'aca.step_of':'Step', 'aca.daily_title':"📡 TODAY'S MENA BUSINESS INTELLIGENCE",
+    'aca.resources_title':'📚 HAND-PICKED FREE COURSES', 'aca.complete_btn':'✓ Mark Complete',
+    'aca.reflection':"Your reflection (optional — what stood out, what you'll do)",
+    'aca.locked':'Complete the previous session first',
+    // Notifications
+    'notif.title':'🔔 NOTIFICATIONS', 'notif.empty':'No notifications yet.',
+    'notif.empty_sub':'Track a competitor or complete an Academy session — your updates appear here.',
+    'notif.mark_all':'✓ Mark all as read', 'notif.clear_all':'Clear all',
   },
   ar: {
     // Nav
@@ -262,6 +325,52 @@ const T = {
     'vault.no_reports':'لا توجد تقارير في هذه الفئة', 'vault.loading':'جارٍ تحميل تقاريرك...',
     // Prompt
     'prompt.title':'كاتب البرومبت',
+    // DNA
+    'dna.title':'هويتي التجارية', 'dna.intro':'8 أسئلة لكشف العمل المثالي لك في سوقك',
+    'dna.q.name':'ما اسمك؟', 'dna.q.country':'في أي بلد ستبني هذا العمل؟',
+    'dna.q.city':'في أي مدينة؟', 'dna.q.industry':'في أي قطاع تريد العمل؟',
+    'dna.q.skills':'ما مهاراتك وخلفيتك؟', 'dna.q.budget':'ما الميزانية المتاحة لديك؟',
+    'dna.q.time':'كم ساعة أسبوعياً يمكنك تخصيصها؟', 'dna.q.experience':'ما خبرتك في الأعمال؟',
+    'dna.q.goal':'ما هدفك الأساسي خلال السنة القادمة؟',
+    'dna.btn.analyze':'🧬 حلّل هويتي التجارية', 'dna.btn.regen':'↻ إعادة التحليل',
+    'dna.match':'العمل المثالي لك', 'dna.score':'مؤشر الجاهزية',
+    'dna.steps':'خطوات البداية الخمس', 'dna.next':'المعلم الأول',
+    'dna.advantage':'ميزتك الفريدة', 'dna.risk':'أكبر مخاطرة', 'dna.investors':'مستثمرون مقترحون',
+    // Launch Package
+    'pkg.title':'حزمة الإطلاق', 'pkg.subtitle':'8 وثائق احترافية مبنية من هويتك التجارية',
+    'pkg.generate_all':'⚡ توليد جميع الوثائق الـ8',
+    'pkg.generating_bg':'يتم التوليد في الخلفية — يمكنك إغلاق الصفحة',
+    'pkg.done':'✓ جاهز للعرض', 'pkg.pending':'لم يُنشأ بعد', 'pkg.generating':'جارٍ التوليد...',
+    'pkg.failed':'فشل — اضغط لإعادة المحاولة', 'pkg.view':'📖 عرض التقرير',
+    'pkg.regen':'↺ إعادة التوليد', 'pkg.gen':'⚡ توليد',
+    'pkg.ready':'عملك جاهز للإطلاق', 'pkg.no_dna':'أكمل هويتك التجارية أولاً',
+    // Competitor Tracker
+    'comp.title':'متعقّب المنافسين', 'comp.hero':'⚔ اعرف ساحة معركتك',
+    'comp.add':'+ تتبع منافس جديد', 'comp.preview':'📡 توليد تقريري الآن',
+    'comp.tracked':'متعقَّب', 'comp.next':'التقرير القادم', 'comp.critical':'تهديد عالي',
+    'comp.empty_title':'ساحة معركتك فارغة', 'comp.empty_desc':'لا يمكنك التفوق على من لا تراقبه. أضف 2-3 منافسين يقلقونك — سنرسل لك تقرير أسبوعي.',
+    'comp.empty_btn':'+ تتبع أول منافس',
+    'comp.name':'اسم المنافس', 'comp.website':'الموقع الإلكتروني',
+    'comp.country':'البلد', 'comp.industry':'القطاع',
+    'comp.desc':'ماذا يفعلون؟', 'comp.why':'لماذا تتبعهم؟',
+    'comp.start_tracking':'+ ابدأ التتبع', 'comp.no_intel':'لا تقارير بعد — اضغط "حلّل الآن" أو انتظر يوم الإثنين.',
+    'comp.your_move':'حركتك هذا الأسبوع', 'comp.last_analyzed':'آخر تحليل',
+    'comp.intel_history':'سجل التقارير', 'comp.threat_low':'تهديد منخفض',
+    'comp.threat_medium':'متوسط', 'comp.threat_high':'تهديد عالٍ', 'comp.threat_critical':'حرج',
+    'comp.threat_none':'في انتظار التقرير',
+    // Academy
+    'aca.title':'أكاديمية الأعمال', 'aca.hero':'🎓 أكاديمية الأعمال',
+    'aca.tab_path':'🧭 رحلة المؤسس', 'aca.tab_daily':'📡 أخبار اليوم', 'aca.tab_resources':'📚 موارد مجانية',
+    'aca.path_title':'🧭 رحلة المؤسس', 'aca.path_sub':'خمس خطوات. خمس وعشرون جلسة. الرحلة من فكرة إلى مؤسس مُطلِق.',
+    'aca.completed':'مكتمل', 'aca.total_sessions':'إجمالي الجلسات', 'aca.streak':'يوم متتالٍ',
+    'aca.step_of':'الخطوة', 'aca.daily_title':'📡 أخبار اليوم — منطقة الشرق الأوسط',
+    'aca.resources_title':'📚 موارد مجانية مختارة', 'aca.complete_btn':'✓ تم الانتهاء',
+    'aca.reflection':'تأملك (اختياري — ماذا فهمت، ماذا ستفعل)',
+    'aca.locked':'أكمل الجلسة السابقة أولاً',
+    // Notifications
+    'notif.title':'🔔 الإشعارات', 'notif.empty':'لا توجد إشعارات بعد.',
+    'notif.empty_sub':'تتبّع منافساً أو أكمل جلسة في الأكاديمية — ستظهر تحديثاتك هنا.',
+    'notif.mark_all':'✓ تمييز الكل كمقروء', 'notif.clear_all':'مسح الكل',
   }
 };
 
@@ -672,10 +781,67 @@ const Notifications = {
   },
 };
 
+/* ══════════════════════════════════════════════════════════════════
+   LANGUAGE SWITCHER — auto-injected into every page's topbar
+   Click toggles between EN ⇄ AR, sets dir/lang on <html>, persists
+   the choice in localStorage, and reloads to re-render everything
+   in the new language.
+══════════════════════════════════════════════════════════════════ */
+const LangSwitcher = {
+  injectStyles() {
+    if (document.getElementById('lang-switcher-styles')) return;
+    const s = document.createElement('style');
+    s.id = 'lang-switcher-styles';
+    s.textContent = `
+      .lang-btn{display:inline-flex;align-items:center;gap:.4rem;background:none;border:1px solid var(--border);height:36px;padding:0 .85rem;border-radius:9px;cursor:pointer;color:var(--text2);font-size:.78rem;font-weight:600;font-family:'Outfit',sans-serif;transition:.15s;}
+      .lang-btn:hover{border-color:var(--border-gold);color:var(--gold);}
+      .lang-btn .lang-flag{font-size:1.05rem;line-height:1;}
+      .lang-btn .lang-code{font-weight:700;letter-spacing:.04em;}
+      .lang-btn .lang-arrow{font-size:.6rem;opacity:.6;margin-${typeof document !== 'undefined' && document.documentElement.dir === 'rtl' ? 'right' : 'left'}:.2rem;}
+      [dir="rtl"] .lang-btn{font-family:'Outfit',sans-serif;}
+    `;
+    document.head.appendChild(s);
+  },
+
+  inject() {
+    const right = document.querySelector('.topbar-right');
+    if (!right || document.getElementById('lang-btn')) return;
+    this.injectStyles();
+    const lang = api.lang();
+    const isAr = lang === 'ar';
+    const btn = document.createElement('button');
+    btn.id = 'lang-btn';
+    btn.className = 'lang-btn';
+    btn.title = isAr ? 'Switch to English' : 'التحويل إلى العربية';
+    btn.innerHTML = isAr
+      ? '<span class="lang-flag">🇬🇧</span><span class="lang-code">EN</span>'
+      : '<span class="lang-flag">🇸🇦</span><span class="lang-code">عربي</span>';
+    btn.onclick = () => this.toggle();
+    right.insertBefore(btn, right.firstChild);
+  },
+
+  toggle() {
+    const cur = api.lang();
+    const next = cur === 'ar' ? 'en' : 'ar';
+    localStorage.setItem('d8_lang', next);
+    applyDir(next);
+    // Reload to fully re-render everything (sidebar, page text, generated content fields)
+    window.location.reload();
+  },
+
+  start() {
+    if (!Auth.token()) return;
+    this.inject();
+  },
+};
+
 // Auto-start after sidebar/topbar is built — sits at the end of buildLayout
 const _originalBuildLayout = buildLayout;
 buildLayout = function(pageId) {
   _originalBuildLayout(pageId);
-  // Topbar exists now — inject the bell
-  setTimeout(() => Notifications.start(), 0);
+  // Topbar exists now — inject the bell + language switcher
+  setTimeout(() => {
+    Notifications.start();
+    LangSwitcher.start();
+  }, 0);
 };
