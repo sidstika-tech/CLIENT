@@ -1,11 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Business Academy — Double Eight AI</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/main.css">
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -133,330 +125,209 @@ body{background:var(--bg);font-family:'Outfit',system-ui,sans-serif;color:var(--
 .sec-title{font-family:'Bebas Neue',cursive,system-ui;font-size:1rem;letter-spacing:1px;color:var(--text);}
 .sec-count{font-size:.7rem;color:var(--text3);}
 </style>
-</head>
-<body>
-<div class="app-grid-bg"></div><div class="page-particles"></div>
-<div class="app">
-  <aside class="sidebar"></aside>
-  <div class="main">
-    <div class="topbar">
-      <button class="hamburger">☰</button>
-      <span class="topbar-title">BUSINESS ACADEMY</span>
-      <div class="topbar-right"><span style="font-size:.78rem;color:var(--text3)">🎓 Path · 📡 Daily · 📚 Resources</span></div>
-    </div>
-    <div class="page-content">
-      <div class="academy-hero">
-        <h2>🎓 BUSINESS ACADEMY</h2>
-        <p>Three things, in one place. A 5-step Founder's Path that walks you from idea to launch. Daily intelligence from the world's markets. And a vault of the best free business education on the internet.</p>
-        <div class="hero-meta">
-          <span>🧭 5-step guided path</span>
-          <span>⚡ New intelligence daily</span>
-          <span>🇲🇪 MENA-aware lessons</span>
-        </div>
-      </div>
 
-      <div class="tabs-row">
-        <button class="tab-btn active" data-tab="path" onclick="switchTab('path')">🧭 The Founder's Path</button>
-        <button class="tab-btn" data-tab="daily" onclick="switchTab('daily')">📡 Today's Intelligence</button>
-        <button class="tab-btn" data-tab="resources" onclick="switchTab('resources')">📚 Free Resources</button>
-      </div>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-      <!-- ━━━━ TAB 1: FOUNDER'S PATH ━━━━ -->
-      <div class="tab-panel active" id="tab-path">
-        <div class="path-progress">
-          <div class="path-progress-top">
-            <div>
-              <h3>🧭 THE FOUNDER'S PATH</h3>
-              <div style="font-size:.78rem;color:var(--text3);margin-top:.3rem">Five steps. Twenty-five sessions. The journey from idea to launched founder.</div>
-            </div>
-            <div class="path-progress-stats">
-              <div class="pp-stat"><strong id="pp-done">0</strong>completed</div>
-              <div class="pp-stat"><strong id="pp-total">25</strong>total sessions</div>
-              <div class="pp-stat"><strong id="pp-streak">0</strong>day streak</div>
-            </div>
-          </div>
-          <div class="pp-bar"><div class="pp-bar-fill" id="pp-bar-fill" style="width:0%"></div></div>
-        </div>
+<div>
+  <div class="topbar">
+    <button class="topbar-icon" aria-label="Menu">☰</button>
+    <span class="topbar-title">Business Academy</span>
+    <span style="font-size:.7rem;color:var(--text3)">🎓</span>
+  </div>
 
-        <div class="path-steps" id="path-steps">
-          <div style="text-align:center;padding:2rem;color:var(--text3);font-size:.85rem">Loading your path...</div>
-        </div>
-      </div>
-
-      <!-- ━━━━ TAB 2: DAILY INTELLIGENCE ━━━━ -->
-      <div class="tab-panel" id="tab-daily">
-        <h3 style="font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px;margin-bottom:1rem;">📡 TODAY'S BUSINESS INTELLIGENCE</h3>
-        <div id="news-cards-row" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
-          <div class="news-card-skeleton"></div>
-          <div class="news-card-skeleton"></div>
-          <div class="news-card-skeleton"></div>
-        </div>
-      </div>
-
-      <!-- ━━━━ TAB 3: FREE RESOURCES ━━━━ -->
-      <div class="tab-panel" id="tab-resources">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;">
-          <h3 style="font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px;">📚 HAND-PICKED FREE COURSES</h3>
-          <span style="font-size:.75rem;color:var(--text3)" id="count-lbl">12 free resources</span>
-        </div>
-        <div class="courses-grid" id="courses-grid"></div>
-      </div>
+  <div class="hero">
+    <h2>🎓 Business Academy</h2>
+    <p>A 5-step Founder's Path from idea to launch. Daily market intelligence. The best free business education on the internet.</p>
+    <div class="hero-pills">
+      <span class="hero-pill">🧭 5-step path</span>
+      <span class="hero-pill">⚡ Daily intel</span>
+      <span class="hero-pill">🌍 MENA-aware</span>
     </div>
   </div>
-</div>
 
-<!-- SESSION VIEWER MODAL -->
-<div class="modal-overlay" id="session-modal">
-  <div class="modal session-modal-content">
-    <div class="modal-header">
-      <span id="sess-icon" style="font-size:1.5rem">🎓</span>
-      <div>
-        <div class="modal-title" id="sess-title">Loading...</div>
-        <div style="font-size:.78rem;color:var(--text3);margin-top:.1rem" id="sess-sub"></div>
-      </div>
-      <button class="modal-close" onclick="closeSession()">✕</button>
-    </div>
-    <div class="modal-body" style="max-height:70vh;overflow-y:auto;">
-      <div class="lesson-content" id="sess-content">
-        <div class="lesson-loading">⏳ Generating your personalized lesson...</div>
-      </div>
-      <div class="lesson-reflection" id="sess-reflection-wrap" style="display:none">
-        <label>Your reflection (optional — what stood out, what you'll do)</label>
-        <textarea id="sess-reflection" placeholder="One or two sentences. The act of writing locks the lesson in."></textarea>
-      </div>
-    </div>
-    <div class="modal-footer" id="sess-footer" style="display:none">
-      <button class="btn btn-secondary" onclick="closeSession()">Close</button>
-      <button class="btn btn-primary" onclick="completeCurrent()" id="sess-complete-btn">
-        <span class="loader" id="sess-loader" style="display:none"></span>
-        <span id="sess-complete-text">✓ Mark Complete</span>
-      </button>
-    </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('path',this)">🧭 Path</button>
+    <button class="tab" onclick="switchTab('daily',this)">📡 Daily</button>
+    <button class="tab" onclick="switchTab('resources',this)">📚 Resources</button>
   </div>
-</div>
 
-<script src="../js/core.js"></script>
-<script>
-Auth.check();
-buildLayout('academy');
+  <!-- PATH -->
+  <div class="panel active" id="tab-path">
+    <div class="prog-banner">
+      <h3>🧭 The Founder's Path</h3>
+      <div class="prog-sub">Five steps · 25 sessions · idea to launched founder</div>
+      <div class="prog-stats">
+        <div class="prog-stat"><strong>7</strong><span>completed</span></div>
+        <div class="prog-stat"><strong>25</strong><span>total</span></div>
+        <div class="prog-stat"><strong>3</strong><span>day streak</span></div>
+      </div>
+      <div class="prog-bar"><div class="prog-bar-fill"></div></div>
+    </div>
 
-const CC={strategy:{bg:'rgba(245,158,11,0.12)',c:'var(--gold)'},mindset:{bg:'rgba(99,102,241,0.12)',c:'#c084fc'},marketing:{bg:'rgba(239,68,68,0.12)',c:'#f87171'},finance:{bg:'rgba(34,197,94,0.12)',c:'#4ade80'},startup:{bg:'rgba(59,130,246,0.12)',c:'#60a5fa'},sales:{bg:'rgba(168,85,247,0.12)',c:'#c084fc'},leadership:{bg:'rgba(6,182,212,0.12)',c:'#22d3ee'}};
+    <div class="steps" id="path-steps">
 
-const COURSES=[
-  {id:'c1',title:'Y Combinator Startup School',cat:'startup',desc:'The exact curriculum used to train thousands of YC startups. Lectures on product, growth, fundraising.',link:'https://www.youtube.com/playlist?list=PLorh3qWx1GaVZZgOWg0NGcXgd4kViwXLG',duration:'20+ lectures',icon:'🚀',badge:'free'},
-  {id:'c2',title:'Alex Hormozi — $100M Offers',cat:'strategy',desc:'How to craft offers so compelling people feel stupid saying no. The complete offer breakdown.',link:'https://www.youtube.com/watch?v=S2EjxjR8eQU',duration:'3h 20min',icon:'💰',badge:'hot'},
-  {id:'c3',title:'Simon Sinek — Start With Why',cat:'leadership',desc:'The most watched business TED talk ever. Why some leaders inspire — and how to apply the Golden Circle.',link:'https://www.youtube.com/watch?v=u4ZoJKF_VuA',duration:'18 min',icon:'🍎',badge:''},
-  {id:'c4',title:'HubSpot — Inbound Marketing Certification',cat:'marketing',desc:'Industry-standard free certification covering content, SEO, social, email, and lead nurturing.',link:'https://academy.hubspot.com/courses/inbound-marketing',duration:'4.5 hours',icon:'🔗',badge:'free'},
-  {id:'c5',title:'Naval Ravikant — How to Get Rich',cat:'mindset',desc:'Naval\'s legendary framework on wealth creation, specific knowledge, and leverage. Mindset masterclass.',link:'https://www.youtube.com/watch?v=6Mya4C3Yr7I',duration:'3h 40min',icon:'🧠',badge:'hot'},
-  {id:'c6',title:'Google Digital Garage — Digital Marketing',cat:'marketing',desc:'Free Google certification covering SEO, SEM, social media, content, email marketing, analytics.',link:'https://learndigital.withgoogle.com/digitalgarage/course/digital-marketing',duration:'40 hours',icon:'📢',badge:'free'},
-  {id:'c7',title:'Khan Academy — Entrepreneurship & Finance',cat:'finance',desc:'Comprehensive free program: accounting, cash flow, P&L, break-even — business finance from scratch.',link:'https://www.khanacademy.org/college-careers-more/entrepreneurship2',duration:'Self-paced',icon:'📊',badge:'free'},
-  {id:'c8',title:'Patrick Bet-David — Valuetainment',cat:'strategy',desc:'Complete business education series on leadership, sales, marketing, scaling. One of the most practical channels.',link:'https://www.youtube.com/@Valuetainment/playlists',duration:'100+ videos',icon:'📋',badge:''},
-  {id:'c9',title:'Meta Blueprint — Facebook & Instagram Ads',cat:'marketing',desc:'Official Meta course on advertising, audience targeting, creative strategy, campaign optimization.',link:'https://www.facebook.com/business/learn/digital-marketing-quick-courses',duration:'30+ hours',icon:'📱',badge:'free'},
-  {id:'c10',title:'HubSpot — Inbound Sales Certification',cat:'sales',desc:'Free sales certification: modern prospecting, connecting with buyers, exploring needs.',link:'https://academy.hubspot.com/courses/inbound-sales',duration:'3 hours',icon:'🎯',badge:'free'},
-  {id:'c11',title:'Tim Ferriss — Tools of Titans',cat:'mindset',desc:'Tim interviews world-class performers — extracting the habits and tactics behind their success.',link:'https://www.youtube.com/@TimFerriss/videos',duration:'100+ videos',icon:'⚡',badge:''},
-  {id:'c12',title:'Coursera — Wharton Entrepreneurship',cat:'startup',desc:'UPenn Wharton complete entrepreneurship program: ideation, launch, growth, financing. Audit free.',link:'https://www.coursera.org/specializations/wharton-entrepreneurship',duration:'5 months',icon:'🎓',badge:'free'},
-];
-
-let pathData = null;
-let currentSessionId = null;
-
-/* ── TAB SWITCHING ──────────────────────────────────────── */
-function switchTab(name){
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));
-  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.id==='tab-'+name));
-  if(name==='daily' && !document.getElementById('news-cards-row').dataset.loaded) loadNewsCards();
-  if(name==='resources' && !document.getElementById('courses-grid').dataset.loaded) renderCourses();
-}
-
-/* ── PATH ───────────────────────────────────────────────── */
-async function loadPath(){
-  const r = await api.get('/academy/path');
-  if(!r?.success){
-    document.getElementById('path-steps').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠</div><p>Failed to load your path. Refresh the page to try again.</p></div>';
-    return;
-  }
-  pathData = r;
-  document.getElementById('pp-done').textContent = r.completedCount;
-  document.getElementById('pp-total').textContent = r.totalSessions;
-  document.getElementById('pp-streak').textContent = r.streak?.current || 0;
-  document.getElementById('pp-bar-fill').style.width = r.percent + '%';
-  renderPath();
-}
-
-function renderPath(){
-  const wrap = document.getElementById('path-steps');
-  wrap.innerHTML = pathData.steps.map(step=>{
-    const done = step.completedCount === step.totalCount;
-    const allLocked = step.sessions.every(s => !s.unlocked);
-    const isCurrent = pathData.currentStep === step.number && !done;
-    const cls = done ? 'complete' : (allLocked ? 'locked' : (isCurrent ? 'current open' : ''));
-    return `
-      <div class="step-card ${cls}" id="step-${step.id}">
-        <div class="step-header" onclick="toggleStep('${step.id}')">
-          <div class="step-icon" style="${done ? 'background:rgba(34,197,94,0.15)' : ''}">${done ? '✓' : step.icon}</div>
-          <div style="flex:1;min-width:0">
-            <div class="step-num">Step ${step.number} of 5</div>
-            <div class="step-title">${step.title}</div>
-            <div class="step-sub">${step.subtitle}</div>
+      <div class="step done" id="step1">
+        <div class="step-head" onclick="toggleStep('step1')">
+          <div class="step-ico">✓</div>
+          <div class="step-info">
+            <div class="step-num">Step 1 of 5</div>
+            <div class="step-title">Idea to Opportunity</div>
+            <div class="step-sub">Find a real problem worth solving</div>
           </div>
-          <span class="step-progress-pill ${done ? 'done' : ''}">${step.completedCount} / ${step.totalCount}</span>
-          <span class="step-arrow">▼</span>
+          <div class="step-right">
+            <span class="step-pill done">5 / 5</span>
+            <span class="step-arrow">▼</span>
+          </div>
         </div>
         <div class="step-body">
-          <div class="step-description">${step.description}</div>
-          ${step.sessions.map(s=>`
-            <div class="session-row ${s.completed ? 'complete' : ''} ${!s.unlocked ? 'locked' : ''}" onclick="${s.unlocked ? `openSession('${s.id}')` : ''}">
-              <div class="session-check">${s.completed ? '✓' : (s.unlocked ? '' : '🔒')}</div>
-              <div class="session-info">
-                <div class="session-row-title">${s.title}</div>
-                <div class="session-row-focus">${s.focus}</div>
-              </div>
-              <div class="session-row-meta">⏱ ${s.duration}</div>
-            </div>
-          `).join('')}
-        </div>
-      </div>`;
-  }).join('');
-}
-
-function toggleStep(stepId){
-  const card = document.getElementById('step-'+stepId);
-  if(card.classList.contains('locked')) return;
-  card.classList.toggle('open');
-}
-
-/* ── SESSION VIEWER ─────────────────────────────────────── */
-async function openSession(sessionId){
-  currentSessionId = sessionId;
-  document.getElementById('sess-title').textContent = 'Loading...';
-  document.getElementById('sess-sub').textContent = '';
-  document.getElementById('sess-content').innerHTML = '<div class="lesson-loading">⏳ Generating your personalized lesson — this takes ~10 seconds.</div>';
-  document.getElementById('sess-reflection-wrap').style.display = 'none';
-  document.getElementById('sess-footer').style.display = 'none';
-  openModal('session-modal');
-
-  const r = await api.get(`/academy/session/${sessionId}`);
-  if(!r?.success){
-    document.getElementById('sess-content').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠</div><p>${r?.error || 'Failed to load this session.'}</p></div>`;
-    return;
-  }
-  document.getElementById('sess-icon').textContent = r.step.icon;
-  document.getElementById('sess-title').textContent = r.session.title;
-  document.getElementById('sess-sub').textContent = `Step ${r.step.number}: ${r.step.title} · ⏱ ${r.session.duration}`;
-  document.getElementById('sess-content').innerHTML = renderMarkdown(r.content);
-  document.getElementById('sess-reflection-wrap').style.display = r.completed ? 'none' : 'block';
-  document.getElementById('sess-footer').style.display = 'flex';
-  if(r.completed){
-    document.getElementById('sess-complete-btn').style.display = 'none';
-  } else {
-    document.getElementById('sess-complete-btn').style.display = '';
-    document.getElementById('sess-complete-text').textContent = '✓ Mark Complete';
-    document.getElementById('sess-complete-btn').disabled = false;
-  }
-}
-
-function closeSession(){
-  closeModal('session-modal');
-  currentSessionId = null;
-}
-
-async function completeCurrent(){
-  if(!currentSessionId) return;
-  const btn = document.getElementById('sess-complete-btn');
-  const loader = document.getElementById('sess-loader');
-  const text = document.getElementById('sess-complete-text');
-  btn.disabled = true; loader.style.display = 'inline-block'; text.textContent = ' Saving...';
-
-  const reflection = document.getElementById('sess-reflection').value.trim();
-  const r = await api.post(`/academy/session/${currentSessionId}/complete`, { reflection });
-  loader.style.display = 'none';
-
-  if(r?.success){
-    Toast.show(r.stepCompleted ? '🎓 Step complete! Next step unlocked.' : '✓ Session complete', 'success');
-    closeSession();
-    loadPath();
-  } else {
-    btn.disabled = false; text.textContent = '✓ Mark Complete';
-    Toast.show(r?.error || 'Failed to save','error');
-  }
-}
-
-/* ── DAILY NEWS ─────────────────────────────────────────── */
-async function loadNewsCards(){
-  document.getElementById('news-cards-row').dataset.loaded = '1';
-  try {
-    const d = await api.get('/academy/daily');
-    if(!d?.data?.cards?.length) throw new Error('No cards');
-    renderNewsCards(d.data.cards);
-  } catch(e){
-    renderNewsCards(getFallbackCards());
-  }
-}
-
-function getFallbackCards(){
-  return [
-    {id:'card1',type:'market',icon:'📈',country:'Saudi Arabia',countryFlag:'🇸🇦',category:'MENA Markets',
-     title:'Tadawul holds steady as Vision 2030 capex keeps flowing',
-     summary:'Saudi giga-project spending continues feeding non-oil sectors. SMEs aligned to Vision 2030 priorities are winning faster contracts than ever.',
-     opportunity:'Map one Vision 2030 pillar to your offering this week — tourism, sport, entertainment, logistics, health, or housing.',
-     source:'Argaam',sourceUrl:'https://www.argaam.com'},
-    {id:'card2',type:'success',icon:'🏆',country:'UAE',countryFlag:'🇦🇪',category:'MENA Founder Story',
-     title:'Tabby reshaped MENA fintech by obsessing over one customer pain',
-     summary:'Tabby built a billion-dollar BNPL business by solving instalment friction for Gulf shoppers. The pattern: pick one painful moment and rebuild it.',
-     opportunity:'Identify the single most painful moment your customer experiences and rebuild only that — nothing else.',
-     source:'Forbes Middle East',sourceUrl:'https://www.forbesmiddleeast.com'},
-    {id:'card3',type:'opportunity',icon:'🚀',country:'Egypt',countryFlag:'🇪🇬',category:'MENA Opportunity',
-     title:'Egyptian e-commerce sellers winning as imported goods slow down',
-     summary:'Currency pressure on imports is creating space for local makers. Niche locally-produced lines are taking market share imports used to own.',
-     opportunity:'If you have any local production angle, list one SKU on Jumia or Instagram this week with "صناعة محلية" as the headline.',
-     source:'MENAbytes',sourceUrl:'https://www.menabytes.com'},
-  ];
-}
-
-function renderNewsCards(cards){
-  const row = document.getElementById('news-cards-row');
-  if(!row) return;
-  const catClasses = {market:'nc-cat-market',success:'nc-cat-success',opportunity:'nc-cat-opportunity'};
-  row.innerHTML = cards.map(c=>`
-    <a class="news-card" data-type="${c.type}" href="${c.sourceUrl}" target="_blank" rel="noopener noreferrer">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem">
-        <div class="nc-icon">${c.icon}</div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.3rem">
-          <span class="nc-cat ${catClasses[c.type]||'nc-cat-market'}">${c.category}</span>
-          <span class="nc-country">${c.countryFlag} ${c.country}</span>
+          <div class="step-desc">You've completed this step. Great work identifying a problem and pressure-testing it against real demand.</div>
+          <div class="sess-row done"><div class="sess-check">✓</div><div class="sess-info"><div class="sess-name">Problem Discovery</div><div class="sess-focus">Finding painful problems people already pay to solve</div></div><div class="sess-dur">⏱ 20 min</div></div>
+          <div class="sess-row done"><div class="sess-check">✓</div><div class="sess-info"><div class="sess-name">Customer Empathy Map</div><div class="sess-focus">Getting inside your customer's head</div></div><div class="sess-dur">⏱ 25 min</div></div>
+          <div class="sess-row done"><div class="sess-check">✓</div><div class="sess-info"><div class="sess-name">Market Size Reality Check</div><div class="sess-focus">TAM, SAM, SOM without the hype</div></div><div class="sess-dur">⏱ 20 min</div></div>
+          <div class="sess-row done"><div class="sess-check">✓</div><div class="sess-info"><div class="sess-name">Competition Audit</div><div class="sess-focus">Who else is solving this — and how you differ</div></div><div class="sess-dur">⏱ 25 min</div></div>
+          <div class="sess-row done"><div class="sess-check">✓</div><div class="sess-info"><div class="sess-name">Opportunity Statement</div><div class="sess-focus">Writing the one-sentence case for your idea</div></div><div class="sess-dur">⏱ 15 min</div></div>
         </div>
       </div>
-      <div class="nc-title">${c.title}</div>
-      <div class="nc-summary">${c.summary}</div>
-      <div class="nc-opportunity">💡 ${c.opportunity}</div>
-      <div class="nc-footer">
-        <span>📰 ${c.source}</span>
-        <span class="nc-link-btn">Read Article →</span>
+
+      <div class="step current open" id="step2">
+        <div class="step-head" onclick="toggleStep('step2')">
+          <div class="step-ico">🧪</div>
+          <div class="step-info">
+            <div class="step-num">Step 2 of 5</div>
+            <div class="step-title">Validate Fast</div>
+            <div class="step-sub">Test before you build</div>
+          </div>
+          <div class="step-right">
+            <span class="step-pill">2 / 5</span>
+            <span class="step-arrow">▼</span>
+          </div>
+        </div>
+        <div class="step-body">
+          <div class="step-desc">Test your riskiest assumptions before writing a line of code or spending a dirham. This step will save you months.</div>
+          <div class="sess-row done"><div class="sess-check">✓</div><div class="sess-info"><div class="sess-name">Riskiest Assumption Test</div><div class="sess-focus">Identify what must be true for this to work</div></div><div class="sess-dur">⏱ 20 min</div></div>
+          <div class="sess-row done"><div class="sess-check">✓</div><div class="sess-info"><div class="sess-name">Landing Page MVP</div><div class="sess-focus">Build a one-page test in 2 hours</div></div><div class="sess-dur">⏱ 30 min</div></div>
+          <div class="sess-row" onclick="alert('Open session!')"><div class="sess-check"></div><div class="sess-info"><div class="sess-name">Customer Interview Script</div><div class="sess-focus">The 5 questions that reveal real intent</div></div><div class="sess-dur">⏱ 25 min</div></div>
+          <div class="sess-row locked"><div class="sess-check">🔒</div><div class="sess-info"><div class="sess-name">Smoke Test Campaign</div><div class="sess-focus">Drive 50 real people to your idea</div></div><div class="sess-dur">⏱ 30 min</div></div>
+          <div class="sess-row locked"><div class="sess-check">🔒</div><div class="sess-info"><div class="sess-name">Read the Data</div><div class="sess-focus">What the numbers actually mean</div></div><div class="sess-dur">⏱ 20 min</div></div>
+        </div>
       </div>
-    </a>`).join('');
-}
 
-/* ── COURSES ────────────────────────────────────────────── */
-function bHTML(b){if(!b)return'';return`<span class="badge badge-${b}">${b==='hot'?'🔥 Hot':'Free'}</span>`;}
-
-function renderCourses(){
-  document.getElementById('courses-grid').dataset.loaded = '1';
-  const grid = document.getElementById('courses-grid');
-  grid.innerHTML = COURSES.map(c=>`
-    <a class="course-card" href="${c.link}" target="_blank" rel="noopener noreferrer">
-      <div class="course-top"><div class="course-icon">${c.icon}</div><div>${bHTML(c.badge)}</div></div>
-      <div class="course-title">${c.title}</div>
-      <div class="course-desc">${c.desc}</div>
-      <div class="course-footer">
-        <span class="course-meta">⏱ ${c.duration}</span>
-        <span class="access-btn">Watch Free →</span>
+      <div class="step" id="step3">
+        <div class="step-head" onclick="toggleStep('step3')">
+          <div class="step-ico">🏗️</div>
+          <div class="step-info">
+            <div class="step-num">Step 3 of 5</div>
+            <div class="step-title">Build Your Offer</div>
+            <div class="step-sub">Craft something people pay for</div>
+          </div>
+          <div class="step-right">
+            <span class="step-pill">0 / 5</span>
+            <span class="step-arrow">▼</span>
+          </div>
+        </div>
+        <div class="step-body">
+          <div class="step-desc">Shape your product, service, or offer into something so clear and compelling people feel silly saying no.</div>
+          <div class="sess-row locked"><div class="sess-check">🔒</div><div class="sess-info"><div class="sess-name">Offer Architecture</div><div class="sess-focus">Core, upsell, and delivery design</div></div><div class="sess-dur">⏱ 25 min</div></div>
+          <div class="sess-row locked"><div class="sess-check">🔒</div><div class="sess-info"><div class="sess-name">Pricing Psychology</div><div class="sess-focus">How to price with confidence</div></div><div class="sess-dur">⏱ 20 min</div></div>
+          <div class="sess-row locked"><div class="sess-check">🔒</div><div class="sess-info"><div class="sess-name">Minimum Viable Product</div><div class="sess-focus">What to build first — and what to skip</div></div><div class="sess-dur">⏱ 30 min</div></div>
+          <div class="sess-row locked"><div class="sess-check">🔒</div><div class="sess-info"><div class="sess-name">Delivery System</div><div class="sess-focus">How you fulfil, reliably, every time</div></div><div class="sess-dur">⏱ 25 min</div></div>
+          <div class="sess-row locked"><div class="sess-check">🔒</div><div class="sess-info"><div class="sess-name">One-Page Business Model</div><div class="sess-focus">Revenue, cost, margin — on one page</div></div><div class="sess-dur">⏱ 20 min</div></div>
+        </div>
       </div>
-    </a>`).join('');
-  document.getElementById('count-lbl').textContent = `${COURSES.length} free resources`;
-}
 
-/* ── INIT ───────────────────────────────────────────────── */
-loadPath();
+      <div class="step locked" id="step4">
+        <div class="step-head">
+          <div class="step-ico">📣</div>
+          <div class="step-info">
+            <div class="step-num">Step 4 of 5</div>
+            <div class="step-title">Go To Market</div>
+            <div class="step-sub">Find and convert your first customers</div>
+          </div>
+          <div class="step-right">
+            <span class="step-pill">0 / 5</span>
+            <span class="step-arrow">▼</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step locked" id="step5">
+        <div class="step-head">
+          <div class="step-ico">🚀</div>
+          <div class="step-info">
+            <div class="step-num">Step 5 of 5</div>
+            <div class="step-title">Launch & Scale</div>
+            <div class="step-sub">Systems that grow without you</div>
+          </div>
+          <div class="step-right">
+            <span class="step-pill">0 / 5</span>
+            <span class="step-arrow">▼</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DAILY -->
+  <div class="panel" id="tab-daily">
+    <div class="sec-head">
+      <span class="sec-title">📡 Today's Intelligence</span>
+    </div>
+    <div class="news-grid">
+      <a class="news-card" data-type="market" href="https://www.argaam.com" target="_blank">
+        <div class="nc-top"><div class="nc-ico">📈</div><div class="nc-meta"><span class="nc-cat market">MENA Markets</span><span class="nc-country">🇸🇦 Saudi Arabia</span></div></div>
+        <div class="nc-title">Tadawul holds steady as Vision 2030 capex keeps flowing</div>
+        <div class="nc-summary">Saudi giga-project spending continues feeding non-oil sectors. SMEs aligned to Vision 2030 priorities are winning faster contracts than ever.</div>
+        <div class="nc-tip">💡 Map one Vision 2030 pillar to your offering this week — tourism, sport, health, or logistics.</div>
+        <div class="nc-footer"><span>📰 Argaam</span><span class="nc-link">Read Article →</span></div>
+      </a>
+      <a class="news-card" data-type="success" href="https://www.forbesmiddleeast.com" target="_blank">
+        <div class="nc-top"><div class="nc-ico">🏆</div><div class="nc-meta"><span class="nc-cat success">MENA Founder Story</span><span class="nc-country">🇦🇪 UAE</span></div></div>
+        <div class="nc-title">Tabby reshaped MENA fintech by obsessing over one customer pain</div>
+        <div class="nc-summary">Tabby built a billion-dollar BNPL business by solving instalment friction for Gulf shoppers. The pattern: pick one painful moment and rebuild it.</div>
+        <div class="nc-tip">💡 Identify the single most painful moment your customer faces — rebuild only that.</div>
+        <div class="nc-footer"><span>📰 Forbes Middle East</span><span class="nc-link">Read Article →</span></div>
+      </a>
+      <a class="news-card" data-type="opportunity" href="https://www.menabytes.com" target="_blank">
+        <div class="nc-top"><div class="nc-ico">🚀</div><div class="nc-meta"><span class="nc-cat opportunity">MENA Opportunity</span><span class="nc-country">🇪🇬 Egypt</span></div></div>
+        <div class="nc-title">Egyptian e-commerce sellers winning as imported goods slow down</div>
+        <div class="nc-summary">Currency pressure on imports is creating space for local makers. Niche locally-produced lines are taking market share imports used to own.</div>
+        <div class="nc-tip">💡 If you have a local angle, list one SKU on Jumia or Instagram with "صناعة محلية" as the headline.</div>
+        <div class="nc-footer"><span>📰 MENAbytes</span><span class="nc-link">Read Article →</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- RESOURCES -->
+  <div class="panel" id="tab-resources">
+    <div class="sec-head">
+      <span class="sec-title">📚 Free Resources</span>
+      <span class="sec-count">12 resources</span>
+    </div>
+    <div class="course-list">
+      <a class="course-card" href="https://www.youtube.com/playlist?list=PLorh3qWx1GaVZZgOWg0NGcXgd4kViwXLG" target="_blank"><div class="course-ico">🚀</div><div class="course-body"><div class="course-top-row"><span class="course-title">Y Combinator Startup School</span><span class="badge free">Free</span></div><div class="course-desc">The exact curriculum used to train thousands of YC startups.</div><div class="course-meta-row"><span class="course-dur">⏱ 20+ lectures</span><span class="course-btn">Watch Free →</span></div></div></a>
+      <a class="course-card" href="https://www.youtube.com/watch?v=S2EjxjR8eQU" target="_blank"><div class="course-ico">💰</div><div class="course-body"><div class="course-top-row"><span class="course-title">Alex Hormozi — $100M Offers</span><span class="badge hot">🔥 Hot</span></div><div class="course-desc">How to craft offers so compelling people feel stupid saying no.</div><div class="course-meta-row"><span class="course-dur">⏱ 3h 20min</span><span class="course-btn">Watch Free →</span></div></div></a>
+      <a class="course-card" href="https://www.youtube.com/watch?v=u4ZoJKF_VuA" target="_blank"><div class="course-ico">🍎</div><div class="course-body"><div class="course-top-row"><span class="course-title">Simon Sinek — Start With Why</span></div><div class="course-desc">The most-watched business TED talk. Why some leaders inspire and others don't.</div><div class="course-meta-row"><span class="course-dur">⏱ 18 min</span><span class="course-btn">Watch Free →</span></div></div></a>
+      <a class="course-card" href="https://academy.hubspot.com/courses/inbound-marketing" target="_blank"><div class="course-ico">🔗</div><div class="course-body"><div class="course-top-row"><span class="course-title">HubSpot — Inbound Marketing</span><span class="badge free">Free</span></div><div class="course-desc">Industry-standard free certification covering content, SEO, and email.</div><div class="course-meta-row"><span class="course-dur">⏱ 4.5 hours</span><span class="course-btn">Watch Free →</span></div></div></a>
+      <a class="course-card" href="https://www.youtube.com/watch?v=6Mya4C3Yr7I" target="_blank"><div class="course-ico">🧠</div><div class="course-body"><div class="course-top-row"><span class="course-title">Naval Ravikant — How to Get Rich</span><span class="badge hot">🔥 Hot</span></div><div class="course-desc">Naval's legendary framework on wealth, leverage, and specific knowledge.</div><div class="course-meta-row"><span class="course-dur">⏱ 3h 40min</span><span class="course-btn">Watch Free →</span></div></div></a>
+      <a class="course-card" href="https://learndigital.withgoogle.com/digitalgarage/course/digital-marketing" target="_blank"><div class="course-ico">📢</div><div class="course-body"><div class="course-top-row"><span class="course-title">Google Digital Garage</span><span class="badge free">Free</span></div><div class="course-desc">Free Google certification: SEO, SEM, social, analytics, and email.</div><div class="course-meta-row"><span class="course-dur">⏱ 40 hours</span><span class="course-btn">Watch Free →</span></div></div></a>
+      <a class="course-card" href="https://www.khanacademy.org/college-careers-more/entrepreneurship2" target="_blank"><div class="course-ico">📊</div><div class="course-body"><div class="course-top-row"><span class="course-title">Khan Academy — Finance</span><span class="badge free">Free</span></div><div class="course-desc">Accounting, cash flow, P&L, break-even — business finance from scratch.</div><div class="course-meta-row"><span class="course-dur">⏱ Self-paced</span><span class="course-btn">Watch Free →</span></div></div></a>
+      <a class="course-card" href="https://www.coursera.org/specializations/wharton-entrepreneurship" target="_blank"><div class="course-ico">🎓</div><div class="course-body"><div class="course-top-row"><span class="course-title">Wharton Entrepreneurship</span><span class="badge free">Free</span></div><div class="course-desc">UPenn Wharton's full entrepreneurship program. Audit free.</div><div class="course-meta-row"><span class="course-dur">⏱ 5 months</span><span class="course-btn">Watch Free →</span></div></div></a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(name, btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+function toggleStep(id){
+  const el=document.getElementById(id);
+  if(el.classList.contains('locked'))return;
+  el.classList.toggle('open');
+}
 </script>
-</body>
-</html>
