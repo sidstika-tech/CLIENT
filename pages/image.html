@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Image Generator — Double Eight AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<style>
+.image-layout{display:flex;flex-direction:column;height:calc(100vh - 58px);overflow:hidden;}
+.image-topbar{padding:.75rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem;flex-shrink:0;}
+.image-topbar h4{font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px;}
+.chip{background:var(--gold-dim);border:1px solid var(--border-gold);color:var(--gold);font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em;}
+
+/* Gallery area */
+.image-gallery{flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:1.5rem;}
+.gallery-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:1rem;color:var(--text3);}
+.gallery-empty .empty-icon{font-size:3.5rem;opacity:.4;}
+.gallery-empty p{font-size:.9rem;text-align:center;max-width:340px;line-height:1.6;}
+.gallery-empty .suggestions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.5rem;}
+.suggestion-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;font-size:.8rem;color:var(--text2);cursor:pointer;transition:.15s;font-family:'Outfit',sans-serif;}
+.suggestion-btn:hover{border-color:var(--border-gold);color:var(--text);}
+
+/* Message rows */
+.img-row{display:flex;flex-direction:column;gap:.75rem;}
+.img-prompt-bubble{align-self:flex-end;background:var(--gold-dim);border:1px solid var(--border-gold);color:var(--text);border-radius:14px 14px 4px 14px;padding:.65rem 1rem;max-width:75%;font-size:.88rem;line-height:1.5;}
+.img-result-wrap{display:flex;gap:.75rem;align-items:flex-start;}
+.img-avatar{width:32px;height:32px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#080810;font-size:.85rem;flex-shrink:0;}
+.img-cards{display:flex;flex-wrap:wrap;gap:.75rem;}
+.img-card{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:var(--surface);transition:.2s;cursor:pointer;}
+.img-card:hover{border-color:var(--border-gold);transform:translateY(-2px);}
+.img-card img{display:block;width:260px;height:260px;object-fit:cover;}
+.img-card-actions{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(8,8,16,.9));padding:.75rem .75rem .6rem;display:flex;gap:.5rem;opacity:0;transition:.2s;}
+.img-card:hover .img-card-actions{opacity:1;}
+.img-action-btn{background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:var(--gold);border-radius:7px;padding:.3rem .65rem;font-size:.75rem;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:.15s;}
+.img-action-btn:hover{background:rgba(245,158,11,.3);}
+
+/* Loading skeleton */
+.img-skeleton{width:260px;height:260px;border-radius:12px;background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.img-loading-label{font-size:.8rem;color:var(--text3);margin-top:.5rem;display:flex;align-items:center;gap:.4rem;}
+.dot-pulse span{display:inline-block;width:4px;height:4px;background:var(--gold);border-radius:50%;margin:0 1px;animation:dotpulse 1.2s infinite;}
+.dot-pulse span:nth-child(2){animation-delay:.2s;}
+.dot-pulse span:nth-child(3){animation-delay:.4s;}
+@keyframes dotpulse{0%,80%,100%{opacity:.2;transform:scale(.8);}40%{opacity:1;transform:scale(1);}}
+
+/* Input */
+.image-input-wrap{border-top:1px solid var(--border);padding:1rem 1.5rem;background:var(--bg);flex-shrink:0;}
+.image-input-row{display:flex;gap:.75rem;align-items:flex-end;max-width:900px;margin:0 auto;}
+.image-input-row textarea{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:.75rem 1rem;color:var(--text);font-size:.9rem;font-family:'Outfit',sans-serif;resize:none;outline:none;transition:.2s;line-height:1.5;max-height:120px;}
+.image-input-row textarea:focus{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.03);}
+.image-input-row textarea::placeholder{color:var(--text3);}
+.image-options{display:flex;gap:.5rem;align-items:center;margin-bottom:.5rem;max-width:900px;margin-left:auto;margin-right:auto;}
+.size-select{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.35rem .65rem;color:var(--text2);font-size:.8rem;font-family:'Outfit',sans-serif;outline:none;cursor:pointer;}
+.size-select:focus{border-color:var(--border-gold);}
+.count-select{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.35rem .65rem;color:var(--text2);font-size:.8rem;font-family:'Outfit',sans-serif;outline:none;cursor:pointer;}
+.img-send-btn{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#080810;font-size:1.1rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.2s;}
+.img-send-btn:hover:not(:disabled){transform:scale(1.05);}
+.img-send-btn:disabled{opacity:.5;cursor:not-allowed;}
+.input-footer{text-align:center;font-size:.72rem;color:var(--text3);margin-top:.5rem;}
+
+/* Lightbox */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:999;display:none;align-items:center;justify-content:center;padding:1.5rem;}
+.lightbox.open{display:flex;}
+.lightbox img{max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain;}
+.lightbox-close{position:fixed;top:1.25rem;right:1.5rem;background:var(--surface2);border:1px solid var(--border);width:38px;height:38px;border-radius:9px;color:var(--text);font-size:1.1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+
+@media(max-width:700px){
+  .img-card img,.img-skeleton{width:calc(50vw - 2.5rem);height:calc(50vw - 2.5rem);}
+  .image-topbar{padding:.65rem 1rem;}
+  .image-gallery{padding:1rem;}
+  .image-input-wrap{padding:.75rem 1rem;}
+}
+</style>
+</head>
+<body>
+<div class="app-grid-bg"></div>
+<div class="app">
+  <aside class="sidebar"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="hamburger">☰</button>
+      <span class="topbar-title" id="page-title">IMAGE GENERATOR</span>
+      <div class="topbar-right">
+        <span class="chip">🎨 Grok Image Quality</span>
+      </div>
+    </div>
+
+    <div class="image-layout">
+      <!-- Topbar info -->
+      <div class="image-topbar">
+        <div style="width:32px;height:32px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#080810;font-size:.9rem;flex-shrink:0">🎨</div>
+        <div>
+          <h4 id="gen-title">AI IMAGE GENERATOR</h4>
+          <div style="font-size:.72rem;color:var(--text3)" id="gen-sub">Describe your image — Grok will create it</div>
+        </div>
+        <button class="btn btn-secondary btn-sm" style="margin-left:auto" onclick="clearAll()" id="clear-btn">Clear All</button>
+      </div>
+
+      <!-- Gallery -->
+      <div class="image-gallery" id="gallery">
+        <div class="gallery-empty" id="empty-state">
+          <div class="empty-icon">🖼️</div>
+          <p id="empty-text">Describe any image and Grok will generate it for you. Try something creative!</p>
+          <div class="suggestions" id="suggestions">
+            <button class="suggestion-btn" onclick="useSuggestion(this)">A futuristic MENA city at sunset</button>
+            <button class="suggestion-btn" onclick="useSuggestion(this)">A minimalist logo for a tech startup</button>
+            <button class="suggestion-btn" onclick="useSuggestion(this)">A confident Arab entrepreneur in modern office</button>
+            <button class="suggestion-btn" onclick="useSuggestion(this)">Abstract golden geometric pattern</button>
+            <button class="suggestion-btn" onclick="useSuggestion(this)">Professional product photography on white background</button>
+            <button class="suggestion-btn" onclick="useSuggestion(this)">A luxury brand social media banner</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input area -->
+      <div class="image-input-wrap">
+        <div class="image-options">
+          <select class="size-select" id="size-select">
+            <option value="1024x1024">1024×1024 — Square</option>
+            <option value="1792x1024">1792×1024 — Wide</option>
+            <option value="1024x1792">1024×1792 — Portrait</option>
+          </select>
+          <select class="count-select" id="count-select">
+            <option value="1">1 image</option>
+            <option value="2">2 images</option>
+            <option value="4">4 images</option>
+          </select>
+        </div>
+        <div class="image-input-row">
+          <textarea id="prompt-input" placeholder="Describe the image you want to generate..." rows="1"
+            onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+          <button class="img-send-btn" id="send-btn" onclick="generateImage()" title="Generate">→</button>
+        </div>
+        <div class="input-footer" id="input-footer">Double Eight AI · Powered by x-ai/grok-imagine-image-quality</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script src="../js/core.js"></script>
+<script>
+Auth.check();
+buildLayout('image');
+
+let isGenerating = false;
+const history = []; // { prompt, images[] }
+
+function applyTranslations() {
+  const isAr = localStorage.getItem('d8_lang') === 'ar';
+  document.getElementById('page-title').textContent = isAr ? 'مولّد الصور' : 'IMAGE GENERATOR';
+  document.getElementById('gen-title').textContent = isAr ? 'مولّد الصور بالذكاء الاصطناعي' : 'AI IMAGE GENERATOR';
+  document.getElementById('gen-sub').textContent = isAr ? 'صف صورتك — وسيقوم Grok بإنشائها' : 'Describe your image — Grok will create it';
+  document.getElementById('clear-btn').textContent = isAr ? 'مسح الكل' : 'Clear All';
+  document.getElementById('prompt-input').placeholder = isAr ? 'صف الصورة التي تريد إنشاءها...' : 'Describe the image you want to generate...';
+  document.getElementById('empty-text').textContent = isAr ? 'صف أي صورة وسيقوم Grok بإنشائها. جرّب شيئاً إبداعياً!' : 'Describe any image and Grok will generate it for you. Try something creative!';
+}
+applyTranslations();
+
+async function generateImage() {
+  const prompt = document.getElementById('prompt-input').value.trim();
+  if (!prompt || isGenerating) return;
+
+  const size = document.getElementById('size-select').value;
+  const n = parseInt(document.getElementById('count-select').value);
+
+  // Hide empty state
+  document.getElementById('empty-state').style.display = 'none';
+
+  // Clear input
+  const input = document.getElementById('prompt-input');
+  input.value = '';
+  input.style.height = 'auto';
+
+  isGenerating = true;
+  const sendBtn = document.getElementById('send-btn');
+  sendBtn.disabled = true;
+  sendBtn.innerHTML = '<div class="dot-pulse"><span></span><span></span><span></span></div>';
+
+  // Add prompt bubble + skeleton placeholders
+  const rowId = 'row-' + Date.now();
+  const gallery = document.getElementById('gallery');
+  const row = document.createElement('div');
+  row.className = 'img-row';
+  row.id = rowId;
+
+  // Prompt bubble
+  const bubble = document.createElement('div');
+  bubble.className = 'img-prompt-bubble';
+  bubble.textContent = prompt;
+  row.appendChild(bubble);
+
+  // Skeletons
+  const resultWrap = document.createElement('div');
+  resultWrap.className = 'img-result-wrap';
+  const avatar = document.createElement('div');
+  avatar.className = 'img-avatar';
+  avatar.textContent = 'D8';
+  const cardsWrap = document.createElement('div');
+  cardsWrap.className = 'img-cards';
+  cardsWrap.id = rowId + '-cards';
+
+  for (let i = 0; i < n; i++) {
+    const skeletonWrap = document.createElement('div');
+    skeletonWrap.style.display = 'flex';
+    skeletonWrap.style.flexDirection = 'column';
+    const sk = document.createElement('div');
+    sk.className = 'img-skeleton';
+    const label = document.createElement('div');
+    label.className = 'img-loading-label';
+    label.innerHTML = '<div class="dot-pulse"><span></span><span></span><span></span></div> Generating...';
+    skeletonWrap.appendChild(sk);
+    skeletonWrap.appendChild(label);
+    cardsWrap.appendChild(skeletonWrap);
+  }
+
+  resultWrap.appendChild(avatar);
+  resultWrap.appendChild(cardsWrap);
+  row.appendChild(resultWrap);
+  gallery.appendChild(row);
+  gallery.scrollTop = gallery.scrollHeight;
+
+  try {
+    const data = await api.post('/tools/image/generate', { prompt, size, n });
+    if (!data?.images?.length) throw new Error('No images returned');
+
+    // Replace skeletons with real images
+    const cardsContainer = document.getElementById(rowId + '-cards');
+    cardsContainer.innerHTML = '';
+    data.images.forEach((url, idx) => {
+      const card = document.createElement('div');
+      card.className = 'img-card';
+      card.innerHTML = `
+        <img src="${url}" alt="Generated image ${idx + 1}" loading="lazy" onclick="openLightbox('${url}')">
+        <div class="img-card-actions">
+          <button class="img-action-btn" onclick="downloadImage('${url}', ${idx})">⬇ Download</button>
+          <button class="img-action-btn" onclick="openLightbox('${url}')">⛶ Expand</button>
+        </div>`;
+      cardsContainer.appendChild(card);
+    });
+
+    history.push({ prompt, images: data.images });
+    gallery.scrollTop = gallery.scrollHeight;
+
+  } catch (err) {
+    console.error('Image generation error:', err);
+    const cardsContainer = document.getElementById(rowId + '-cards');
+    cardsContainer.innerHTML = `<div style="color:var(--red);font-size:.85rem;padding:.75rem;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px">
+      ⚠ Generation failed. Please try again.
+    </div>`;
+    Toast.show('Image generation failed', 'error');
+  } finally {
+    isGenerating = false;
+    sendBtn.disabled = false;
+    sendBtn.innerHTML = '→';
+  }
+}
+
+function useSuggestion(btn) {
+  document.getElementById('prompt-input').value = btn.textContent;
+  generateImage();
+}
+
+function clearAll() {
+  const isAr = localStorage.getItem('d8_lang') === 'ar';
+  if (!history.length) return;
+  if (confirm(isAr ? 'مسح كل الصور المُنشأة؟' : 'Clear all generated images?')) {
+    window.location.reload();
+  }
+}
+
+function openLightbox(url) {
+  document.getElementById('lightbox-img').src = url;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+async function downloadImage(url, idx) {
+  try {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `d8-image-${Date.now()}-${idx + 1}.png`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  } catch {
+    // Fallback: open in new tab
+    window.open(url, '_blank');
+  }
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); generateImage(); }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+// Close lightbox on Escape
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+</script>
+</body>
+</html>
