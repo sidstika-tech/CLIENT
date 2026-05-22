@@ -493,11 +493,7 @@ function buildLayout(pageId) {
     const overlay = document.createElement('div');
     overlay.id = 'main-overlay';
     overlay.className = 'sidebar-overlay';
-    overlay.onclick = () => {
-      sidebar.classList.remove('open');
-      overlay.classList.remove('show');
-      document.body.classList.remove('sidebar-open');
-    };
+    overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('show'); };
     document.body.insertBefore(overlay, document.body.firstChild);
   }
 
@@ -511,7 +507,6 @@ function buildLayout(pageId) {
       sidebar.classList.remove('open');
       const ov = document.getElementById('main-overlay');
       if(ov) ov.classList.remove('show');
-      document.body.classList.remove('sidebar-open');
     };
     sidebar.appendChild(closeBtn);
   }
@@ -519,10 +514,9 @@ function buildLayout(pageId) {
   // Hamburger setup — find all .hamburger buttons and wire them
   document.querySelectorAll('.hamburger').forEach(btn => {
     btn.onclick = () => {
-      const isOpen = sidebar.classList.toggle('open');
+      sidebar.classList.toggle('open');
       const ov = document.getElementById('main-overlay');
-      if(ov) ov.classList.toggle('show', isOpen);
-      document.body.classList.toggle('sidebar-open', isOpen);
+      if(ov) ov.classList.toggle('show');
     };
   });
 }
