@@ -119,7 +119,7 @@ async function deleteReport(id,source) {
   const path=source==='generator'?`/generator/reports/${id}`:`/tools/reports/${id}`;
   const d=await api.del(path);
   if(d?.success){Toast.show(isAr?'تم الحذف':'Deleted','success');loadVault();}
-  else Toast.show('Delete failed','error');
+  else Toast.show(isAr?'فشل الحذف':'Delete failed','error');
 }
 loadVault();
 </script>

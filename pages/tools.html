@@ -84,7 +84,22 @@ buildLayout('tools');
 function applyTranslations() {
   const isAr = localStorage.getItem('d8_lang')==='ar';
   document.getElementById('page-title').textContent = isAr ? 'مركز الأدوات الذكية' : 'AI TOOLS HUB';
-  document.getElementById('tools-count').textContent = isAr ? '6 أدوات متخصصة' : '6 AI-powered tools';
+  document.getElementById('tools-count').textContent = isAr ? '6 أدوات ذكاء اصطناعي' : '6 AI-powered tools';
+  // Category filter buttons
+  document.getElementById('cat-all').textContent = isAr ? 'كل الأدوات' : 'All Tools';
+  document.getElementById('cat-brand').textContent = isAr ? 'الهوية والعلامة' : 'Brand & Identity';
+  document.getElementById('cat-plan').textContent = isAr ? 'التخطيط والاستراتيجية' : 'Planning & Strategy';
+  document.getElementById('cat-legal').textContent = isAr ? 'القانون والمالية' : 'Legal & Finance';
+  document.getElementById('cat-mkt').textContent = isAr ? 'التسويق' : 'Marketing';
+  document.getElementById('cat-sales').textContent = isAr ? 'المبيعات والمحتوى' : 'Sales & Copy';
+  // Modal action buttons
+  document.getElementById('cancel-modal-btn').textContent = isAr ? 'إلغاء' : 'Cancel';
+  document.getElementById('gen-btn-text').textContent = isAr ? '⚡ توليد' : '⚡ Generate';
+  document.getElementById('result-title-lbl').textContent = isAr ? 'النتيجة المولّدة' : 'Generated Result';
+  document.getElementById('copy-btn').textContent = isAr ? 'نسخ النص' : 'Copy Text';
+  document.getElementById('new-btn').textContent = isAr ? '← جديد' : '← New';
+  document.getElementById('close-result-btn').textContent = isAr ? '✕ إغلاق' : '✕ Close';
+  document.getElementById('download-html-btn').textContent = isAr ? '⬇ تحميل index.html' : '⬇ Download index.html';
 }
 applyTranslations();
 

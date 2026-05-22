@@ -159,13 +159,14 @@ async function handleFileUpload(e) {
   const isImage = file.type.startsWith('image/');
   const isDoc = !isImage && (file.type === 'application/pdf' || file.type.includes('word') || file.type === 'text/plain');
   
+  const isArChat = localStorage.getItem('d8_lang') === 'ar';
   if (!isImage && !isDoc) {
-    Toast.show('Unsupported file type. Please upload images or documents (PDF, Word, Text).', 'error');
+    Toast.show(isArChat ? 'نوع الملف غير مدعوم. يرجى رفع صورة أو مستند (PDF, Word, نص).' : 'Unsupported file type. Please upload images or documents (PDF, Word, Text).', 'error');
     return;
   }
 
   if (file.size > 5 * 1024 * 1024) {
-    Toast.show('File too large. Max 5MB.', 'error');
+    Toast.show(isArChat ? 'الملف كبير جداً. الحد الأقصى 5 ميغابايت.' : 'File too large. Max 5MB.', 'error');
     return;
   }
 
@@ -215,7 +216,7 @@ async function loadSessions() {
   }
   list.innerHTML=data.sessions.map(s=>`
     <div class="session-item ${s._id===currentSessionId?'active':''}" onclick="loadSession('${s._id}');closeHistoryPanel()">
-      <div class="session-title">${s.title||'New Conversation'}</div>
+      <div class="session-title">${s.title||(isAr?'محادثة جديدة':'New Conversation')}</div>
       <div class="session-date">${timeAgo(s.updatedAt)}</div>
     </div>`).join('');
 }

@@ -199,6 +199,81 @@
 <script>
 Auth.check();
 buildLayout('dashboard');
+
+function applyDashTranslations(){
+  const isAr=localStorage.getItem('d8_lang')==='ar';
+  if(!isAr)return;
+  // Topbar
+  document.querySelector('.topbar-title').textContent='لوحة التحكم';
+  document.querySelector('.btn-new').textContent='+ تقرير جديد';
+  // Limit banner
+  document.querySelector('.limit-banner-text h4').textContent='وصلت إلى حد الخطة المجانية';
+  document.querySelector('.limit-banner-text p').textContent='قم بالترقية إلى Pro — الشهر الأول مجاناً — لمواصلة إنشاء التقارير وتنمية أعمالك.';
+  document.querySelector('.limit-banner .btn-primary').textContent='🎁 ترقية مجانية ←';
+  // Welcome
+  document.getElementById('welcome-sub').textContent='منصتك للذكاء الاصطناعي جاهزة. ماذا نبني اليوم؟';
+  document.querySelector('.welcome-banner .btn-primary').textContent='◎ اسأل المستشار الذكي';
+  // DNA CTA
+  document.querySelector('#dna-cta-banner [style*="font-family"]').textContent='اكتشف عملك المثالي';
+  document.querySelector('#dna-cta-banner [style*="font-size:.85rem"]').textContent='أجب 8 أسئلة سريعة — يخبرك ذكاؤنا بالضبط أي عمل تبنيه بناءً على مهاراتك وميزانيتك وبلدك.';
+  document.querySelector('#dna-cta-banner .btn-primary').textContent='🧬 ابدأ هويتي التجارية ←';
+  // DNA summary
+  document.querySelector('#dna-summary-banner [style*="text-transform"]').textContent='عملك المثالي';
+  document.querySelector('#dna-summary-banner [style*="color:#818cf8"]').textContent='عرض التقرير كاملاً ←';
+  // Onboarding
+  document.querySelector('.onboarding-card h3').textContent='🚀 قائمة الإطلاق';
+  document.querySelector('.onboarding-card p').textContent='أكمل هذه الخطوات الخمس لإطلاق عملك بالذكاء الاصطناعي';
+  // Onboard steps
+  const steps=document.querySelectorAll('.onboard-step-text');
+  const stepData=[
+    ['أجرِ أول بحث سوقي','افهم سوقك قبل إنفاق أي دولار'],
+    ['أنشئ خطة عملك','جاهزة للمستثمرين خلال دقيقتين'],
+    ['أنشئ هوية علامتك','الألوان والخطوط والصوت ومفهوم الشعار'],
+    ['ابنِ استراتيجيتك التسويقية','خطة كاملة لاستقطاب أول عملاءك'],
+    ['أنشئ عرض المستثمرين','جاهز لجمع التمويل عندما تكون مستعداً']
+  ];
+  steps.forEach((el,i)=>{
+    if(stepData[i]){
+      el.childNodes[0].textContent=stepData[i][0];
+      const sp=el.querySelector('span');
+      if(sp)sp.textContent=stepData[i][1];
+    }
+  });
+  // Stats
+  document.querySelectorAll('.stat-label')[0].textContent='التقارير المولّدة';
+  document.querySelectorAll('.stat-label')[1].textContent='محادثات الذكاء الاصطناعي';
+  document.querySelectorAll('.stat-label')[2].textContent='أبحاث السوق';
+  document.querySelectorAll('.stat-label')[3].textContent='الخطة الحالية';
+  document.querySelectorAll('.stat-sub')[0].textContent='إجمالي كل الوقت';
+  document.querySelectorAll('.stat-sub')[1].textContent='إجمالي الجلسات';
+  document.querySelectorAll('.stat-sub')[2].textContent='تقارير منجزة';
+  document.querySelector('#stat-plan').nextElementSibling.innerHTML='<a onclick="window.location.href=\'billing.html\'" style="color:var(--gold);cursor:pointer">ترقية ←</a>';
+  // Quick actions
+  const qBtns=document.querySelectorAll('.quick-btn');
+  const qData=[
+    ['المستشار الذكي','اسأل أي شيء'],
+    ['خطة عمل','جاهزة للمستثمرين'],
+    ['أبحاث السوق','رؤى عميقة'],
+    ['متعقّب المنافسين','تقارير أسبوعية'],
+    ['خطة تسويقية','استراتيجية كاملة'],
+    ['رحلة المؤسس','خمس خطوات للإطلاق'],
+    ['حزمة الإطلاق','8 وثائق كاملة']
+  ];
+  qBtns.forEach((btn,i)=>{
+    if(qData[i]){
+      btn.querySelector('.q-label').textContent=qData[i][0];
+      btn.querySelector('.q-sub').textContent=qData[i][1];
+    }
+  });
+  // Recent + Usage headers
+  document.querySelectorAll('.section-hdr h3')[0].textContent='التقارير الأخيرة';
+  document.querySelector('.section-hdr .btn-secondary').textContent='عرض الكل ←';
+  document.querySelectorAll('.section-hdr h3')[1].textContent='الاستخدام هذا الشهر';
+  document.querySelector('.tip-hdr').textContent='◎ نصيحة المستشار الذكي';
+  // Date in Arabic locale
+  document.getElementById('top-date').textContent=new Date().toLocaleDateString('ar-SA',{weekday:'long',month:'long',day:'numeric'});
+}
+
 document.getElementById('top-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
 
 const ONBOARD_KEY='d8_onboard';
@@ -233,7 +308,8 @@ async function loadDashboard(){
   if(!u?.user)return;
   const user=u.user;
   Auth.setUser(user);
-  document.getElementById('welcome-msg').textContent=`Welcome back, ${user.name?.split(' ')[0]||''}!`;
+  const isAr=localStorage.getItem('d8_lang')==='ar';
+  document.getElementById('welcome-msg').textContent=isAr?`مرحباً بعودتك، ${user.name?.split(' ')[0]||''}!`:`Welcome back, ${user.name?.split(' ')[0]||''}!`;
   document.getElementById('stat-reports').textContent=user.usage?.reportsGenerated||0;
   document.getElementById('stat-chats').textContent=user.usage?.chatMessages||0;
   document.getElementById('stat-research').textContent=user.usage?.marketResearch||0;
@@ -249,11 +325,12 @@ async function loadDashboard(){
   const LIMITS={free:{chat:20,reports:3,research:2,marketing:2},starter:{chat:200,reports:20,research:15,marketing:15},pro:{chat:1000,reports:100,research:75,marketing:75},enterprise:{chat:-1,reports:-1,research:-1,marketing:-1}};
   const limits=LIMITS[plan]||LIMITS.free;
   const usage=user.usage||{};
+  const isArLang=localStorage.getItem('d8_lang')==='ar';
   const items=[
-    {label:'AI Chats',used:usage.chatMessages||0,max:limits.chat},
-    {label:'Reports',used:usage.reportsGenerated||0,max:limits.reports},
-    {label:'Market Research',used:usage.marketResearch||0,max:limits.research},
-    {label:'Marketing Plans',used:usage.marketingPlans||0,max:limits.marketing}
+    {label:isArLang?'محادثات الذكاء الاصطناعي':'AI Chats',used:usage.chatMessages||0,max:limits.chat},
+    {label:isArLang?'التقارير':'Reports',used:usage.reportsGenerated||0,max:limits.reports},
+    {label:isArLang?'أبحاث السوق':'Market Research',used:usage.marketResearch||0,max:limits.research},
+    {label:isArLang?'خطط التسويق':'Marketing Plans',used:usage.marketingPlans||0,max:limits.marketing}
   ];
   document.getElementById('usage-bars').innerHTML=items.map(it=>{
     const pct=it.max===-1?5:Math.min(100,Math.round((it.used/it.max)*100));
@@ -285,7 +362,7 @@ async function loadDashboard(){
   const tipArr=tips[lang]||tips.en;
   document.getElementById('tip-text').textContent=tipArr[Math.floor(Math.random()*tipArr.length)];
 }
-loadDashboard();
+loadDashboard().then(()=>applyDashTranslations());
 </script>
 </body>
 </html>

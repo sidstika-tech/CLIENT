@@ -206,8 +206,10 @@ h1,h2,h3,h4,h5 { font-family:'Bebas Neue',cursive; letter-spacing:1px; }
 /* ── RESPONSIVE ── */
 @media(max-width:900px) {
   .sidebar { transform:translateX(-100%); position:fixed; z-index:200; }
-  .sidebar.open { transform:translateX(0); }
-  .main { margin-left:0; }
+  [dir="rtl"] .sidebar { transform:translateX(100%); left:auto; right:0; }
+  .sidebar.open { transform:translateX(0) !important; }
+  [dir="rtl"] .sidebar.open { transform:translateX(0) !important; }
+  .main { margin-left:0 !important; margin-right:0 !important; width:100% !important; }
   .form-grid,.form-grid-3 { grid-template-columns:1fr; }
   .tools-grid { grid-template-columns:1fr 1fr; }
   .chat-layout { grid-template-columns:1fr; }
@@ -267,9 +269,9 @@ h1,h2,h3,h4,h5 { font-family:'Bebas Neue',cursive; letter-spacing:1px; }
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.55);
+  background: rgba(0,0,0,0.6);
   z-index: 150;
-  backdrop-filter: blur(2px);
+  /* NO backdrop-filter here — it was blurring the sidebar itself */
 }
 .sidebar-overlay.show { display: block; }
 
@@ -484,13 +486,18 @@ h1,h2,h3,h4,h5 { font-family:'Bebas Neue',cursive; letter-spacing:1px; }
 /* ── RESPONSIVE OVERRIDES (MOBILE) ── */
 @media(max-width:900px) {
   .hamburger { display: flex !important; }
-  .sidebar { transform: translateX(-100%); }
-  [dir="rtl"] .sidebar { transform: translateX(100%); }
+  /* Issue 1 fix: sidebar hidden off-screen, main takes full width */
+  .sidebar { transform: translateX(-100%); width: var(--sidebar); }
+  [dir="rtl"] .sidebar { transform: translateX(100%); left: auto; right: 0; }
   .sidebar.open { transform: translateX(0) !important; }
-  .main { margin-left: 0 !important; margin-right: 0 !important; }
+  /* Issue 5 fix: RTL sidebar open also uses translateX(0) */
+  [dir="rtl"] .sidebar.open { transform: translateX(0) !important; }
+  .main { margin-left: 0 !important; margin-right: 0 !important; width: 100% !important; max-width: 100vw !important; }
   .tool-page-grid { grid-template-columns: 1fr; }
   .mobile-tool-tabs { display: flex !important; }
-  .topbar { padding: 0 1rem; }
+  .topbar { padding: 0 .75rem; }
+  /* Issue 1 fix: close button visible when sidebar open */
+  .sidebar-close-btn { display: flex !important; }
 }
 @media(max-width:600px) {
   .tool-page-grid { grid-template-columns: 1fr; }
@@ -558,12 +565,14 @@ html, body { overflow-x: hidden; max-width: 100vw; }
    MOBILE FIXES — proper responsive for all sections
 ══════════════════════════════════════════════════════════════════ */
 @media(max-width:768px){
-  /* Sidebar */
-  .sidebar{transform:translateX(-100%);position:fixed;z-index:100;height:100vh;}
-  [dir=rtl] .sidebar{transform:translateX(100%);}
-  .sidebar.open{transform:translateX(0);}
+  /* Sidebar — Issue 1 & 5 fix */
+  .sidebar{transform:translateX(-100%);position:fixed;z-index:200;height:100vh;width:var(--sidebar);}
+  [dir=rtl] .sidebar{transform:translateX(100%);left:auto;right:0;}
+  .sidebar.open{transform:translateX(0)!important;}
+  [dir=rtl] .sidebar.open{transform:translateX(0)!important;}
   .sidebar-overlay.show{display:block;}
-  .main{margin-left:0!important;margin-right:0!important;}
+  /* Issue 1 fix: main must be full width, no side margins */
+  .main{margin-left:0!important;margin-right:0!important;width:100%!important;max-width:100vw!important;overflow-x:hidden;}
 
   /* Topbar */
   .topbar{padding:0 .75rem;height:52px;}
@@ -673,4 +682,56 @@ html, body { overflow-x: hidden; max-width: 100vw; }
   .comp-actions .btn{font-size:.78rem;padding:.5rem .75rem;}
   .img-card img{width:160px;height:160px;}
   .score-grid{grid-template-columns:repeat(2,1fr);}
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   CRITICAL MOBILE FULL-SCREEN FIXES — Issue #1
+   Prevents any horizontal scroll / side movement on mobile
+══════════════════════════════════════════════════════════════════ */
+@media(max-width:900px){
+  html, body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    position: relative;
+  }
+  .app {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    flex-direction: column;
+  }
+  .main {
+    width: 100% !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    overflow-x: hidden !important;
+  }
+  .page-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  /* Sidebar close button — always show on mobile */
+  .sidebar-close-btn {
+    display: flex !important;
+    position: absolute;
+    top: .85rem;
+    right: .75rem;
+    left: auto;
+  }
+  [dir="rtl"] .sidebar-close-btn {
+    right: auto;
+    left: .75rem;
+  }
+  /* Issue 2 fix: no blur on overlay (blurs sidebar) */
+  .sidebar-overlay {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  /* Topbar stays full width */
+  .topbar {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
 }

@@ -511,14 +511,31 @@ function buildLayout(pageId) {
     sidebar.appendChild(closeBtn);
   }
 
-  // Hamburger setup — find all .hamburger buttons and wire them
+  // Issue 5 fix: Hamburger setup — works for both LTR and RTL
   document.querySelectorAll('.hamburger').forEach(btn => {
+    btn.setAttribute('aria-label', lang === 'ar' ? 'فتح القائمة' : 'Open menu');
     btn.onclick = () => {
-      sidebar.classList.toggle('open');
-      const ov = document.getElementById('main-overlay');
-      if(ov) ov.classList.toggle('show');
+      const isOpen = sidebar.classList.contains('open');
+      if (isOpen) {
+        sidebar.classList.remove('open');
+        const ov = document.getElementById('main-overlay');
+        if(ov) ov.classList.remove('show');
+      } else {
+        sidebar.classList.add('open');
+        const ov = document.getElementById('main-overlay');
+        if(ov) ov.classList.add('show');
+      }
     };
   });
+  // Issue 5 fix: user plan label in Arabic
+  if (lang === 'ar') {
+    const planMap = { free: 'مجاني', starter: 'مبتدئ', pro: 'احترافي', enterprise: 'مؤسسي' };
+    const planEl = sidebar.querySelector('.user-plan');
+    if (planEl) {
+      const planKey = (user.membership?.plan||'free').toLowerCase();
+      planEl.textContent = (planMap[planKey] || planKey) + ' خطة';
+    }
+  }
 }
 
 /* ── GENERATE BUTTON LOADING STATE ── */
@@ -577,13 +594,14 @@ async function exportReport(reportId, format) {
 
 /* ── DATE FORMATTER ── */
 function timeAgo(d) {
+  const isAr = localStorage.getItem('d8_lang') === 'ar';
   const diff = Date.now() - new Date(d).getTime();
   const m = Math.floor(diff/60000);
-  if(m<1) return 'just now';
-  if(m<60) return `${m}m ago`;
+  if(m<1) return isAr ? 'للتو' : 'just now';
+  if(m<60) return isAr ? `منذ ${m} دقيقة` : `${m}m ago`;
   const h = Math.floor(m/60);
-  if(h<24) return `${h}h ago`;
-  return Math.floor(h/24)+'d ago';
+  if(h<24) return isAr ? `منذ ${h} ساعة` : `${h}h ago`;
+  return isAr ? `منذ ${Math.floor(h/24)} يوم` : Math.floor(h/24)+'d ago';
 }
 
 /* ── Apply language direction on page load ── */
@@ -665,17 +683,18 @@ const Notifications = {
       const drawer = document.createElement('aside');
       drawer.id = 'notif-drawer';
       drawer.className = 'notif-drawer';
+      const isArNotif = localStorage.getItem('d8_lang') === 'ar';
       drawer.innerHTML = `
         <div class="notif-drawer-header">
-          <h3>🔔 NOTIFICATIONS</h3>
+          <h3>${isArNotif ? '🔔 الإشعارات' : '🔔 NOTIFICATIONS'}</h3>
           <button class="notif-drawer-close" onclick="Notifications.close()">✕</button>
         </div>
         <div class="notif-actions">
-          <button onclick="Notifications.markAllRead()">✓ Mark all as read</button>
-          <button onclick="Notifications.clearAll()" style="margin-left:auto;color:#f87171">Clear all</button>
+          <button onclick="Notifications.markAllRead()">${isArNotif ? '✓ تمييز الكل كمقروء' : '✓ Mark all as read'}</button>
+          <button onclick="Notifications.clearAll()" style="${isArNotif ? 'margin-right:auto' : 'margin-left:auto'};color:#f87171">${isArNotif ? 'مسح الكل' : 'Clear all'}</button>
         </div>
         <div class="notif-list" id="notif-list">
-          <div class="notif-empty">Loading…</div>
+          <div class="notif-empty">${isArNotif ? 'جارٍ التحميل…' : 'Loading…'}</div>
         </div>
       `;
       document.body.appendChild(overlay);
@@ -707,12 +726,13 @@ const Notifications = {
   renderList() {
     const list = document.getElementById('notif-list');
     if (!list) return;
+    const isArList = localStorage.getItem('d8_lang') === 'ar';
     if (!this.cache.length) {
       list.innerHTML = `
         <div class="notif-empty">
           <div class="ne-icon">🔕</div>
-          <div>No notifications yet.</div>
-          <div style="font-size:.75rem;margin-top:.4rem;opacity:.7">Track a competitor or complete an Academy session — your updates appear here.</div>
+          <div>${isArList ? 'لا توجد إشعارات بعد.' : 'No notifications yet.'}</div>
+          <div style="font-size:.75rem;margin-top:.4rem;opacity:.7">${isArList ? 'تتبّع منافساً أو أكمل جلسة في الأكاديمية — ستظهر تحديثاتك هنا.' : 'Track a competitor or complete an Academy session — your updates appear here.'}</div>
         </div>`;
       return;
     }
