@@ -135,7 +135,7 @@
             onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
           <button class="img-send-btn" id="send-btn" onclick="generateImage()" title="Generate">→</button>
         </div>
-        <div class="input-footer" id="input-footer">Double Eight AI · Powered by x-ai/grok-imagine-image-quality</div>
+        <div class="input-footer" id="input-footer">Double Eight AI · Powered by x-ai/grok-imagine</div>
       </div>
     </div>
   </div>
@@ -273,7 +273,7 @@ async function generateImage() {
 
   try {
     const data = await api.post('/tools/image/generate', { 
-      prompt: prompt + (attachedFile ? ` (Reference image attached)` : ''), 
+      prompt, 
       size, 
       n,
       imageData // Pass reference image if available

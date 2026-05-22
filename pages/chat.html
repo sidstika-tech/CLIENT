@@ -273,14 +273,13 @@ async function sendMessage() {
         reader.readAsDataURL(attachedFile.file);
       });
     } else {
-      // For documents, we'd ideally parse them. For now, we'll add a note.
-      // In a real app, you'd send the file to a parsing endpoint first.
       finalMessage += `\n\n[Attached Document: ${attachedFile.name}]`;
     }
   }
 
-  appendMessage('user', text + (attachedFile ? `\n\n(Attached: ${attachedFile.name})` : ''));
-  messages.push({role:'user',content:text});
+  const displayMessage = text + (attachedFile ? `\n\n(Attached: ${attachedFile.name})` : '');
+  appendMessage('user', displayMessage);
+  messages.push({role:'user',content:displayMessage});
   
   const aiMsgId=appendMessage('assistant','',true);
   let fullResponse='';
