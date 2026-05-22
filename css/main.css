@@ -553,3 +553,124 @@ html, body { overflow-x: hidden; max-width: 100vw; }
 #website-preview-wrap{margin-top:1rem;}
 #website-preview-frame{width:100%;height:480px;border:1px solid var(--border);border-radius:var(--radius);background:#fff;}
 @media(max-width:800px){.two-col{grid-template-columns:1fr;}.quick-actions{grid-template-columns:1fr 1fr;}}
+
+/* ══════════════════════════════════════════════════════════════════
+   MOBILE FIXES — proper responsive for all sections
+══════════════════════════════════════════════════════════════════ */
+@media(max-width:768px){
+  /* Sidebar */
+  .sidebar{transform:translateX(-100%);position:fixed;z-index:100;height:100vh;}
+  [dir=rtl] .sidebar{transform:translateX(100%);}
+  .sidebar.open{transform:translateX(0);}
+  .sidebar-overlay.show{display:block;}
+  .main{margin-left:0!important;margin-right:0!important;}
+
+  /* Topbar */
+  .topbar{padding:0 .75rem;height:52px;}
+  .topbar-title{font-size:.85rem;letter-spacing:1px;}
+  .topbar-right{gap:.3rem;}
+  .hamburger{display:flex!important;}
+
+  /* Page content */
+  .page-content{padding:.75rem!important;}
+
+  /* Dashboard */
+  .quick-actions{grid-template-columns:1fr 1fr;gap:.6rem;}
+  .quick-btn{padding:.85rem .6rem;}
+  .quick-btn .q-icon{font-size:1.2rem;margin-bottom:.3rem;}
+  .quick-btn .q-label{font-size:.78rem;}
+  .two-col{grid-template-columns:1fr;}
+  .recent-item{padding:.75rem .85rem;}
+
+  /* DNA page */
+  .dna-hero{padding:1.2rem 1rem;}
+  .dna-hero h2{font-size:1.4rem;}
+  .dna-hero::after{display:none;}
+  .id-row{grid-template-columns:1fr!important;}
+  .q-card{padding:1rem 1.1rem;}
+  .q-options{grid-template-columns:1fr 1fr;}
+  .section-mirror,.section-path,.section-map{padding:1rem 1.1rem;}
+  .path-grid{grid-template-columns:1fr!important;}
+  .mirror-block.feature{font-size:.95rem;padding:1rem;}
+  .score-grid{grid-template-columns:repeat(3,1fr);gap:.4rem;}
+  .score-num{font-size:1.4rem;}
+  .closing-strip{grid-template-columns:1fr;}
+
+  /* Chat */
+  .chat-layout{height:calc(100vh - 52px)!important;}
+  .chat-sidebar{display:none;}
+  .chat-main{border-left:none!important;border-right:none!important;}
+  .chat-input-wrap{padding:.6rem .75rem;}
+  .chat-input-row textarea{font-size:16px;/* prevents iOS zoom */}
+
+  /* Image generator */
+  .image-layout{height:calc(100vh - 52px);}
+  .img-card img{width:200px;height:200px;}
+  .image-input-wrap{padding:.6rem .75rem;}
+  .image-input-row textarea{font-size:16px;}
+
+  /* Tools */
+  .tool-grid{grid-template-columns:1fr!important;}
+  .modal{max-width:95vw!important;margin:.5rem!important;max-height:90vh;}
+  .modal-body{max-height:60vh;overflow-y:auto;}
+  .form-grid{grid-template-columns:1fr!important;}
+
+  /* Academy */
+  .tabs-row{gap:.2rem;}
+  .tab-btn{padding:.5rem .7rem;font-size:.78rem;}
+  .step-header{padding:.85rem 1rem;flex-wrap:wrap;gap:.6rem;}
+  .step-icon{width:40px;height:40px;font-size:1.1rem;}
+  .step-title{font-size:1rem;}
+  .step-progress-pill{order:10;margin-left:auto;}
+  .session-row{padding:.7rem .75rem;gap:.6rem;}
+  #news-cards-row{grid-template-columns:1fr!important;}
+  .courses-grid{grid-template-columns:1fr!important;}
+  .path-progress{padding:1rem;}
+  .path-progress-top{flex-direction:column;align-items:flex-start;}
+  .pp-stat strong{font-size:.9rem;}
+
+  /* Launch Package */
+  .pkg-grid{grid-template-columns:1fr!important;}
+  .pkg-hero{padding:1.2rem 1rem;}
+  .pkg-hero::after{display:none;}
+
+  /* Competitor */
+  .comp-grid{grid-template-columns:1fr!important;}
+  .comp-hero{padding:1.2rem 1rem;}
+  .comp-hero::after{display:none;}
+  .comp-actions{flex-direction:column;}
+  .intel-signals{grid-template-columns:1fr!important;}
+
+  /* Community */
+  .comm-hero{padding:1.2rem 1rem;}
+  .comm-feed{padding:0;}
+  .post-card{padding:1rem;}
+  .post-reply{padding:.6rem .75rem;}
+
+  /* Billing */
+  .plans-grid{grid-template-columns:1fr!important;}
+  .plan-card.featured{transform:none;}
+
+  /* Vault */
+  .vault-grid{grid-template-columns:1fr!important;}
+
+  /* Notifications drawer */
+  .notif-drawer{width:100vw;max-width:100vw;}
+
+  /* Language button */
+  .lang-btn{padding:0 .5rem;font-size:.7rem;}
+
+  /* Hero sections universal */
+  [class*="-hero"]::after{display:none!important;}
+
+  /* Forms on mobile */
+  .form-input,.form-textarea,.q-input{font-size:16px!important;}
+}
+
+@media(max-width:400px){
+  .quick-actions{grid-template-columns:1fr;}
+  .q-options{grid-template-columns:1fr;}
+  .comp-actions .btn{font-size:.78rem;padding:.5rem .75rem;}
+  .img-card img{width:160px;height:160px;}
+  .score-grid{grid-template-columns:repeat(2,1fr);}
+}
