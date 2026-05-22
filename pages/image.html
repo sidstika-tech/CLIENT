@@ -127,7 +127,10 @@
             <option value="4">4 images</option>
           </select>
         </div>
+        <div id="attachment-preview" style="display:none;padding:.5rem 1rem;gap:.5rem;flex-wrap:wrap;border-bottom:1px solid var(--border)"></div>
         <div class="image-input-row">
+          <input type="file" id="file-upload" style="display:none" onchange="handleFileUpload(event)" accept="image/*">
+          <button class="chat-action-btn" onclick="document.getElementById('file-upload').click()" title="Upload Reference Image" style="background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;padding:0 .5rem">🖼️</button>
           <textarea id="prompt-input" placeholder="Describe the image you want to generate..." rows="1"
             onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
           <button class="img-send-btn" id="send-btn" onclick="generateImage()" title="Generate">→</button>
@@ -151,6 +154,39 @@ buildLayout('image');
 
 let isGenerating = false;
 const history = []; // { prompt, images[] }
+let attachedFile = null;
+
+async function handleFileUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  if (!file.type.startsWith('image/')) {
+    Toast.show('Please upload an image file.', 'error');
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    Toast.show('File too large. Max 5MB.', 'error');
+    return;
+  }
+
+  attachedFile = { file, name: file.name };
+
+  const preview = document.getElementById('attachment-preview');
+  preview.style.display = 'flex';
+  preview.innerHTML = `
+    <div style="background:var(--surface2);border:1px solid var(--border-gold);border-radius:8px;padding:.4rem .8rem;display:flex;align-items:center;gap:.5rem;font-size:.8rem">
+      <span>🖼️ ${file.name}</span>
+      <button onclick="removeAttachment()" style="background:none;border:none;color:var(--red);cursor:pointer;font-weight:bold">✕</button>
+    </div>
+  `;
+}
+
+function removeAttachment() {
+  attachedFile = null;
+  document.getElementById('attachment-preview').style.display = 'none';
+  document.getElementById('file-upload').value = '';
+}
 
 function applyTranslations() {
   const isAr = localStorage.getItem('d8_lang') === 'ar';
@@ -177,6 +213,15 @@ async function generateImage() {
   const input = document.getElementById('prompt-input');
   input.value = '';
   input.style.height = 'auto';
+
+  let imageData = null;
+  if (attachedFile) {
+    imageData = await new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.readAsDataURL(attachedFile.file);
+    });
+  }
 
   isGenerating = true;
   const sendBtn = document.getElementById('send-btn');
@@ -227,7 +272,13 @@ async function generateImage() {
   gallery.scrollTop = gallery.scrollHeight;
 
   try {
-    const data = await api.post('/tools/image/generate', { prompt, size, n });
+    const data = await api.post('/tools/image/generate', { 
+      prompt: prompt + (attachedFile ? ` (Reference image attached)` : ''), 
+      size, 
+      n,
+      imageData // Pass reference image if available
+    });
+    removeAttachment();
     if (!data?.images?.length) throw new Error('No images returned');
 
     // Replace skeletons with real images

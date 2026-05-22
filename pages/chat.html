@@ -102,7 +102,10 @@
           </div>
         </div>
         <div class="chat-input-wrap">
+          <div id="attachment-preview" style="display:none;padding:.5rem 1rem;gap:.5rem;flex-wrap:wrap;border-bottom:1px solid var(--border)"></div>
           <div class="chat-input-row">
+            <input type="file" id="file-upload" style="display:none" onchange="handleFileUpload(event)" accept="image/*,.pdf,.doc,.docx,.txt">
+            <button class="chat-action-btn" onclick="document.getElementById('file-upload').click()" title="Upload Image or Document" style="background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;padding:0 .5rem">📎</button>
             <textarea class="chat-textarea" id="chat-input" placeholder="Ask anything — business plans, strategy, pricing, marketing..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
             <button class="chat-send" onclick="sendMessage()" id="send-btn" title="Send">→</button>
           </div>
@@ -147,6 +150,46 @@ function applyTranslations() {
 applyTranslations();
 
 let currentSessionId=null, isStreaming=false, messages=[];
+let attachedFile = null;
+
+async function handleFileUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const isImage = file.type.startsWith('image/');
+  const isDoc = !isImage && (file.type === 'application/pdf' || file.type.includes('word') || file.type === 'text/plain');
+  
+  if (!isImage && !isDoc) {
+    Toast.show('Unsupported file type. Please upload images or documents (PDF, Word, Text).', 'error');
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    Toast.show('File too large. Max 5MB.', 'error');
+    return;
+  }
+
+  attachedFile = {
+    file,
+    type: isImage ? 'image' : 'doc',
+    name: file.name
+  };
+
+  const preview = document.getElementById('attachment-preview');
+  preview.style.display = 'flex';
+  preview.innerHTML = `
+    <div style="background:var(--surface2);border:1px solid var(--border-gold);border-radius:8px;padding:.4rem .8rem;display:flex;align-items:center;gap:.5rem;font-size:.8rem">
+      <span>${isImage ? '🖼️' : '📄'} ${file.name}</span>
+      <button onclick="removeAttachment()" style="background:none;border:none;color:var(--red);cursor:pointer;font-weight:bold">✕</button>
+    </div>
+  `;
+}
+
+function removeAttachment() {
+  attachedFile = null;
+  document.getElementById('attachment-preview').style.display = 'none';
+  document.getElementById('file-upload').value = '';
+}
 
 function showMobTab(tab) {
   document.getElementById('tab-chat').classList.toggle('active',tab==='chat');
@@ -218,12 +261,43 @@ async function sendMessage() {
   const sendBtn=document.getElementById('send-btn');
   sendBtn.innerHTML='<div class="typing-dots" style="padding:0"><span></span><span></span><span></span></div>';
   sendBtn.disabled=true;
-  appendMessage('user',text);
+  let imageData = null;
+  let finalMessage = text;
+
+  if (attachedFile) {
+    if (attachedFile.type === 'image') {
+      imageData = await new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(attachedFile.file);
+      });
+    } else {
+      // For documents, we'd ideally parse them. For now, we'll add a note.
+      // In a real app, you'd send the file to a parsing endpoint first.
+      finalMessage += `\n\n[Attached Document: ${attachedFile.name}]`;
+    }
+  }
+
+  appendMessage('user', text + (attachedFile ? `\n\n(Attached: ${attachedFile.name})` : ''));
   messages.push({role:'user',content:text});
+  
   const aiMsgId=appendMessage('assistant','',true);
   let fullResponse='';
+  
+  const payload = {
+    message: finalMessage,
+    sessionId: currentSessionId,
+    imageData: imageData
+  };
+
+  removeAttachment();
+
   try {
-    const r=await fetch(`${API}/chat/message`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${Auth.token()}`},body:JSON.stringify({message:text,sessionId:currentSessionId})});
+    const r=await fetch(`${API}/chat/message`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${Auth.token()}`},
+      body:JSON.stringify(payload)
+    });
     if(!r.ok) throw new Error('Server error');
     const reader=r.body.getReader(); const dec=new TextDecoder(); let buf='';
     while(true) {

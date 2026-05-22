@@ -149,22 +149,29 @@ const TC={question:{label:'Question',cls:'type-q',icon:'❓'},review:{label:'Rev
 const av=document.getElementById('my-avatar');
 av.textContent=(user.name||'U')[0].toUpperCase();
 av.style.background=avC(user.name||'U');
+const DEMO_POSTS = [
+  { _id: 'd1', authorName: 'Ahmed K.', type: 'success', text: 'Just launched my first SaaS in Riyadh! The 30-day roadmap was a lifesaver. First 10 paying customers in week 1! 🚀', createdAt: new Date(Date.now() - 3600000 * 2).toISOString(), likes: ['u1', 'u2', 'u3'], replies: [{ authorName: 'Sara M.', text: 'Mabrouk Ahmed! That is amazing progress.' }] },
+  { _id: 'd2', authorName: 'Layla O.', type: 'question', text: 'Does anyone have experience with payment gateways in Egypt? Looking for something with low fees for a small boutique.', createdAt: new Date(Date.now() - 3600000 * 5).toISOString(), likes: ['u4'], replies: [{ authorName: 'Omar H.', text: 'Check out Paymob or Fawry, they are the most reliable there.' }] },
+  { _id: 'd3', authorName: 'Yassine B.', type: 'review', text: 'The Business DNA tool is scary accurate. It told me exactly why I was struggling with my previous project. Highly recommend everyone to take it.', createdAt: new Date(Date.now() - 3600000 * 12).toISOString(), likes: ['u5', 'u6'], replies: [] },
+  { _id: 'd4', authorName: 'Fatima Z.', type: 'comment', text: 'Networking is so much easier when you have a clear brand kit. Just shared mine with a potential partner and they were impressed by the professionalism.', createdAt: new Date(Date.now() - 3600000 * 24).toISOString(), likes: ['u7'], replies: [] }
+];
+
 async function loadPosts(type='all'){
   const q=type==='all'?'':'?type='+type;
-  // Timeout after 6s so users don't get stuck on loading forever
   const timeout = new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),6000));
   let d;
   try {
     d = await Promise.race([api.get('/community/posts'+q), timeout]);
+    posts = d?.posts || [];
   } catch(e) {
-    document.getElementById('feed').innerHTML='<div class="empty-state"><div class="empty-icon">💬</div><p>Be the first to post!<br><small style="font-size:.72rem;opacity:.6">Community launching soon</small></p></div>';
-    document.getElementById('stat-posts').textContent='0';
-    document.getElementById('stat-members').textContent='0';
-    document.getElementById('stat-today').textContent='0';
-    return;
+    posts = [];
   }
-  if(!d){document.getElementById('feed').innerHTML='<div class="empty-state"><div class="empty-icon">💬</div><p>No posts yet.<br>Be the first to share!</p></div>';return;}
-  posts=d.posts||[];
+  
+  // If no real posts, show demo posts
+  if (posts.length === 0) {
+    posts = type === 'all' ? DEMO_POSTS : DEMO_POSTS.filter(p => p.type === type);
+  }
+  
   renderFeed();
   loadStats();
   renderTopMembers();
