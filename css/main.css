@@ -482,6 +482,7 @@ h1,h2,h3,h4,h5 { font-family:'Bebas Neue',cursive; letter-spacing:1px; }
 .btn-primary:hover { animation: none; }
 
 /* ── RESPONSIVE OVERRIDES (MOBILE) ── */
+* ── RESPONSIVE OVERRIDES (MOBILE) ── */
 @media(max-width:900px) {
   .hamburger { display: flex !important; }
   .sidebar { transform: translateX(-100%); }
