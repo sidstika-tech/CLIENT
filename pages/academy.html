@@ -184,7 +184,7 @@
       <div class="tab-panel" id="tab-resources">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;">
           <h3 style="font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px;" data-i18n="aca.resources_title">📚 HAND-PICKED FREE COURSES</h3>
-          <span style="font-size:.75rem;color:var(--text3)" id="count-lbl">12 free resources</span>
+          <span style="font-size:.75rem;color:var(--text3)" id="count-lbl" data-i18n="aca.resources_count">12 free resources</span>
         </div>
         <div class="courses-grid" id="courses-grid"></div>
       </div>
@@ -259,7 +259,7 @@ function switchTab(name){
 async function loadPath(){
   const r = await api.get('/academy/path');
   if(!r?.success){
-    document.getElementById('path-steps').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠</div><p>Failed to load your path. Refresh the page to try again.</p></div>';
+    document.getElementById('path-steps').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠</div><p data-i18n="aca.load_fail">Failed to load your path. Refresh the page to try again.</p></div>';
     return;
   }
   pathData = r;
@@ -282,7 +282,7 @@ function renderPath(){
         <div class="step-header" onclick="toggleStep('${step.id}')">
           <div class="step-icon" style="${done ? 'background:rgba(34,197,94,0.15)' : ''}">${done ? '✓' : step.icon}</div>
           <div style="flex:1;min-width:0">
-            <div class="step-num">Step ${step.number} of 5</div>
+            <div class="step-num">${t('aca.step_of')} ${step.number} / 5</div>
             <div class="step-title">${step.title}</div>
             <div class="step-sub">${step.subtitle}</div>
           </div>
@@ -315,9 +315,9 @@ function toggleStep(stepId){
 /* ── SESSION VIEWER ─────────────────────────────────────── */
 async function openSession(sessionId){
   currentSessionId = sessionId;
-  document.getElementById('sess-title').textContent = 'Loading...';
-  document.getElementById('sess-sub').textContent = '';
-  document.getElementById('sess-content').innerHTML = '<div class="lesson-loading">⏳ Generating your personalized lesson — this takes ~10 seconds.</div>';
+document.getElementById('sess-title').textContent = t('label.loading');
+    document.getElementById('sess-sub').textContent = '';
+    document.getElementById('sess-content').innerHTML = `<div class="lesson-loading">⏳ ${t('aca.lesson_generating')}</div>`;
   document.getElementById('sess-reflection-wrap').style.display = 'none';
   document.getElementById('sess-footer').style.display = 'none';
   openModal('session-modal');
@@ -329,7 +329,7 @@ async function openSession(sessionId){
   }
   document.getElementById('sess-icon').textContent = r.step.icon;
   document.getElementById('sess-title').textContent = r.session.title;
-  document.getElementById('sess-sub').textContent = `Step ${r.step.number}: ${r.step.title} · ⏱ ${r.session.duration}`;
+  document.getElementById('sess-sub').textContent = `${t('aca.step_of')} ${r.step.number}: ${r.step.title} · ⏱ ${r.session.duration}`;
   document.getElementById('sess-content').innerHTML = renderMarkdown(r.content);
   document.getElementById('sess-reflection-wrap').style.display = r.completed ? 'none' : 'block';
   document.getElementById('sess-footer').style.display = 'flex';
@@ -337,7 +337,7 @@ async function openSession(sessionId){
     document.getElementById('sess-complete-btn').style.display = 'none';
   } else {
     document.getElementById('sess-complete-btn').style.display = '';
-    document.getElementById('sess-complete-text').textContent = '✓ Mark Complete';
+    document.getElementById('sess-complete-text').textContent = t('aca.complete_btn');
     document.getElementById('sess-complete-btn').disabled = false;
   }
 }
@@ -352,18 +352,18 @@ async function completeCurrent(){
   const btn = document.getElementById('sess-complete-btn');
   const loader = document.getElementById('sess-loader');
   const text = document.getElementById('sess-complete-text');
-  btn.disabled = true; loader.style.display = 'inline-block'; text.textContent = ' Saving...';
+  btn.disabled = true; loader.style.display = 'inline-block'; text.textContent = ' ' + t('btn.generating');
 
   const reflection = document.getElementById('sess-reflection').value.trim();
   const r = await api.post(`/academy/session/${currentSessionId}/complete`, { reflection });
   loader.style.display = 'none';
 
   if(r?.success){
-    Toast.show(r.stepCompleted ? '🎓 Step complete! Next step unlocked.' : '✓ Session complete', 'success');
+    Toast.show(r.stepCompleted ? t('aca.step_complete_msg') : t('aca.session_complete_msg'), 'success');
     closeSession();
     loadPath();
   } else {
-    btn.disabled = false; text.textContent = '✓ Mark Complete';
+    btn.disabled = false; text.textContent = t('aca.complete_btn');
     Toast.show(r?.error || 'Failed to save','error');
   }
 }
