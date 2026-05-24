@@ -32,6 +32,19 @@ const Auth = {
   check: () => { if(!localStorage.getItem('d8_token')) window.location.href='/index.html'; }
 };
 
+/* ── DEBOUNCED LOGOUT ──
+   Prevents multiple simultaneous 401s (from scroll-triggered API calls,
+   notification polling, etc.) from firing Auth.logout() multiple times
+   and causing the signup modal to flash open mid-scroll. */
+let _logoutTimer = null;
+function scheduleLogout() {
+  if (_logoutTimer) return; // already scheduled — ignore duplicate 401s
+  _logoutTimer = setTimeout(() => {
+    _logoutTimer = null;
+    Auth.logout();
+  }, 2000); // 2s grace — collects all 401s into one logout
+}
+
 /* ── API CLIENT ──
    Auto-sends current UI language with EVERY request so the backend
    can generate Arabic content when the user is in Arabic mode. */
@@ -46,34 +59,34 @@ const api = {
   // Helper that auto-injects language into the body of every POST/PUT
   withLang: (body) => {
     if (!body || typeof body !== 'object') return body;
-    if (body.language === undefined) body.language = api.lang();
-    if (body.inputs && typeof body.inputs === 'object' && body.inputs.language === undefined) {
+    if (!body.language) body.language = api.lang();
+    if (body.inputs && typeof body.inputs === 'object' && !body.inputs.language) {
       body.inputs.language = api.lang();
     }
     return body;
   },
   async get(path) {
     const r = await fetch(`${API}${path}`, { headers: this.headers() });
-    if(r.status===401) { Auth.logout(); return; }
+    if(r.status===401) { scheduleLogout(); return null; }
     return r.json();
   },
   async post(path, body) {
     const r = await fetch(`${API}${path}`, { method:'POST', headers: this.headers(), body: JSON.stringify(this.withLang(body || {})) });
-    if(r.status===401) { Auth.logout(); return; }
+    if(r.status===401) { scheduleLogout(); return null; }
     return r.json();
   },
   async put(path, body) {
     const r = await fetch(`${API}${path}`, { method:'PUT', headers: this.headers(), body: JSON.stringify(this.withLang(body || {})) });
-    if(r.status===401) { Auth.logout(); return; }
+    if(r.status===401) { scheduleLogout(); return null; }
     return r.json();
   },
   async del(path) {
     const r = await fetch(`${API}${path}`, { method:'DELETE', headers: this.headers() });
-    if(r.status===401) { Auth.logout(); return; }
+    if(r.status===401) { scheduleLogout(); return null; }
     return r.json();
   },
   async streamPost(path, body, onChunk) {
-    const r = await fetch(`${API}${path}`, { method:'POST', headers: this.headers(), body: JSON.stringify(body) });
+    const r = await fetch(`${API}${path}`, { method:'POST', headers: this.headers(), body: JSON.stringify(this.withLang(body || {})) });
     if(!r.body) throw new Error('No stream');
     const reader = r.body.getReader();
     const decoder = new TextDecoder();
