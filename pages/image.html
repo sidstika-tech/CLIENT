@@ -92,7 +92,7 @@
         <div style="width:32px;height:32px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#080810;font-size:.9rem;flex-shrink:0">🎨</div>
         <div>
           <h4 id="gen-title">AI IMAGE GENERATOR</h4>
-          <div style="font-size:.72rem;color:var(--text3)" id="gen-sub">Describe your image — Grok will create it</div>
+          <div style="font-size:.72rem;color:var(--text3)" id="gen-sub">Describe your image — D8 will create it</div>
         </div>
         <button class="btn btn-secondary btn-sm" style="margin-left:auto" onclick="clearAll()" id="clear-btn">Clear All</button>
       </div>
@@ -101,7 +101,7 @@
       <div class="image-gallery" id="gallery">
         <div class="gallery-empty" id="empty-state">
           <div class="empty-icon">🖼️</div>
-          <p id="empty-text">Describe any image and Grok will generate it for you. Try something creative!</p>
+          <p id="empty-text">Describe any image and D8 will generate it for you. Try something creative!</p>
           <div class="suggestions" id="suggestions">
             <button class="suggestion-btn" onclick="useSuggestion(this)">A futuristic MENA city at sunset</button>
             <button class="suggestion-btn" onclick="useSuggestion(this)">A minimalist logo for a tech startup</button>
@@ -135,7 +135,7 @@
             onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
           <button class="img-send-btn" id="send-btn" onclick="generateImage()" title="Generate">→</button>
         </div>
-        <div class="input-footer" id="input-footer">Double Eight AI · Powered by x-ai/grok-imagine</div>
+        <div class="input-footer" id="input-footer">Double Eight AI</div>
       </div>
     </div>
   </div>
