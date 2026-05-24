@@ -382,10 +382,17 @@ const T = {
     'aca.topbar_helper':'🎓 المسار · 📡 اليوم · 📚 الموارد',
     'aca.lesson_generating':'⏳ جارٍ إنشاء درسك المخصص...',
     'aca.locked':'أكمل الجلسة السابقة أولاً',
+    'aca.load_fail':'فشل تحميل مسارك. أعد تحميل الصفحة للمحاولة مرة أخرى.',
+    'aca.step_complete_msg':'🎓 اكتملت الخطوة! تم فتح الخطوة التالية.',
+    'aca.session_complete_msg':'✓ اكتملت الجلسة',
+    'aca.tab_path':'🧭 مسار المؤسس',
+    'aca.tab_daily':'📡 معلومات اليوم',
+    'aca.tab_resources':'📚 موارد مجانية',
+    'aca.hero':'🎓 أكاديمية الأعمال',
     // Notifications
     'notif.title':'🔔 الإشعارات', 'notif.empty':'لا توجد إشعارات بعد.',
     'notif.empty_sub':'تتبّع منافساً أو أكمل جلسة في الأكاديمية — ستظهر تحديثاتك هنا.',
-    'notif.mark_all':'✓ تمييز الكل كمقرو
+    'notif.mark_all':'✓ تمييز الكل كمقروء',
     'notif.clear_all':'مسح الكل',
     // Community
     'comm.members_count':'◉ {count} أعضاء',
@@ -398,6 +405,7 @@ const T = {
     'comm.filter_all':'الكل',
     'comm.filter_q':'❓ أسئلة',
     'comm.filter_r':'⭐ مراجعات',
+    'comm.loading_posts':'جارٍ تحميل المنشورات...',
     'comm.filter_s':'🏆 إنجازات',
     'comm.filter_c':'💬 تعليقات',
     'comm.top_members':'🏅 الأعضاء الأوائل',
@@ -407,7 +415,6 @@ const T = {
     'comm.rule3':'لا للبريد العشوائي دون إضافة قيمة أولاً.',
     'comm.rule4':'اطرح أسئلة ذكية مع السياق.',
     'comm.rule5':'احتفل بالإنجازات — الكبيرة والصغيرة.',
-    'comm.loading_posts':'جارٍ تحميل المنشورات...',
     'comm.msg_write_first':'اكتب شيئاً أولاً!',
     'comm.msg_posted':'تم النشر!',
     'comm.msg_post_fail':'تعذر النشر — لم يتم نشر الواجهة الخلفية بعد',
@@ -601,15 +608,27 @@ function buildLayout(pageId) {
       }
     };
   });
-  // Issue 5 fix: user plan label in Arabic
-  if (lang === 'ar') {
-    const planMap = { free: 'مجاني', starter: 'مبتدئ', pro: 'احترافي', enterprise: 'مؤسسي' };
-    const planEl = sidebar.querySelector('.user-plan');
-    if (planEl) {
-      const planKey = (user.membership?.plan||'free').toLowerCase();
-      planEl.textContent = (planMap[planKey] || planKey) + ' خطة';
-    }
+  // Translate plan
+  const planMap = { 
+    ar: { free: 'مجاني', starter: 'مبتدئ', pro: 'احترافي', enterprise: 'مؤسسي', plan: 'خطة' },
+    en: { free: 'Free', starter: 'Starter', pro: 'Pro', enterprise: 'Enterprise', plan: 'plan' }
+  };
+  const planEl = sidebar.querySelector('.user-plan');
+  if (planEl) {
+    const pk = (user.membership?.plan||'free').toLowerCase();
+    const map = planMap[lang] || planMap.en;
+    planEl.textContent = lang === 'ar' ? `${map[pk] || pk} ${map.plan}` : `${map[pk] || pk} ${map.plan}`;
   }
+
+  // Auto-translate any [data-i18n] on the page
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if(val && val !== key) {
+      if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.placeholder = val;
+      else el.textContent = val;
+    }
+  });
 }
 
 /* ── GENERATE BUTTON LOADING STATE ── */
