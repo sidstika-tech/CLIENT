@@ -104,6 +104,7 @@ section{position:relative;z-index:1;}
 .step-desc{font-size:.87rem;color:var(--text2);line-height:1.65;}
 .step-cta-link{color:var(--gold);font-size:.82rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:.3rem;margin-top:.5rem;}
 .step-cta-link:hover{text-decoration:underline;}
+button.step-cta-link{background:none;border:none;font-family:'Outfit',sans-serif;padding:0;}
 
 /* ── LIVE DEMO STRIP ── */
 .demo-strip{padding:5rem 2rem;max-width:1100px;margin:0 auto;}
@@ -337,7 +338,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:2rem 2.5rem;display:fl
         <div class="step-content">
           <div class="step-label">Validate Your Idea</div>
           <div class="step-desc">Use the <strong style="color:#fff">Market Research</strong> tool to understand your market size, competition, and customer pain points in your specific region. Know if your idea is worth pursuing before spending a dirham.</div>
-          <a class="step-cta-link" onclick="openAuth('register')">Start with Market Research →</a>
+          <button class="step-cta-link" onclick="openAuth('register')">Start with Market Research →</button>
         </div>
       </div>
       <div class="journey-step">
@@ -345,7 +346,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:2rem 2.5rem;display:fl
         <div class="step-content">
           <div class="step-label">Build Your Foundation</div>
           <div class="step-desc">Generate a complete <strong style="color:#fff">Business Plan</strong> with financial projections, market analysis, and a 12-month roadmap. Investor-ready in under 2 minutes. What consultants charge $5,000 for.</div>
-          <a class="step-cta-link" onclick="openAuth('register')">Create Your Business Plan →</a>
+          <button class="step-cta-link" onclick="openAuth('register')">Create Your Business Plan →</button>
         </div>
       </div>
       <div class="journey-step">
@@ -353,7 +354,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:2rem 2.5rem;display:fl
         <div class="step-content">
           <div class="step-label">Build Your Brand</div>
           <div class="step-desc">Generate your <strong style="color:#fff">Brand Kit</strong> — full identity with colors, fonts, voice, and messaging guidelines. Then generate your <strong style="color:#fff">Website</strong> and download it as a ready HTML file.</div>
-          <a class="step-cta-link" onclick="openAuth('register')">Build Your Brand →</a>
+          <button class="step-cta-link" onclick="openAuth('register')">Build Your Brand →</button>
         </div>
       </div>
       <div class="journey-step">
@@ -361,7 +362,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:2rem 2.5rem;display:fl
         <div class="step-content">
           <div class="step-label">Get Your First Customers</div>
           <div class="step-desc">Build your <strong style="color:#fff">Marketing Strategy</strong>, generate your <strong style="color:#fff">Ad Campaigns</strong>, write your <strong style="color:#fff">Cold Email Sequences</strong>, and execute your <strong style="color:#fff">30-Day Launch Plan</strong>.</div>
-          <a class="step-cta-link" onclick="openAuth('register')">Start Getting Customers →</a>
+          <button class="step-cta-link" onclick="openAuth('register')">Start Getting Customers →</button>
         </div>
       </div>
       <div class="journey-step">
@@ -369,7 +370,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:2rem 2.5rem;display:fl
         <div class="step-content">
           <div class="step-label">Raise Capital (When Ready)</div>
           <div class="step-desc">When the time comes, use the <strong style="color:#fff">Investor Pitch Deck</strong> generator and the <strong style="color:#fff">AI Advisor</strong> to prepare your funding story and financials. Walk into any meeting prepared.</div>
-          <a class="step-cta-link" onclick="openAuth('register')">Prepare Your Pitch →</a>
+          <button class="step-cta-link" onclick="openAuth('register')">Prepare Your Pitch →</button>
         </div>
       </div>
     </div>
@@ -590,7 +591,16 @@ function closeAuth(){
   document.getElementById('auth-modal').classList.remove('open');
   document.body.style.overflow='';
 }
-document.getElementById('auth-modal').addEventListener('click',function(e){if(e.target===this)closeAuth();});
+// Prevent scroll/swipe on mobile from accidentally closing the modal
+let _touchStartY = 0;
+const _authOverlay = document.getElementById('auth-modal');
+_authOverlay.addEventListener('touchstart', function(e){ _touchStartY = e.touches[0].clientY; }, { passive: true });
+_authOverlay.addEventListener('touchend', function(e){
+  const diff = Math.abs(e.changedTouches[0].clientY - _touchStartY);
+  if(diff > 10) return; // was a scroll/swipe — ignore
+  if(e.target === this) closeAuth();
+});
+_authOverlay.addEventListener('click', function(e){ if(e.target===this) closeAuth(); });
 
 function switchAuthTab(tab){
   const isLogin=tab==='login';
