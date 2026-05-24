@@ -569,10 +569,14 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:2rem 2.5rem;display:fl
 </div>
 
 <script>
-const API='https://api.doubleeight.online/api';
-
 // Redirect if logged in
 if(localStorage.getItem('d8_token')) window.location.href='pages/dashboard.html';
+
+const API = (() => {
+  const h = window.location.hostname;
+  if (h === 'localhost' || h === '127.0.0.1' || h === '0.0.0.0' || h === '') return 'http://localhost:5000/api';
+  return 'https://api.doubleeight.online/api';
+})();
 
 // Particles
 const pc=document.getElementById('particles');
@@ -600,21 +604,7 @@ function applyLandingLang(lang){
   if(flag) flag.textContent=isAr?'🇸🇦':'🇬🇧';
   if(text) text.textContent=isAr?'AR':'EN';
 
-  // Helper to find and translate text nodes
-  const walk=(el)=>{
-    if(el.nodeType===3){
-      const t=el.textContent.trim();
-      if(!t)return;
-      // We look for keys in our global T object if available, or use hardcoded map for index.html
-      const key=el.parentElement.getAttribute('data-i18n');
-      if(key && T[lang][key]) el.textContent=T[lang][key];
-    }
-    el.childNodes.forEach(walk);
-  };
-  
-  // For index.html we'll use a more direct replacement since it doesn't use the full T system yet
   if(isAr){
-    // Nav
     document.querySelectorAll('a[href="#pricing"]').forEach(a=>a.textContent='التسعير');
     document.querySelectorAll('a[href="#faq"]').forEach(a=>a.textContent='الأسئلة الشائعة');
     document.querySelectorAll('button[onclick="openAuth(\'login\')"]').forEach(b=>b.textContent='تسجيل الدخول');
@@ -623,8 +613,6 @@ function applyLandingLang(lang){
       if(b.classList.contains('btn-hero-primary')) b.textContent='⚡ ابدأ مجاناً — بدون بطاقة ائتمان';
       if(b.classList.contains('plan-btn')) b.textContent=b.textContent.includes('Claim')?'🎁 احصل على شهر مجاني':'ابدأ مجاناً';
     });
-    
-    // Hero
     const h1=document.querySelector('.hero h1');
     if(h1){
       h1.querySelector('.line-white').textContent='عملك الخاص.';
@@ -633,32 +621,18 @@ function applyLandingLang(lang){
     }
     const heroSub=document.querySelector('.hero-sub');
     if(heroSub) heroSub.innerHTML='لا مدرسة أعمال. لا مستشارين مكلفين. لا سنوات ضائعة.<br><strong>Double Eight AI</strong> يمنح كل رائد أعمال في العالم العربي الأدوات الدقيقة التي تدفع الشركات الكبرى مئات الآلاف للحصول عليها — بجزء بسيط من التكلفة.';
-    
-    // Problem
     const probHdr=document.querySelector('.problem .sec-title');
     if(probHdr) probHdr.textContent='لماذا تفشل معظم الشركات في المنطقة؟';
-    
-    // Pricing
     const priceHdr=document.querySelector('.pricing .sec-title');
     if(priceHdr) priceHdr.textContent='ابدأ مجاناً. توسع عندما تكون جاهزاً.';
+  } else {
+    location.reload(); // Simple way to restore English for now
   }
-  
-  // For a perfect fix, we'll use the T object we already populated in core.js
-  document.querySelectorAll('[data-i18n]').forEach(el=>{
-    const key=el.getAttribute('data-i18n');
-    if(T[lang] && T[lang][key]) el.textContent=T[lang][key];
-  });
-  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
-    const key=el.getAttribute('data-i18n-placeholder');
-    if(T[lang] && T[lang][key]) el.placeholder=T[lang][key];
-  });
 }
 
-// Initial apply
 (function(){
   const lang=localStorage.getItem('d8_lang')||'en';
-  // Wait for T to be loaded from core.js
-  setTimeout(()=>applyLandingLang(lang),100);
+  if(lang==='ar') applyLandingLang('ar');
 })();
 
 // FAQ
