@@ -249,6 +249,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:2rem 2.5rem;display:fl
   <div class="nav-right">
     <a href="#pricing" class="nav-link" style="text-decoration:none">Pricing</a>
     <a href="#faq" class="nav-link" style="text-decoration:none">FAQ</a>
+    <button class="nav-link" onclick="toggleLang()" style="display:flex;align-items:center;gap:.3rem"><span id="lang-flag">🇬🇧</span> <span id="lang-text">EN</span></button>
     <button class="nav-link" onclick="openAuth('login')">Sign In</button>
     <button class="btn-nav" onclick="openAuth('register')">Get Started Free</button>
   </div>
@@ -581,6 +582,84 @@ for(let i=0;i<20;i++){
   p.style.cssText=`left:${Math.random()*100}%;animation-duration:${10+Math.random()*15}s;animation-delay:${Math.random()*12}s;`;
   pc.appendChild(p);
 }
+
+// LANGUAGE TOGGLE
+function toggleLang(){
+  const currentLang=localStorage.getItem('d8_lang')||'en';
+  const newLang=currentLang==='en'?'ar':'en';
+  localStorage.setItem('d8_lang',newLang);
+  applyLandingLang(newLang);
+}
+
+function applyLandingLang(lang){
+  const isAr=lang==='ar';
+  document.documentElement.setAttribute('dir',isAr?'rtl':'ltr');
+  document.documentElement.lang=lang;
+  const flag=document.getElementById('lang-flag');
+  const text=document.getElementById('lang-text');
+  if(flag) flag.textContent=isAr?'🇸🇦':'🇬🇧';
+  if(text) text.textContent=isAr?'AR':'EN';
+
+  // Helper to find and translate text nodes
+  const walk=(el)=>{
+    if(el.nodeType===3){
+      const t=el.textContent.trim();
+      if(!t)return;
+      // We look for keys in our global T object if available, or use hardcoded map for index.html
+      const key=el.parentElement.getAttribute('data-i18n');
+      if(key && T[lang][key]) el.textContent=T[lang][key];
+    }
+    el.childNodes.forEach(walk);
+  };
+  
+  // For index.html we'll use a more direct replacement since it doesn't use the full T system yet
+  if(isAr){
+    // Nav
+    document.querySelectorAll('a[href="#pricing"]').forEach(a=>a.textContent='التسعير');
+    document.querySelectorAll('a[href="#faq"]').forEach(a=>a.textContent='الأسئلة الشائعة');
+    document.querySelectorAll('button[onclick="openAuth(\'login\')"]').forEach(b=>b.textContent='تسجيل الدخول');
+    document.querySelectorAll('button[onclick="openAuth(\'register\')"]').forEach(b=>{
+      if(b.classList.contains('btn-nav')) b.textContent='ابدأ مجاناً';
+      if(b.classList.contains('btn-hero-primary')) b.textContent='⚡ ابدأ مجاناً — بدون بطاقة ائتمان';
+      if(b.classList.contains('plan-btn')) b.textContent=b.textContent.includes('Claim')?'🎁 احصل على شهر مجاني':'ابدأ مجاناً';
+    });
+    
+    // Hero
+    const h1=document.querySelector('.hero h1');
+    if(h1){
+      h1.querySelector('.line-white').textContent='عملك الخاص.';
+      h1.querySelector('.line-gold').textContent='بني بذكاء.';
+      h1.querySelector('.line-dim').textContent='في ثوانٍ.';
+    }
+    const heroSub=document.querySelector('.hero-sub');
+    if(heroSub) heroSub.innerHTML='لا مدرسة أعمال. لا مستشارين مكلفين. لا سنوات ضائعة.<br><strong>Double Eight AI</strong> يمنح كل رائد أعمال في العالم العربي الأدوات الدقيقة التي تدفع الشركات الكبرى مئات الآلاف للحصول عليها — بجزء بسيط من التكلفة.';
+    
+    // Problem
+    const probHdr=document.querySelector('.problem .sec-title');
+    if(probHdr) probHdr.textContent='لماذا تفشل معظم الشركات في المنطقة؟';
+    
+    // Pricing
+    const priceHdr=document.querySelector('.pricing .sec-title');
+    if(priceHdr) priceHdr.textContent='ابدأ مجاناً. توسع عندما تكون جاهزاً.';
+  }
+  
+  // For a perfect fix, we'll use the T object we already populated in core.js
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key=el.getAttribute('data-i18n');
+    if(T[lang] && T[lang][key]) el.textContent=T[lang][key];
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
+    const key=el.getAttribute('data-i18n-placeholder');
+    if(T[lang] && T[lang][key]) el.placeholder=T[lang][key];
+  });
+}
+
+// Initial apply
+(function(){
+  const lang=localStorage.getItem('d8_lang')||'en';
+  // Wait for T to be loaded from core.js
+  setTimeout(()=>applyLandingLang(lang),100);
+})();
 
 // FAQ
 function toggleFaq(el){
