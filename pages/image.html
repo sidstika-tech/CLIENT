@@ -192,10 +192,10 @@ function applyTranslations() {
   const isAr = localStorage.getItem('d8_lang') === 'ar';
   document.getElementById('page-title').textContent = isAr ? 'مولّد الصور' : 'IMAGE GENERATOR';
   document.getElementById('gen-title').textContent = isAr ? 'مولّد الصور بالذكاء الاصطناعي' : 'AI IMAGE GENERATOR';
-  document.getElementById('gen-sub').textContent = isAr ? 'صف صورتك — وسيقوم Grok بإنشائها' : 'Describe your image — Grok will create it';
+  document.getElementById('gen-sub').textContent = isAr ? 'صف صورتك — وسيقوم D8 بإنشائها' : 'Describe your image — D8 will create it';
   document.getElementById('clear-btn').textContent = isAr ? 'مسح الكل' : 'Clear All';
   document.getElementById('prompt-input').placeholder = isAr ? 'صف الصورة التي تريد إنشاءها...' : 'Describe the image you want to generate...';
-  document.getElementById('empty-text').textContent = isAr ? 'صف أي صورة وسيقوم Grok بإنشائها. جرّب شيئاً إبداعياً!' : 'Describe any image and Grok will generate it for you. Try something creative!';
+  document.getElementById('empty-text').textContent = isAr ? 'صف أي صورة وسيقوم D8 بإنشائها. جرّب شيئاً إبداعياً!' : 'Describe any image and D8 will generate it for you. Try something creative!';
 }
 applyTranslations();
 
