@@ -102,10 +102,10 @@
             </div>
             <div class="compose-footer">
               <select class="type-select" id="post-type">
-                <option value="comment">💬 Comment</option>
-                <option value="question">❓ Question</option>
-                <option value="review">⭐ Review</option>
-                <option value="success">🏆 Success Story</option>
+                <option value="comment" data-i18n="comm.type_comment">💬 Comment</option>
+                <option value="question" data-i18n="comm.type_question">❓ Question</option>
+                <option value="review" data-i18n="comm.type_review">⭐ Review</option>
+                <option value="success" data-i18n="comm.type_success">🏆 Success Story</option>
               </select>
               <span class="char-count" id="char-count">0 / 1000</span>
               <button class="post-btn" id="post-btn" onclick="submitPost()">Post →</button>
@@ -145,7 +145,7 @@ let posts=[];
 const AV=['#f59e0b','#6366f1','#ec4899','#10b981','#3b82f6','#ef4444','#8b5cf6','#06b6d4'];
 function avC(n){let h=0;for(let i=0;i<(n||'').length;i++)h=n.charCodeAt(i)+((h<<5)-h);return AV[Math.abs(h)%AV.length];}
 function avS(n,s=36){return `style="background:${avC(n)};width:${s}px;height:${s}px;border-radius:${s<30?'7px':'9px'}"`}
-const TC={question:{label:'Question',cls:'type-q',icon:'❓'},review:{label:'Review',cls:'type-r',icon:'⭐'},comment:{label:'Comment',cls:'type-c',icon:'💬'},success:{label:'Win 🏆',cls:'type-s',icon:'🏆'}};
+const TC={question:{label:t('comm.type_question'),cls:'type-q',icon:'❓'},review:{label:t('comm.type_review'),cls:'type-r',icon:'⭐'},comment:{label:t('comm.type_comment'),cls:'type-c',icon:'💬'},success:{label:t('comm.type_success'),cls:'type-s',icon:'🏆'}};
 const av=document.getElementById('my-avatar');
 av.textContent=(user.name||'U')[0].toUpperCase();
 av.style.background=avC(user.name||'U');
@@ -182,19 +182,19 @@ async function loadStats(){
   document.getElementById('stat-posts').textContent=d.total||0;
   document.getElementById('stat-members').textContent=d.members||0;
   document.getElementById('stat-today').textContent=d.todayCount||0;
-  document.getElementById('online-label').textContent=`◉ ${Math.max(d.members||1,3)} members`;
+  document.getElementById('online-label').textContent=t('comm.members_count').replace('{count}', Math.max(d.members||1,3));
 }
 async function submitPost(){
   const text=document.getElementById('compose-text').value.trim();
-  if(!text){Toast.show('Write something first!','error');return;}
+  if(!text){Toast.show(t('comm.msg_write_first'),'error');return;}
   const btn=document.getElementById('post-btn');
-  btn.disabled=true;btn.textContent='Posting...';
+  btn.disabled=true;btn.textContent=t('comm.posting_btn');
   const d=await api.post('/community/posts',{type:document.getElementById('post-type').value,text});
-  btn.disabled=false;btn.textContent='Post →';
-  if(!d||d.error){Toast.show(d?.error||'Could not post — backend not yet deployed','error');return;}
+  btn.disabled=false;btn.textContent=t('comm.post_btn');
+  if(!d||d.error){Toast.show(d?.error||t('comm.msg_post_fail'),'error');return;}
   document.getElementById('compose-text').value='';
   document.getElementById('char-count').textContent='0 / 1000';
-  Toast.show('Posted!','success');
+  Toast.show(t('comm.msg_posted'),'success');
   loadPosts(currentFilter);
 }
 async function toggleLike(id){
@@ -211,7 +211,7 @@ async function submitReply(id){
   if(!text)return;
   input.value='';
   const d=await api.post(`/community/posts/${id}/reply`,{text});
-  if(!d||d.error){Toast.show(d?.error||'Reply failed','error');return;}
+  if(!d||d.error){Toast.show(d?.error||t('comm.msg_reply_fail'),'error');return;}
   loadPosts(currentFilter);
   setTimeout(()=>{const el=document.getElementById('rp-'+id);if(el)el.classList.add('open');},400);
 }

@@ -35,14 +35,6 @@
         <button class="btn btn-primary" id="save-profile-btn" onclick="saveProfile()">Save Profile</button>
       </div>
 
-      <div class="card" style="margin-bottom:1.25rem">
-        <h3 id="lang-hdr" style="font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;margin-bottom:1rem;color:var(--gold)">◑ LANGUAGE</h3>
-        <div class="lang-toggle">
-          <button class="lang-btn active" id="lang-en" onclick="setLang('en')">🇬🇧 English</button>
-          <button class="lang-btn" id="lang-ar" onclick="setLang('ar')">🇸🇦 العربية</button>
-        </div>
-        <div id="lang-note" style="font-size:.78rem;color:var(--text3);margin-top:.75rem">Changes the interface language across the platform.</div>
-      </div>
 
       <div class="card" style="margin-bottom:1.25rem">
         <h3 id="pay-hdr" style="font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;margin-bottom:1rem;color:var(--gold)">◑ PAYMENT METHODS</h3>
@@ -105,8 +97,7 @@ function applyTranslations() {
   document.getElementById('profile-hdr').textContent = t('set.profile');
   document.getElementById('lbl-name').textContent = t('set.full_name');
   document.getElementById('save-profile-btn').textContent = t('set.save_profile');
-  document.getElementById('lang-hdr').textContent = t('set.language');
-  document.getElementById('lang-note').textContent = t('set.lang_note');
+
   document.getElementById('pay-hdr').textContent = t('set.payment');
   document.getElementById('add-card-btn').textContent = t('set.add_card');
   document.getElementById('pw-hdr').textContent = t('set.password');
@@ -128,17 +119,7 @@ function applyTranslations() {
   document.title = isAr ? 'الإعدادات — Double Eight AI' : 'Settings — Double Eight AI';
 }
 
-function setLang(lang) {
-  localStorage.setItem('d8_lang', lang);
-  applyDir(lang);
-  document.getElementById('lang-en').classList.toggle('active', lang==='en');
-  document.getElementById('lang-ar').classList.toggle('active', lang==='ar');
-  applyTranslations();
-  // Re-build sidebar with new language
-  buildLayout('settings');
-  api.put('/user/profile',{settings:{language:lang}}).catch(()=>{});
-  Toast.show(lang==='ar'?'تم تغيير اللغة':'Language changed','success');
-}
+
 
 async function loadProfile() {
   const d=await api.get('/user/profile');
@@ -148,31 +129,29 @@ async function loadProfile() {
   const lang=d.user.settings?.language||localStorage.getItem('d8_lang')||'en';
   localStorage.setItem('d8_lang',lang);
   applyDir(lang);
-  document.getElementById('lang-en').classList.toggle('active',lang==='en');
-  document.getElementById('lang-ar').classList.toggle('active',lang==='ar');
   applyTranslations();
   loadCards();
 }
 async function saveProfile() {
   const name=document.getElementById('s-name').value.trim();
-  if(!name){Toast.show(localStorage.getItem('d8_lang')==='ar'?'الاسم مطلوب':'Name is required','error');return;}
+  if(!name){Toast.show(t('set.name_required'),'error');return;}
   const d=await api.put('/user/profile',{name});
   if(d?.error){Toast.show(d.error,'error');return;}
   Auth.setUser({...Auth.user(),name});
-  Toast.show(localStorage.getItem('d8_lang')==='ar'?'تم حفظ الملف!':'Profile updated!','success');
+  Toast.show(t('set.profile_updated'),'success');
 }
 async function changePassword() {
   const oldPw=document.getElementById('s-oldpw').value;
   const newPw=document.getElementById('s-newpw').value;
   const newPw2=document.getElementById('s-newpw2').value;
   const isAr=localStorage.getItem('d8_lang')==='ar';
-  if(!oldPw||!newPw){Toast.show(isAr?'أكمل جميع الحقول':'Fill all fields','error');return;}
-  if(newPw!==newPw2){Toast.show(isAr?'كلمات المرور غير متطابقة':'Passwords do not match','error');return;}
-  if(newPw.length<6){Toast.show(isAr?'6 أحرف على الأقل':'Min 6 characters','error');return;}
+  if(!oldPw||!newPw){Toast.show(t('set.fill_fields'),'error');return;}
+  if(newPw!==newPw2){Toast.show(t('set.pw_mismatch'),'error');return;}
+  if(newPw.length<6){Toast.show(t('set.pw_min_len'),'error');return;}
   const d=await api.put('/user/password',{currentPassword:oldPw,newPassword:newPw});
   if(d?.error){Toast.show(d.error,'error');return;}
   ['s-oldpw','s-newpw','s-newpw2'].forEach(id=>document.getElementById(id).value='');
-  Toast.show(isAr?'تم تغيير كلمة المرور!':'Password changed!','success');
+  Toast.show(t('set.pw_changed'),'success');
 }
 
 function getSavedCards(){try{return JSON.parse(localStorage.getItem('d8_cards')||'[]');}catch{return[];}}
