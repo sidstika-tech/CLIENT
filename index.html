@@ -22,6 +22,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);over
 @keyframes rise{0%{transform:translateY(100vh);opacity:0;}10%{opacity:.5;}90%{opacity:.2;}100%{transform:translateY(-5vh);opacity:0;}}
 
 /* ── NAV ── */
+html,body{overflow-x:hidden;max-width:100vw;}
 nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 2.5rem;background:rgba(7,7,15,.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(245,158,11,.08);}
 .nav-logo{display:flex;align-items:center;gap:.7rem;text-decoration:none;}
 .logo-box{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',cursive;font-size:19px;color:#07070f;}
@@ -31,6 +32,13 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .nav-link:hover{color:var(--gold);}
 .btn-nav{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:var(--gold);padding:.45rem 1.1rem;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;transition:.2s;font-family:'Outfit',sans-serif;}
 .btn-nav:hover{background:rgba(245,158,11,.2);}
+@media(max-width:600px){
+  nav{padding:.85rem 1rem;}
+  .logo-name{display:none;}
+  .nav-right{gap:.5rem;}
+  .nav-link{font-size:.78rem;padding:.2rem .3rem;}
+  .btn-nav{font-size:.78rem;padding:.38rem .7rem;}
+}
 
 /* ── SECTIONS ── */
 section{position:relative;z-index:1;}
@@ -591,16 +599,15 @@ function closeAuth(){
   document.getElementById('auth-modal').classList.remove('open');
   document.body.style.overflow='';
 }
-// Prevent scroll/swipe on mobile from accidentally closing the modal
-let _touchStartY = 0;
-const _authOverlay = document.getElementById('auth-modal');
-_authOverlay.addEventListener('touchstart', function(e){ _touchStartY = e.touches[0].clientY; }, { passive: true });
-_authOverlay.addEventListener('touchend', function(e){
-  const diff = Math.abs(e.changedTouches[0].clientY - _touchStartY);
-  if(diff > 10) return; // was a scroll/swipe — ignore
-  if(e.target === this) closeAuth();
+// Prevent scroll/swipe from accidentally opening or closing modal on mobile
+let _touchStartY=0;
+const _authOverlay=document.getElementById('auth-modal');
+_authOverlay.addEventListener('touchstart',function(e){_touchStartY=e.touches[0].clientY;},{passive:true});
+_authOverlay.addEventListener('touchend',function(e){
+  if(Math.abs(e.changedTouches[0].clientY-_touchStartY)>10)return; // was a scroll, not a tap
+  if(e.target===this)closeAuth();
 });
-_authOverlay.addEventListener('click', function(e){ if(e.target===this) closeAuth(); });
+_authOverlay.addEventListener('click',function(e){if(e.target===this)closeAuth();});
 
 function switchAuthTab(tab){
   const isLogin=tab==='login';
