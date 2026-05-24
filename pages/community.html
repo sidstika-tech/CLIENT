@@ -75,7 +75,7 @@
   <div class="main">
     <div class="topbar">
       <button class="hamburger">☰</button>
-      <span class="topbar-title">COMMUNITY</span>
+      <span class="topbar-title" data-i18n="comm.title">COMMUNITY</span>
       <div class="topbar-right">
         <span style="font-size:.76rem;color:var(--text3)" id="online-label">◉ Members</span>
       </div>
@@ -84,12 +84,12 @@
       <div class="comm-hero">
         <div style="font-size:2.5rem;flex-shrink:0">🌍</div>
         <div>
-          <h2>THE D8 COMMUNITY</h2>
-          <p>Share your wins, ask questions, post reviews, and learn from entrepreneurs like you.</p>
+          <h2 data-i18n="comm.hero">THE D8 COMMUNITY</h2>
+          <p data-i18n="comm.hero_desc">Share your wins, ask questions, post reviews, and learn from entrepreneurs like you.</p>
           <div class="comm-stats">
-            <div class="comm-stat"><div class="n" id="stat-posts">—</div><div class="l">Posts</div></div>
-            <div class="comm-stat"><div class="n" id="stat-members">—</div><div class="l">Members</div></div>
-            <div class="comm-stat"><div class="n" id="stat-today">—</div><div class="l">Today</div></div>
+            <div class="comm-stat"><div class="n" id="stat-posts">—</div><div class="l" data-i18n="comm.stat_posts">Posts</div></div>
+            <div class="comm-stat"><div class="n" id="stat-members">—</div><div class="l" data-i18n="comm.stat_members">Members</div></div>
+            <div class="comm-stat"><div class="n" id="stat-today">—</div><div class="l" data-i18n="comm.stat_today">Today</div></div>
           </div>
         </div>
       </div>
@@ -98,7 +98,7 @@
           <div class="compose-box">
             <div class="compose-top">
               <div class="compose-avatar" id="my-avatar">U</div>
-              <textarea class="compose-input" id="compose-text" placeholder="Share a win, ask a question, post a review..." maxlength="1000" oninput="document.getElementById('char-count').textContent=this.value.length+' / 1000'"></textarea>
+              <textarea class="compose-input" id="compose-text" data-i18n-placeholder="comm.compose_placeholder" placeholder="Share a win, ask a question, post a review..." maxlength="1000" oninput="document.getElementById('char-count').textContent=this.value.length+' / 1000'"></textarea>
             </div>
             <div class="compose-footer">
               <select class="type-select" id="post-type">
@@ -112,23 +112,23 @@
             </div>
           </div>
           <div class="feed-filters">
-            <button class="feed-filter active" onclick="filterFeed('all',this)">All</button>
-            <button class="feed-filter" onclick="filterFeed('question',this)">❓ Questions</button>
-            <button class="feed-filter" onclick="filterFeed('review',this)">⭐ Reviews</button>
-            <button class="feed-filter" onclick="filterFeed('success',this)">🏆 Wins</button>
-            <button class="feed-filter" onclick="filterFeed('comment',this)">💬 Comments</button>
+            <button class="feed-filter active" onclick="filterFeed('all',this)" data-i18n="comm.filter_all">All</button>
+            <button class="feed-filter" onclick="filterFeed('question',this)" data-i18n="comm.filter_q">❓ Questions</button>
+            <button class="feed-filter" onclick="filterFeed('review',this)" data-i18n="comm.filter_r">⭐ Reviews</button>
+            <button class="feed-filter" onclick="filterFeed('success',this)" data-i18n="comm.filter_s">🏆 Wins</button>
+            <button class="feed-filter" onclick="filterFeed('comment',this)" data-i18n="comm.filter_c">💬 Comments</button>
           </div>
           <div id="feed"><div style="text-align:center;padding:2.5rem;color:var(--text3);font-size:.85rem">Loading posts...</div></div>
         </div>
         <div class="comm-widget-col">
-          <div class="widget"><div class="widget-title">🏅 TOP MEMBERS</div><div id="top-members"></div></div>
+          <div class="widget"><div class="widget-title" data-i18n="comm.top_members">🏅 TOP MEMBERS</div><div id="top-members"></div></div>
           <div class="widget">
-            <div class="widget-title">📌 RULES</div>
-            <div class="rule-item"><span class="rule-num">1.</span><span>Be respectful — everyone is building.</span></div>
-            <div class="rule-item"><span class="rule-num">2.</span><span>Share real experiences and honest feedback.</span></div>
-            <div class="rule-item"><span class="rule-num">3.</span><span>No spam without adding value first.</span></div>
-            <div class="rule-item"><span class="rule-num">4.</span><span>Ask smart questions with context.</span></div>
-            <div class="rule-item"><span class="rule-num">5.</span><span>Celebrate wins — big and small.</span></div>
+            <div class="widget-title" data-i18n="comm.rules_title">📌 RULES</div>
+            <div class="rule-item"><span class="rule-num">1.</span><span data-i18n="comm.rule1">Be respectful — everyone is building.</span></div>
+            <div class="rule-item"><span class="rule-num">2.</span><span data-i18n="comm.rule2">Share real experiences and honest feedback.</span></div>
+            <div class="rule-item"><span class="rule-num">3.</span><span data-i18n="comm.rule3">No spam without adding value first.</span></div>
+            <div class="rule-item"><span class="rule-num">4.</span><span data-i18n="comm.rule4">Ask smart questions with context.</span></div>
+            <div class="rule-item"><span class="rule-num">5.</span><span data-i18n="comm.rule5">Celebrate wins — big and small.</span></div>
           </div>
         </div>
       </div>

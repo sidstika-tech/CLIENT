@@ -128,24 +128,24 @@
   <div class="main">
     <div class="topbar">
       <button class="hamburger">☰</button>
-      <span class="topbar-title">BUSINESS ACADEMY</span>
+      <span class="topbar-title" data-i18n="aca.title">BUSINESS ACADEMY</span>
       <div class="topbar-right"><span style="font-size:.78rem;color:var(--text3)">🎓 Path · 📡 Daily · 📚 Resources</span></div>
     </div>
     <div class="page-content">
       <div class="academy-hero">
-        <h2>🎓 BUSINESS ACADEMY</h2>
-        <p>Three things, in one place. A 5-step Founder's Path that walks you from idea to launch. Daily intelligence from the world's markets. And a vault of the best free business education on the internet.</p>
+        <h2 data-i18n="aca.hero">🎓 BUSINESS ACADEMY</h2>
+        <p data-i18n="aca.hero_desc">Three things, in one place. A 5-step Founder's Path that walks you from idea to launch. Daily intelligence from the world's markets. And a vault of the best free business education on the internet.</p>
         <div class="hero-meta">
-          <span>🧭 5-step guided path</span>
-          <span>⚡ New intelligence daily</span>
-          <span>🇲🇪 MENA-aware lessons</span>
+          <span data-i18n="aca.meta_path">🧭 5-step guided path</span>
+          <span data-i18n="aca.meta_daily">⚡ New intelligence daily</span>
+          <span data-i18n="aca.meta_mena">🇲🇪 MENA-aware lessons</span>
         </div>
       </div>
 
       <div class="tabs-row">
-        <button class="tab-btn active" data-tab="path" onclick="switchTab('path')">🧭 The Founder's Path</button>
-        <button class="tab-btn" data-tab="daily" onclick="switchTab('daily')">📡 Today's Intelligence</button>
-        <button class="tab-btn" data-tab="resources" onclick="switchTab('resources')">📚 Free Resources</button>
+        <button class="tab-btn active" data-tab="path" onclick="switchTab('path')" data-i18n="aca.tab_path">🧭 The Founder's Path</button>
+        <button class="tab-btn" data-tab="daily" onclick="switchTab('daily')" data-i18n="aca.tab_daily">📡 Today's Intelligence</button>
+        <button class="tab-btn" data-tab="resources" onclick="switchTab('resources')" data-i18n="aca.tab_resources">📚 Free Resources</button>
       </div>
 
       <!-- ━━━━ TAB 1: FOUNDER'S PATH ━━━━ -->
@@ -153,13 +153,13 @@
         <div class="path-progress">
           <div class="path-progress-top">
             <div>
-              <h3>🧭 THE FOUNDER'S PATH</h3>
-              <div style="font-size:.78rem;color:var(--text3);margin-top:.3rem">Five steps. Twenty-five sessions. The journey from idea to launched founder.</div>
+              <h3 data-i18n="aca.path_title">🧭 THE FOUNDER'S PATH</h3>
+              <div style="font-size:.78rem;color:var(--text3);margin-top:.3rem" data-i18n="aca.path_sub">Five steps. Twenty-five sessions. The journey from idea to launched founder.</div>
             </div>
             <div class="path-progress-stats">
-              <div class="pp-stat"><strong id="pp-done">0</strong>completed</div>
-              <div class="pp-stat"><strong id="pp-total">25</strong>total sessions</div>
-              <div class="pp-stat"><strong id="pp-streak">0</strong>day streak</div>
+              <div class="pp-stat"><strong id="pp-done">0</strong> <span data-i18n="aca.completed">completed</span></div>
+              <div class="pp-stat"><strong id="pp-total">25</strong> <span data-i18n="aca.total_sessions">total sessions</span></div>
+              <div class="pp-stat"><strong id="pp-streak">0</strong> <span data-i18n="aca.streak">day streak</span></div>
             </div>
           </div>
           <div class="pp-bar"><div class="pp-bar-fill" id="pp-bar-fill" style="width:0%"></div></div>
@@ -172,7 +172,7 @@
 
       <!-- ━━━━ TAB 2: DAILY INTELLIGENCE ━━━━ -->
       <div class="tab-panel" id="tab-daily">
-        <h3 style="font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px;margin-bottom:1rem;">📡 TODAY'S BUSINESS INTELLIGENCE</h3>
+        <h3 style="font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px;margin-bottom:1rem;" data-i18n="aca.daily_title">📡 TODAY'S BUSINESS INTELLIGENCE</h3>
         <div id="news-cards-row" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
           <div class="news-card-skeleton"></div>
           <div class="news-card-skeleton"></div>
@@ -183,7 +183,7 @@
       <!-- ━━━━ TAB 3: FREE RESOURCES ━━━━ -->
       <div class="tab-panel" id="tab-resources">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;">
-          <h3 style="font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px;">📚 HAND-PICKED FREE COURSES</h3>
+          <h3 style="font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px;" data-i18n="aca.resources_title">📚 HAND-PICKED FREE COURSES</h3>
           <span style="font-size:.75rem;color:var(--text3)" id="count-lbl">12 free resources</span>
         </div>
         <div class="courses-grid" id="courses-grid"></div>
@@ -208,7 +208,7 @@
         <div class="lesson-loading">⏳ Generating your personalized lesson...</div>
       </div>
       <div class="lesson-reflection" id="sess-reflection-wrap" style="display:none">
-        <label>Your reflection (optional — what stood out, what you'll do)</label>
+        <label data-i18n="aca.reflection">Your reflection (optional — what stood out, what you'll do)</label>
         <textarea id="sess-reflection" placeholder="One or two sentences. The act of writing locks the lesson in."></textarea>
       </div>
     </div>
@@ -216,7 +216,7 @@
       <button class="btn btn-secondary" onclick="closeSession()">Close</button>
       <button class="btn btn-primary" onclick="completeCurrent()" id="sess-complete-btn">
         <span class="loader" id="sess-loader" style="display:none"></span>
-        <span id="sess-complete-text">✓ Mark Complete</span>
+        <span id="sess-complete-text" data-i18n="aca.complete_btn">✓ Mark Complete</span>
       </button>
     </div>
   </div>
