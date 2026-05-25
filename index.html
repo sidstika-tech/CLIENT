@@ -557,13 +557,36 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:2rem 2.5rem;display:fl
     <form class="auth-form" id="login-form" onsubmit="handleLogin(event)">
       <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="login-email" placeholder="you@email.com" required></div>
       <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="login-pass" placeholder="••••••••" required></div>
+      <div style="text-align:right;margin-bottom:1rem;"><a href="#" onclick="showForgotPassword();return false;" style="font-size:.8rem;color:var(--gold);text-decoration:none;">Forgot password?</a></div>
       <button type="submit" class="btn-auth" id="login-btn">Sign In →</button>
     </form>
     <form class="auth-form active" id="register-form" onsubmit="handleRegister(event)">
       <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="reg-name" placeholder="Your name" required></div>
       <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="reg-email" placeholder="you@email.com" required></div>
       <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="reg-pass" placeholder="Min 6 characters" required minlength="6"></div>
+      <div class="form-group" style="margin-top:1.2rem;">
+        <label style="display:flex;align-items:flex-start;gap:.5rem;cursor:pointer;font-size:.8rem;line-height:1.5;">
+          <input type="checkbox" id="terms-checkbox" required style="margin-top:.2rem;cursor:pointer;">
+          <span>I agree to the <a href="pages/terms.html" target="_blank" style="color:var(--gold);text-decoration:none;">Terms & Conditions</a></span>
+        </label>
+      </div>
       <button type="submit" class="btn-auth" id="reg-btn">⚡ Create Free Account →</button>
+    </form>
+  </div>
+</div>
+
+<!-- Forgot Password Modal -->
+<div class="modal-overlay" id="forgot-password-modal">
+  <div class="auth-modal">
+    <button class="modal-close-btn" onclick="closeForgotPassword()">✕</button>
+    <h2>🔐 RESET PASSWORD</h2>
+    <p id="forgot-modal-sub">Enter your email and we'll send you a reset link</p>
+    <div id="forgot-error" class="auth-error"></div>
+    <div id="forgot-success" class="auth-error" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:#4ade80;"></div>
+    <form class="auth-form" id="forgot-form" onsubmit="handleForgotPassword(event)">
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="forgot-email" placeholder="you@email.com" required></div>
+      <button type="submit" class="btn-auth" id="forgot-btn">Send Reset Link →</button>
+      <div style="text-align:center;margin-top:1rem;"><a href="#" onclick="backToLogin();return false;" style="font-size:.8rem;color:var(--text2);text-decoration:none;">← Back to login</a></div>
     </form>
   </div>
 </div>
@@ -684,7 +707,13 @@ async function handleLogin(e){
   try{
     const r=await fetch(`${API}/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:document.getElementById('login-email').value,password:document.getElementById('login-pass').value})});
     const d=await r.json();
-    if(!r.ok)throw new Error(d.error||'Login failed');
+    if(!r.ok){
+      if(d.requiresVerification){
+        showAuthError('⚠️ Please verify your email first. Check your inbox or click here to resend verification.');
+        return;
+      }
+      throw new Error(d.error||'Login failed');
+    }
     localStorage.setItem('d8_token',d.token);
     localStorage.setItem('d8_user',JSON.stringify(d.user));
     window.location.href='pages/dashboard.html';
@@ -692,17 +721,75 @@ async function handleLogin(e){
   finally{btn.textContent='Sign In →';btn.disabled=false;}
 }
 
+// Forgot Password Modal Functions
+function showForgotPassword(){
+  closeAuth();
+  document.getElementById('forgot-password-modal').classList.add('open');
+  document.getElementById('forgot-error').style.display='none';
+  document.getElementById('forgot-success').style.display='none';
+}
+
+function closeForgotPassword(){
+  document.getElementById('forgot-password-modal').classList.remove('open');
+  document.getElementById('forgot-form').reset();
+}
+
+function backToLogin(){
+  closeForgotPassword();
+  openAuth('login');
+}
+
+async function handleForgotPassword(e){
+  e.preventDefault();
+  const btn=document.getElementById('forgot-btn');
+  const email=document.getElementById('forgot-email').value;
+  btn.textContent='Sending...';btn.disabled=true;
+  document.getElementById('forgot-error').style.display='none';
+  document.getElementById('forgot-success').style.display='none';
+  try{
+    const r=await fetch(`${API}/auth/forgot-password`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.error||'Failed to send reset email');
+    const successEl=document.getElementById('forgot-success');
+    successEl.textContent='✅ '+d.message+' Check your email for the reset link.';
+    successEl.style.display='block';
+    document.getElementById('forgot-form').reset();
+  }catch(err){
+    const errorEl=document.getElementById('forgot-error');
+    errorEl.textContent=err.message;
+    errorEl.style.display='block';
+  }
+  finally{btn.textContent='Send Reset Link →';btn.disabled=false;}
+}
+
 async function handleRegister(e){
   e.preventDefault();
+  const termsCheckbox = document.getElementById('terms-checkbox');
+  if (!termsCheckbox.checked) {
+    showAuthError('Please accept the Terms & Conditions to continue');
+    return;
+  }
   const btn=document.getElementById('reg-btn');
   btn.textContent='Creating account...';btn.disabled=true;
   try{
-    const r=await fetch(`${API}/auth/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('reg-name').value,email:document.getElementById('reg-email').value,password:document.getElementById('reg-pass').value})});
+    const r=await fetch(`${API}/auth/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('reg-name').value,email:document.getElementById('reg-email').value,password:document.getElementById('reg-pass').value,acceptedTerms:true})});
     const d=await r.json();
-    if(!r.ok)throw new Error(d.error||'Registration failed');
-    localStorage.setItem('d8_token',d.token);
-    localStorage.setItem('d8_user',JSON.stringify(d.user));
-    window.location.href='pages/dashboard.html';
+    if(!r.ok){
+      if(d.requiresVerification){
+        showAuthError('✅ Account created! Please check your email to verify your account.');
+        setTimeout(()=>closeAuth(),3000);
+        return;
+      }
+      throw new Error(d.error||'Registration failed');
+    }
+    if(d.requiresVerification){
+      showAuthError('✅ Account created! Please check your email to verify your account.');
+      setTimeout(()=>closeAuth(),3000);
+    }else{
+      localStorage.setItem('d8_token',d.token);
+      localStorage.setItem('d8_user',JSON.stringify(d.user));
+      window.location.href='pages/dashboard.html';
+    }
   }catch(err){showAuthError(err.message);}
   finally{btn.textContent='⚡ Create Free Account →';btn.disabled=false;}
 }

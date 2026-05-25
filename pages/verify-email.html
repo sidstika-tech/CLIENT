@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify Email - Double Eight AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--gold:#f59e0b;--gold-dark:#d97706;--bg:#07070f;--bg2:#0d0d1c;--text:#fff;--text2:rgba(255,255,255,.6);--text3:rgba(255,255,255,.3);}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;}
+.container{max-width:500px;width:100%;background:var(--bg2);border:1px solid rgba(245,158,11,.2);border-radius:20px;padding:3rem;text-align:center;}
+.logo{font-family:'Bebas Neue',cursive;font-size:2rem;letter-spacing:2px;color:var(--gold);margin-bottom:2rem;}
+.icon{font-size:4rem;margin-bottom:1.5rem;}
+h1{font-family:'Bebas Neue',cursive;font-size:2rem;letter-spacing:1px;margin-bottom:1rem;}
+p{font-size:.95rem;color:var(--text2);line-height:1.7;margin-bottom:1.5rem;}
+.spinner{width:50px;height:50px;border:4px solid rgba(245,158,11,.2);border-top-color:var(--gold);border-radius:50%;margin:2rem auto;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.btn{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#07070f;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;padding:.95rem 2rem;border-radius:10px;border:none;cursor:pointer;text-decoration:none;display:inline-block;margin-top:1rem;transition:.2s;}
+.btn:hover{transform:translateY(-2px);}
+.error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#f87171;padding:1rem;border-radius:10px;margin-top:1.5rem;}
+.success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:#4ade80;padding:1rem;border-radius:10px;margin-top:1.5rem;}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo">🎯 DOUBLE EIGHT AI</div>
+  
+  <div id="loading" style="display:block;">
+    <div class="spinner"></div>
+    <h1>Verifying Your Email</h1>
+    <p>Please wait while we verify your account...</p>
+  </div>
+
+  <div id="success" style="display:none;">
+    <div class="icon">✅</div>
+    <h1>Email Verified!</h1>
+    <p>Your account has been successfully verified. You can now access all features of Double Eight AI.</p>
+    <a href="../index.html" class="btn">Go to Dashboard</a>
+  </div>
+
+  <div id="error" style="display:none;">
+    <div class="icon">❌</div>
+    <h1>Verification Failed</h1>
+    <p id="error-message">This verification link is invalid or has expired.</p>
+    <a href="../index.html" class="btn">Back to Home</a>
+  </div>
+</div>
+
+<script>
+const API_URL = 'https://api.doubleeight.online/api';
+
+async function verifyEmail() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get('token');
+
+  if (!token) {
+    showError('No verification token provided');
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/auth/verify-email?token=${token}`);
+    const data = await response.json();
+
+    if (data.success) {
+      // Store the auth token
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+      }
+      showSuccess();
+    } else {
+      showError(data.error || 'Verification failed');
+    }
+  } catch (error) {
+    console.error('Verification error:', error);
+    showError('Network error. Please try again.');
+  }
+}
+
+function showSuccess() {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('error').style.display = 'none';
+  document.getElementById('success').style.display = 'block';
+  
+  // Redirect to dashboard after 3 seconds
+  setTimeout(() => {
+    window.location.href = './dashboard.html';
+  }, 3000);
+}
+
+function showError(message) {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('success').style.display = 'none';
+  document.getElementById('error').style.display = 'block';
+  document.getElementById('error-message').textContent = message;
+}
+
+// Auto-verify on page load
+verifyEmail();
+</script>
+</body>
+</html>
