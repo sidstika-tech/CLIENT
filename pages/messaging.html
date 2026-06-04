@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" id="html-root">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Social Media AI — Double Eight AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<style>
+/* ── HERO ── */
+.sm-hero{background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(245,158,11,.04));border:1px solid var(--border-gold);border-radius:var(--radius-lg);padding:1.75rem 2rem;margin-bottom:1.75rem;position:relative;overflow:hidden;}
+.sm-hero::after{content:'📲';position:absolute;right:1.75rem;top:50%;transform:translateY(-50%);font-size:5rem;opacity:.06;pointer-events:none;}
+.sm-hero h2{font-family:'Bebas Neue',cursive;font-size:1.8rem;letter-spacing:2px;color:var(--gold);margin-bottom:.35rem;}
+.sm-hero p{font-size:.875rem;color:var(--text2);line-height:1.65;max-width:580px;}
+.hero-stats{display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:1rem;font-size:.78rem;color:var(--text3);}
+.hero-stats .hs{display:flex;align-items:center;gap:.4rem;}
+.hero-stats .hs strong{color:var(--gold);font-weight:600;}
+
+/* ── PLATFORM CARDS GRID ── */
+.platform-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-bottom:1.75rem;}
+.platform-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;transition:.25s;position:relative;overflow:hidden;}
+.platform-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:.5;transition:.3s;}
+.platform-card.ig::before{background:linear-gradient(90deg,#833ab4,#fd1d1d,#fcb045);}
+.platform-card.fb::before{background:#1877f2;}
+.platform-card.wa::before{background:#25d366;}
+.platform-card.connected{border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.03);}
+.platform-card.connected::before{opacity:1;}
+.plat-head{display:flex;align-items:center;gap:.85rem;margin-bottom:1.1rem;}
+.plat-icon{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;}
+.plat-icon.ig{background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);}
+.plat-icon.fb{background:#1877f2;}
+.plat-icon.wa{background:#25d366;}
+.plat-info{flex:1;min-width:0;}
+.plat-name{font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:1px;color:var(--text);}
+.plat-sub{font-size:.75rem;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.status-pill{display:inline-flex;align-items:center;gap:5px;padding:.28rem .7rem;border-radius:20px;font-size:.72rem;font-weight:600;white-space:nowrap;}
+.status-pill.on{background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.2);}
+.status-pill.off{background:var(--surface2);color:var(--text3);border:1px solid var(--border);}
+.status-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}
+.plat-features{display:flex;flex-direction:column;gap:.45rem;margin-bottom:1.1rem;}
+.plat-feature{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--text3);}
+.plat-feature.ok{color:var(--text2);}
+.plat-feature .fi{width:16px;text-align:center;font-size:.75rem;}
+.plat-btn-row{display:flex;gap:.6rem;}
+
+/* ── AI CONFIG CARD ── */
+.ai-config{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.75rem;}
+.section-hdr{font-family:'Bebas Neue',cursive;font-size:1.25rem;letter-spacing:1.5px;color:var(--gold);margin-bottom:1.25rem;}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:.7rem 0;border-bottom:1px solid var(--border);}
+.toggle-row:last-of-type{border-bottom:none;}
+.trow-left .trow-title{font-size:.875rem;color:var(--text);font-weight:500;}
+.trow-left .trow-desc{font-size:.75rem;color:var(--text3);margin-top:2px;}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
+.toggle input{opacity:0;position:absolute;width:0;height:0;}
+.toggle-track{position:absolute;inset:0;background:var(--surface2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:.2s;}
+.toggle-track::before{content:'';position:absolute;width:18px;height:18px;left:2px;top:2px;background:var(--text3);border-radius:50%;transition:.2s;}
+.toggle input:checked~.toggle-track{background:rgba(245,158,11,.2);border-color:var(--gold);}
+.toggle input:checked~.toggle-track::before{transform:translateX(20px);background:var(--gold);}
+.lang-btns{display:flex;gap:.5rem;margin-top:.5rem;}
+.lang-opt{flex:1;padding:.45rem;border-radius:8px;font-size:.82rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text3);font-family:'Outfit',sans-serif;transition:.15s;}
+.lang-opt.active{background:var(--gold-dim);color:var(--gold);border-color:var(--border-gold);}
+.prompt-area{width:100%;min-height:130px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:9px;padding:.75rem 1rem;color:var(--text);font-family:'Outfit',sans-serif;font-size:.875rem;resize:vertical;outline:none;line-height:1.65;transition:.2s;}
+.prompt-area:focus{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.02);}
+.char-count{font-size:.72rem;color:var(--text3);margin-top:.4rem;text-align:right;}
+
+/* ── TABS ── */
+.tab-bar{display:flex;gap:.25rem;margin-bottom:1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;}
+.tab-btn{flex:1;padding:.5rem;border-radius:7px;font-size:.82rem;font-weight:500;font-family:'Outfit',sans-serif;color:var(--text3);background:none;border:none;cursor:pointer;transition:.15s;}
+.tab-btn.active{background:var(--gold-dim);color:var(--gold);border:1px solid var(--border-gold);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* ── COMPOSE ── */
+.compose-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.25rem;}
+.compose-textarea{width:100%;min-height:110px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:9px;padding:.75rem 1rem;color:var(--text);font-family:'Outfit',sans-serif;font-size:.9rem;resize:vertical;outline:none;line-height:1.65;transition:.2s;}
+.compose-textarea:focus{border-color:rgba(245,158,11,.4);}
+.platform-checkboxes{display:flex;gap:.75rem;flex-wrap:wrap;margin:.85rem 0;}
+.plat-check{display:flex;align-items:center;gap:.45rem;cursor:pointer;font-size:.82rem;color:var(--text2);padding:.4rem .75rem;border-radius:8px;border:1px solid var(--border);transition:.15s;user-select:none;}
+.plat-check input{display:none;}
+.plat-check.checked{background:var(--gold-dim);border-color:var(--border-gold);color:var(--gold);}
+.plat-check-dot{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.5;}
+.plat-check.checked .plat-check-dot{opacity:1;}
+.compose-actions{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;}
+.ai-gen-row{display:flex;gap:.5rem;align-items:center;background:rgba(245,158,11,.04);border:1px solid var(--border-gold);border-radius:9px;padding:.6rem 1rem;margin:.85rem 0;}
+.ai-gen-row input{flex:1;background:none;border:none;color:var(--text);font-family:'Outfit',sans-serif;font-size:.875rem;outline:none;}
+.ai-gen-row input::placeholder{color:var(--text3);}
+
+/* ── CONVERSATIONS ── */
+.convo-list{display:flex;flex-direction:column;gap:.6rem;}
+.convo-item{display:flex;align-items:flex-start;gap:.85rem;padding:1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:.15s;}
+.convo-item:hover{border-color:var(--border-gold);}
+.convo-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:700;flex-shrink:0;color:#fff;}
+.convo-avatar.ig{background:linear-gradient(135deg,#833ab4,#fd1d1d);}
+.convo-avatar.fb{background:#1877f2;}
+.convo-avatar.wa{background:#25d366;}
+.convo-body{flex:1;min-width:0;}
+.convo-name{font-size:.875rem;font-weight:600;color:var(--text);}
+.convo-preview{font-size:.78rem;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.convo-meta{text-align:right;flex-shrink:0;}
+.convo-plat{font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:20px;margin-bottom:3px;display:inline-block;}
+.convo-plat.ig{background:rgba(253,29,29,.12);color:#fd6b6b;}
+.convo-plat.fb{background:rgba(24,119,242,.12);color:#60a5fa;}
+.convo-plat.wa{background:rgba(37,211,102,.12);color:#4ade80;}
+.convo-time{font-size:.7rem;color:var(--text3);}
+
+/* ── SCHEDULED POSTS ── */
+.post-item{display:flex;align-items:flex-start;gap:.85rem;padding:1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);transition:.15s;}
+.post-item:hover{border-color:var(--border-gold);}
+.post-platforms{display:flex;gap:.3rem;flex-shrink:0;flex-direction:column;}
+.post-plat-dot{width:8px;height:8px;border-radius:50%;}
+.post-plat-dot.ig{background:linear-gradient(135deg,#833ab4,#fd1d1d);}
+.post-plat-dot.fb{background:#1877f2;}
+.post-plat-dot.wa{background:#25d366;}
+.post-content-preview{font-size:.82rem;color:var(--text2);line-height:1.5;flex:1;min-width:0;}
+.post-time{font-size:.72rem;color:var(--text3);white-space:nowrap;flex-shrink:0;}
+.status-tag{font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em;display:inline-block;margin-top:4px;}
+.st-scheduled{background:rgba(245,158,11,.12);color:var(--gold);}
+.st-published{background:rgba(34,197,94,.12);color:#22c55e;}
+.st-failed{background:rgba(239,68,68,.12);color:#ef4444;}
+
+/* ── WEBHOOK INFO ── */
+.webhook-box{background:rgba(245,158,11,.05);border:1px solid var(--border-gold);border-radius:var(--radius);padding:1rem 1.25rem;font-size:.8rem;color:var(--text2);line-height:1.7;}
+.webhook-box code{color:var(--gold);font-size:.78rem;word-break:break-all;display:block;margin:.25rem 0;}
+.webhook-box a{color:var(--gold);}
+
+/* ── EMPTY ── */
+.empty-sm{text-align:center;padding:2.5rem 1rem;color:var(--text3);font-size:.85rem;}
+.empty-sm .ei{font-size:2.5rem;margin-bottom:.75rem;opacity:.35;}
+
+@media(max-width:640px){
+  .platform-grid{grid-template-columns:1fr;}
+  .plat-btn-row{flex-direction:column;}
+  .compose-actions{flex-direction:column;align-items:stretch;}
+  .tab-btn{font-size:.76rem;padding:.45rem .3rem;}
+}
+</style>
+</head>
+<body>
+<div class="app-grid-bg"></div>
+<div class="page-particles"></div>
+<div class="app">
+  <aside class="sidebar"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="hamburger" onclick="document.querySelector('.sidebar').classList.toggle('open');document.getElementById('main-overlay')?.classList.toggle('show')">☰</button>
+      <span class="topbar-title">SOCIAL MEDIA AI</span>
+      <div class="topbar-right">
+        <span id="ai-master-badge" style="font-size:.75rem;padding:.3rem .75rem;border-radius:20px;font-weight:600;background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2);">● AI ON</span>
+      </div>
+    </div>
+
+    <div class="page-content" style="max-width:900px">
+
+      <!-- Hero -->
+      <div class="sm-hero">
+        <h2>SOCIAL MEDIA AI MANAGER</h2>
+        <p>Connect your Instagram, Facebook and WhatsApp with one click. Your AI handles all incoming messages, replies to DMs, and publishes content automatically.</p>
+        <div class="hero-stats">
+          <div class="hs"><strong id="h-replies">0</strong> AI replies sent</div>
+          <div class="hs"><strong id="h-posts">0</strong> posts published</div>
+          <div class="hs"><strong id="h-channels">0</strong> / 3 channels connected</div>
+        </div>
+      </div>
+
+      <!-- Platform connection cards -->
+      <div class="platform-grid">
+
+        <!-- Instagram -->
+        <div class="platform-card ig" id="card-instagram">
+          <div class="plat-head">
+            <div class="plat-icon ig">📸</div>
+            <div class="plat-info">
+              <div class="plat-name" id="name-instagram">Instagram</div>
+              <div class="plat-sub" id="sub-instagram">Not connected</div>
+            </div>
+            <span class="status-pill off" id="badge-instagram"><span class="status-dot"></span>Off</span>
+          </div>
+          <div class="plat-features">
+            <div class="plat-feature ok"><span class="fi">✓</span> Auto-reply to DMs</div>
+            <div class="plat-feature ok"><span class="fi">✓</span> Reply to comments</div>
+            <div class="plat-feature ok"><span class="fi">✓</span> Publish posts & reels</div>
+            <div class="plat-feature ok"><span class="fi">✓</span> Free — no cost</div>
+          </div>
+          <div class="plat-btn-row" id="btns-instagram">
+            <button class="btn btn-primary" style="flex:1" onclick="connectPlatform('instagram')">
+              Connect Instagram →
+            </button>
+          </div>
+        </div>
+
+        <!-- Facebook -->
+        <div class="platform-card fb" id="card-facebook">
+          <div class="plat-head">
+            <div class="plat-icon fb">📘</div>
+            <div class="plat-info">
+              <div class="plat-name" id="name-facebook">Facebook</div>
+              <div class="plat-sub" id="sub-facebook">Not connected</div>
+            </div>
+            <span class="status-pill off" id="badge-facebook"><span class="status-dot"></span>Off</span>
+          </div>
+          <div class="plat-features">
+            <div class="plat-feature ok"><span class="fi">✓</span> Auto-reply to Messenger</div>
+            <div class="plat-feature ok"><span class="fi">✓</span> Reply to post comments</div>
+            <div class="plat-feature ok"><span class="fi">✓</span> Publish to Facebook Page</div>
+            <div class="plat-feature ok"><span class="fi">✓</span> Free — no cost</div>
+          </div>
+          <div class="plat-btn-row" id="btns-facebook">
+            <button class="btn btn-primary" style="flex:1" onclick="connectPlatform('facebook')">
+              Connect Facebook →
+            </button>
+          </div>
+        </div>
+
+        <!-- WhatsApp -->
+        <div class="platform-card wa" id="card-whatsapp">
+          <div class="plat-head">
+            <div class="plat-icon wa">💬</div>
+            <div class="plat-info">
+              <div class="plat-name" id="name-whatsapp">WhatsApp</div>
+              <div class="plat-sub" id="sub-whatsapp">Business API required</div>
+            </div>
+            <span class="status-pill off" id="badge-whatsapp"><span class="status-dot"></span>Off</span>
+          </div>
+          <div class="plat-features">
+            <div class="plat-feature ok"><span class="fi">✓</span> Auto-reply to messages</div>
+            <div class="plat-feature ok"><span class="fi">✓</span> Send broadcast messages</div>
+            <div class="plat-feature ok"><span class="fi">✓</span> 1000 free conversations/mo</div>
+            <div class="plat-feature" style="color:var(--gold)"><span class="fi">!</span> Needs Meta Business App</div>
+          </div>
+          <div class="plat-btn-row" id="btns-whatsapp">
+            <button class="btn btn-primary" style="flex:1" onclick="connectPlatform('whatsapp')">
+              Connect WhatsApp →
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Tabs: AI Config / Compose / Conversations / Setup -->
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('ai')">🤖 AI Settings</button>
+        <button class="tab-btn" onclick="switchTab('compose')">✏️ Compose & Post</button>
+        <button class="tab-btn" onclick="switchTab('convos')">💬 Conversations</button>
+        <button class="tab-btn" onclick="switchTab('setup')">⚙️ Setup Guide</button>
+      </div>
+
+      <!-- TAB: AI Settings -->
+      <div class="tab-panel active" id="tab-ai">
+        <div class="ai-config">
+          <div class="section-hdr">◑ AI ASSISTANT CONFIG</div>
+
+          <div class="toggle-row">
+            <div class="trow-left">
+              <div class="trow-title">AI Auto-Reply (master switch)</div>
+              <div class="trow-desc">Turn off to pause all AI replies across all platforms</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="ai-enabled" checked onchange="saveAI()"><span class="toggle-track"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="trow-left">
+              <div class="trow-title">Reply on Instagram</div>
+              <div class="trow-desc">Handle Instagram DMs and comment replies</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="ai-ig" checked onchange="saveAI()"><span class="toggle-track"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="trow-left">
+              <div class="trow-title">Reply on Facebook</div>
+              <div class="trow-desc">Handle Messenger DMs and post comment replies</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="ai-fb" checked onchange="saveAI()"><span class="toggle-track"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="trow-left">
+              <div class="trow-title">Reply on WhatsApp</div>
+              <div class="trow-desc">Handle WhatsApp Business messages</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="ai-wa" checked onchange="saveAI()"><span class="toggle-track"></span></label>
+          </div>
+
+          <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border)">
+            <div style="font-size:.78rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem">Reply Language</div>
+            <div class="lang-btns">
+              <button class="lang-opt active" id="lopt-auto" onclick="setLang('auto')">Auto-detect</button>
+              <button class="lang-opt" id="lopt-en" onclick="setLang('en')">English</button>
+              <button class="lang-opt" id="lopt-ar" onclick="setLang('ar')">العربية</button>
+            </div>
+          </div>
+
+          <div style="margin-top:1.25rem">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem">
+              <div style="font-size:.78rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em">AI System Prompt</div>
+              <span class="char-count" id="prompt-chars" style="margin:0">0 / 3000</span>
+            </div>
+            <textarea class="prompt-area" id="ai-prompt" placeholder="Tell the AI who it is and how to behave.&#10;&#10;Example: You are the customer support assistant for Nour Store, a women's clothing boutique in Cairo. Answer questions about products, delivery (3-5 days in Egypt, 7-10 days GCC), return policy (7 days unworn), and prices. Be warm and professional. For orders, direct to WhatsApp: +20 100 000 0000."></textarea>
+            <div style="display:flex;justify-content:flex-end;margin-top:.75rem">
+              <button class="btn btn-primary" onclick="saveAI()">Save AI Settings</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Compose & Post -->
+      <div class="tab-panel" id="tab-compose">
+        <div class="compose-card">
+          <div class="section-hdr">◑ COMPOSE POST</div>
+
+          <!-- AI content generator -->
+          <div class="ai-gen-row">
+            <span style="font-size:.85rem;color:var(--gold);flex-shrink:0">✦ AI</span>
+            <input type="text" id="ai-idea" placeholder="Describe your post idea and AI will write it...">
+            <button class="btn btn-primary btn-sm" onclick="generatePostContent()">Generate</button>
+          </div>
+
+          <textarea class="compose-textarea" id="post-content" placeholder="Write your post content here, or use AI to generate it above..."></textarea>
+
+          <div style="font-size:.78rem;color:var(--text3);margin:.5rem 0 .3rem">Select platforms to publish:</div>
+          <div class="platform-checkboxes">
+            <label class="plat-check" id="chk-instagram" onclick="toggleCheck('instagram')">
+              <input type="checkbox" id="pc-instagram">
+              <span class="plat-check-dot"></span>
+              📸 Instagram
+            </label>
+            <label class="plat-check" id="chk-facebook" onclick="toggleCheck('facebook')">
+              <input type="checkbox" id="pc-facebook">
+              <span class="plat-check-dot"></span>
+              📘 Facebook
+            </label>
+            <label class="plat-check" id="chk-whatsapp" onclick="toggleCheck('whatsapp')">
+              <input type="checkbox" id="pc-whatsapp">
+              <span class="plat-check-dot"></span>
+              💬 WhatsApp
+            </label>
+          </div>
+
+          <div style="margin-bottom:1rem">
+            <div style="font-size:.78rem;color:var(--text3);margin-bottom:.4rem">Schedule (leave empty to post now):</div>
+            <input type="datetime-local" class="form-input" id="post-schedule" style="max-width:280px">
+          </div>
+
+          <div class="compose-actions">
+            <button class="btn btn-primary" onclick="publishPost(false)">⚡ Publish Now</button>
+            <button class="btn btn-secondary" onclick="publishPost(true)">🕐 Schedule Post</button>
+            <button class="btn btn-secondary" onclick="clearCompose()">Clear</button>
+          </div>
+        </div>
+
+        <!-- Scheduled posts -->
+        <div class="ai-config">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+            <div class="section-hdr" style="margin-bottom:0">◑ SCHEDULED POSTS</div>
+            <button class="btn btn-secondary btn-sm" onclick="loadPosts()">Refresh</button>
+          </div>
+          <div id="posts-list"><div class="empty-sm"><div class="ei">📅</div>No scheduled posts yet.</div></div>
+        </div>
+      </div>
+
+      <!-- TAB: Conversations -->
+      <div class="tab-panel" id="tab-convos">
+        <div class="ai-config">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+            <div class="section-hdr" style="margin-bottom:0">◑ RECENT AI CONVERSATIONS</div>
+            <button class="btn btn-secondary btn-sm" onclick="loadConvos()">Refresh</button>
+          </div>
+          <div id="convos-list"><div class="empty-sm"><div class="ei">💬</div>No conversations yet. Connect a platform to start.</div></div>
+        </div>
+      </div>
+
+      <!-- TAB: Setup Guide -->
+      <div class="tab-panel" id="tab-setup">
+        <div class="ai-config">
+          <div class="section-hdr">◑ SETUP GUIDE</div>
+
+          <div style="background:rgba(245,158,11,.05);border:1px solid var(--border-gold);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem">
+            <div style="font-size:.82rem;font-weight:600;color:var(--gold);margin-bottom:.5rem">Step 1 — Create your Meta Developer App (one time)</div>
+            <div style="font-size:.8rem;color:var(--text2);line-height:1.7">
+              1. Go to <a href="https://developers.facebook.com" target="_blank" style="color:var(--gold)">developers.facebook.com</a> → Create App → Business type<br>
+              2. Add products: <strong>Messenger</strong>, <strong>Instagram Graph API</strong>, <strong>WhatsApp Business</strong><br>
+              3. Copy your <strong>App ID</strong> and <strong>App Secret</strong><br>
+              4. Add OAuth redirect URI: <code id="redirect-uri" style="color:var(--gold);font-size:.78rem"></code><br>
+              5. Submit for App Review to request: <code>pages_messaging</code>, <code>instagram_manage_messages</code>, <code>instagram_content_publish</code>
+            </div>
+          </div>
+
+          <div style="background:rgba(99,102,241,.05);border:1px solid rgba(99,102,241,.2);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem">
+            <div style="font-size:.82rem;font-weight:600;color:#a78bfa;margin-bottom:.5rem">Step 2 — Add env vars to your Vercel project</div>
+            <div style="font-size:.8rem;color:var(--text2);line-height:1.9;font-family:monospace">
+              META_APP_ID=<span style="color:#a78bfa">your_app_id</span><br>
+              META_APP_SECRET=<span style="color:#a78bfa">your_app_secret</span><br>
+              META_WEBHOOK_VERIFY_TOKEN=<span style="color:#a78bfa">doubleeight_webhook_2024</span><br>
+              SERVER_URL=<span style="color:#a78bfa">https://api.doubleeight.online</span><br>
+              CLIENT_URL=<span style="color:#a78bfa">https://doubleeight.online</span>
+            </div>
+          </div>
+
+          <div style="background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.2);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem">
+            <div style="font-size:.82rem;font-weight:600;color:#4ade80;margin-bottom:.5rem">Step 3 — Configure webhook in Meta App Dashboard</div>
+            <div style="font-size:.8rem;color:var(--text2);line-height:1.7">
+              Webhook URL: <code id="webhook-url" style="color:#4ade80;font-size:.78rem;word-break:break-all;display:block;margin:.25rem 0"></code>
+              Verify Token: <code style="color:#4ade80">doubleeight_webhook_2024</code><br>
+              Subscribe to fields: <code>messages</code>, <code>messaging_postbacks</code>, <code>feed</code>
+            </div>
+            <button class="btn btn-secondary btn-sm" style="margin-top:.75rem" onclick="copyWebhook()">Copy Webhook URL</button>
+          </div>
+
+          <div style="background:rgba(37,211,102,.05);border:1px solid rgba(37,211,102,.2);border-radius:var(--radius);padding:1rem 1.25rem">
+            <div style="font-size:.82rem;font-weight:600;color:#25d366;margin-bottom:.5rem">Step 4 — Connect your accounts</div>
+            <div style="font-size:.8rem;color:var(--text2);line-height:1.7">
+              Once env vars are set and deployed, click the <strong>"Connect"</strong> buttons above.<br>
+              A Meta popup will open → you log in and approve → your AI starts working automatically.<br><br>
+              <strong>Instagram + Facebook:</strong> Needs an Instagram Business account linked to a Facebook Page.<br>
+              <strong>WhatsApp:</strong> Needs a WhatsApp Business API number (apply at business.facebook.com).
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- CONNECTING MODAL -->
+<div class="modal-overlay" id="connecting-modal">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-body" style="text-align:center;padding:2.5rem 2rem">
+      <div style="font-size:2.5rem;margin-bottom:1rem" id="connecting-icon">📸</div>
+      <div style="font-family:'Bebas Neue',cursive;font-size:1.3rem;letter-spacing:1px;margin-bottom:.5rem" id="connecting-title">Connecting Instagram</div>
+      <div style="font-size:.85rem;color:var(--text3);margin-bottom:1.5rem" id="connecting-desc">A Meta authorization popup will open. Log in and approve access.</div>
+      <div class="loader" style="width:28px;height:28px;border-width:3px;margin:0 auto"></div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/core.js"></script>
+<script>
+Auth.check();
+buildLayout('messaging');
+
+const API_BASE = typeof API !== 'undefined' ? API : 'https://api.doubleeight.online/api';
+let currentLang = 'auto';
+let saveTimer = null;
+
+/* ── INIT ── */
+async function init() {
+  // Set URLs
+  const base = API_BASE.replace('/api','');
+  document.getElementById('redirect-uri').textContent = base + '/api/messaging/oauth/callback';
+  document.getElementById('webhook-url').textContent = base + '/api/messaging/webhook';
+
+  // Check URL params for success/error
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('connected')) { showToast('Account connected successfully! ✅','success'); history.replaceState({},document.title,window.location.pathname); }
+  if (params.get('error')) { showToast('Connection failed: ' + decodeURIComponent(params.get('error')),'error'); history.replaceState({},document.title,window.location.pathname); }
+
+  await loadStatus();
+  await loadConvos();
+  loadPosts();
+
+  // Prompt char counter
+  const p = document.getElementById('ai-prompt');
+  p.addEventListener('input', () => { document.getElementById('prompt-chars').textContent = `${p.value.length} / 3000`; });
+}
+
+/* ── LOAD STATUS ── */
+async function loadStatus() {
+  const d = await api.get('/messaging/status');
+  if (!d?.success) return;
+  const ig = d.integration;
+
+  // Update stats
+  document.getElementById('h-replies').textContent = ig.stats?.totalReplies || 0;
+  document.getElementById('h-posts').textContent = ig.stats?.postsPublished || 0;
+  const connected = [ig.instagram?.connected, ig.facebook?.connected, ig.whatsapp?.connected].filter(Boolean).length;
+  document.getElementById('h-channels').textContent = connected;
+
+  // Platform cards
+  updateCard('instagram', ig.instagram);
+  updateCard('facebook', ig.facebook);
+  updateCard('whatsapp', ig.whatsapp);
+
+  // AI settings
+  const ai = ig.ai || {};
+  document.getElementById('ai-enabled').checked = ai.enabled !== false;
+  document.getElementById('ai-ig').checked = ai.replyInstagram !== false;
+  document.getElementById('ai-fb').checked = ai.replyFacebook !== false;
+  document.getElementById('ai-wa').checked = ai.replyWhatsapp !== false;
+  if (ai.systemPrompt) {
+    const el = document.getElementById('ai-prompt');
+    el.value = ai.systemPrompt;
+    document.getElementById('prompt-chars').textContent = `${ai.systemPrompt.length} / 3000`;
+  }
+  currentLang = ai.language || 'auto';
+  setLang(currentLang, false);
+
+  // Master badge
+  const badge = document.getElementById('ai-master-badge');
+  if (ai.enabled !== false) { badge.style.background='rgba(34,197,94,.1)'; badge.style.color='#22c55e'; badge.style.borderColor='rgba(34,197,94,.2)'; badge.textContent='● AI ON'; }
+  else { badge.style.background='rgba(239,68,68,.1)'; badge.style.color='#ef4444'; badge.style.borderColor='rgba(239,68,68,.2)'; badge.textContent='● AI OFF'; }
+}
+
+function updateCard(platform, data) {
+  const card = document.getElementById(`card-${platform}`);
+  const badge = document.getElementById(`badge-${platform}`);
+  const name = document.getElementById(`name-${platform}`);
+  const sub = document.getElementById(`sub-${platform}`);
+  const btns = document.getElementById(`btns-${platform}`);
+
+  if (data?.connected) {
+    card.classList.add('connected');
+    badge.className = 'status-pill on';
+    badge.innerHTML = '<span class="status-dot"></span>Live';
+    const label = data.pageName || data.phoneNumber || platform;
+    name.textContent = label;
+    sub.textContent = `Connected • AI active`;
+    btns.innerHTML = `<button class="btn btn-secondary" style="flex:1;font-size:.8rem" onclick="disconnectPlatform('${platform}')">Disconnect</button>`;
+  } else {
+    card.classList.remove('connected');
+    badge.className = 'status-pill off';
+    badge.innerHTML = '<span class="status-dot"></span>Off';
+    const defaults = { instagram:'Instagram', facebook:'Facebook', whatsapp:'WhatsApp' };
+    name.textContent = defaults[platform];
+    sub.textContent = platform === 'whatsapp' ? 'Business API required' : 'Not connected';
+    btns.innerHTML = `<button class="btn btn-primary" style="flex:1" onclick="connectPlatform('${platform}')">Connect ${defaults[platform]} →</button>`;
+  }
+}
+
+/* ── CONNECT PLATFORM (OAuth popup) ── */
+async function connectPlatform(platform) {
+  const icons = { instagram:'📸', facebook:'📘', whatsapp:'💬' };
+  const names = { instagram:'Instagram', facebook:'Facebook', whatsapp:'WhatsApp' };
+
+  // Show connecting modal
+  document.getElementById('connecting-icon').textContent = icons[platform];
+  document.getElementById('connecting-title').textContent = `Connecting ${names[platform]}`;
+  document.getElementById('connecting-desc').textContent = 'A Meta authorization window will open. Log in with Facebook and approve access.';
+  openModal('connecting-modal');
+
+  // Get OAuth URL from server
+  const res = await api.get(`/messaging/oauth/${platform}`);
+  closeModal('connecting-modal');
+
+  if (!res?.success || !res.url) {
+    showToast(res?.error || 'Could not generate auth URL. Check META_APP_ID env var.', 'error');
+    return;
+  }
+
+  // Open Meta OAuth popup
+  const w = 600, h = 700;
+  const left = (screen.width / 2) - (w / 2);
+  const top = (screen.height / 2) - (h / 2);
+  const popup = window.open(res.url, 'MetaOAuth', `width=${w},height=${h},left=${left},top=${top},scrollbars=yes`);
+
+  // Poll popup for redirect back to our domain
+  const poll = setInterval(() => {
+    try {
+      if (!popup || popup.closed) {
+        clearInterval(poll);
+        // Reload status — connection may have succeeded
+        setTimeout(() => { loadStatus(); showToast('Checking connection status...','success'); }, 1000);
+        return;
+      }
+      // Check if popup redirected to our client URL
+      const href = popup.location.href;
+      if (href.includes('doubleeight.online') || href.includes('localhost')) {
+        clearInterval(poll);
+        popup.close();
+        const url = new URL(href);
+        if (url.searchParams.get('connected')) { showToast(`${names[platform]} connected! ✅`,'success'); }
+        else if (url.searchParams.get('error')) { showToast('Connection failed: ' + url.searchParams.get('error'),'error'); }
+        setTimeout(loadStatus, 800);
+      }
+    } catch(e) { /* cross-origin — still loading */ }
+  }, 500);
+}
+
+/* ── DISCONNECT ── */
+async function disconnectPlatform(platform) {
+  const names = { instagram:'Instagram', facebook:'Facebook', whatsapp:'WhatsApp' };
+  if (!confirm(`Disconnect ${names[platform]}? AI will stop replying on this channel.`)) return;
+  const res = await api.delete(`/messaging/disconnect/${platform}`);
+  if (res?.success) { showToast(`${names[platform]} disconnected`,'success'); loadStatus(); }
+  else showToast(res?.error || 'Failed','error');
+}
+
+/* ── AI SETTINGS ── */
+function setLang(lang, save=true) {
+  currentLang = lang;
+  ['auto','en','ar'].forEach(l => document.getElementById(`lopt-${l}`)?.classList.toggle('active', l===lang));
+  if (save) saveAI();
+}
+
+async function saveAI() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    const body = {
+      enabled: document.getElementById('ai-enabled').checked,
+      systemPrompt: document.getElementById('ai-prompt').value,
+      replyInstagram: document.getElementById('ai-ig').checked,
+      replyFacebook: document.getElementById('ai-fb').checked,
+      replyWhatsapp: document.getElementById('ai-wa').checked,
+      language: currentLang,
+    };
+    const res = await api.put('/messaging/ai-settings', body);
+    if (res?.success) { showToast('AI settings saved ✅','success'); loadStatus(); }
+    else showToast(res?.error || 'Save failed','error');
+  }, 700);
+}
+
+/* ── COMPOSE ── */
+function toggleCheck(platform) {
+  const chk = document.getElementById(`chk-${platform}`);
+  const inp = document.getElementById(`pc-${platform}`);
+  inp.checked = !inp.checked;
+  chk.classList.toggle('checked', inp.checked);
+}
+
+function clearCompose() {
+  document.getElementById('post-content').value = '';
+  document.getElementById('post-schedule').value = '';
+  ['instagram','facebook','whatsapp'].forEach(p => {
+    document.getElementById(`pc-${p}`).checked = false;
+    document.getElementById(`chk-${p}`).classList.remove('checked');
+  });
+}
+
+async function generatePostContent() {
+  const idea = document.getElementById('ai-idea').value.trim();
+  if (!idea) { showToast('Describe your post idea first','error'); return; }
+  const btn = event.target; btn.textContent = '...'; btn.disabled = true;
+  const res = await api.post('/generator/generate', { type: 'social_post', inputs: { idea, language: currentLang } });
+  btn.textContent = 'Generate'; btn.disabled = false;
+  if (res?.result) { document.getElementById('post-content').value = res.result; showToast('Post generated ✅','success'); }
+  else {
+    // Fallback: use any available AI
+    const content = `Post idea: ${idea}\n\nWrite an engaging social media post about this topic. Keep it concise, use relevant emojis, and add 3-5 hashtags at the end.`;
+    document.getElementById('post-content').value = content;
+    showToast('Use AI Advisor to refine this post','success');
+  }
+}
+
+async function publishPost(schedule) {
+  const content = document.getElementById('post-content').value.trim();
+  const platforms = ['instagram','facebook','whatsapp'].filter(p => document.getElementById(`pc-${p}`).checked);
+  const scheduledAt = document.getElementById('post-schedule').value;
+
+  if (!content) return showToast('Write your post content first','error');
+  if (!platforms.length) return showToast('Select at least one platform','error');
+  if (schedule && !scheduledAt) return showToast('Set a schedule date/time','error');
+
+  const btn = event.target; btn.disabled = true; const orig = btn.textContent; btn.textContent = 'Publishing...';
+  const res = await api.post('/messaging/publish', { content, platforms, scheduledAt: schedule ? scheduledAt : null });
+  btn.disabled = false; btn.textContent = orig;
+
+  if (res?.success) {
+    if (res.scheduled) { showToast('Post scheduled! ✅','success'); loadPosts(); }
+    else {
+      const ok = Object.entries(res.results || {}).filter(([,v]) => v.success).map(([k]) => k);
+      const fail = Object.entries(res.results || {}).filter(([,v]) => !v.success).map(([k]) => k);
+      if (ok.length) showToast(`Published to: ${ok.join(', ')} ✅`,'success');
+      if (fail.length) showToast(`Failed on: ${fail.join(', ')}. Check platform connection.`,'error');
+      clearCompose();
+      loadStatus();
+    }
+  } else showToast(res?.error || 'Publish failed','error');
+}
+
+async function loadPosts() {
+  const res = await api.get('/messaging/posts');
+  const el = document.getElementById('posts-list');
+  if (!res?.posts?.length) { el.innerHTML = '<div class="empty-sm"><div class="ei">📅</div>No scheduled posts.</div>'; return; }
+  el.innerHTML = res.posts.map(p => `
+    <div class="post-item">
+      <div class="post-platforms">
+        ${p.platforms.map(pl => `<div class="post-plat-dot ${pl}" title="${pl}"></div>`).join('')}
+      </div>
+      <div class="post-content-preview">${esc(p.content.slice(0,120))}${p.content.length>120?'...':''}</div>
+      <div class="post-time">
+        <div>${fmtDate(p.scheduledAt)}</div>
+        <span class="status-tag st-${p.status}">${p.status}</span>
+        ${p.status === 'scheduled' ? `<br><button class="btn btn-danger btn-sm" style="margin-top:.4rem;font-size:.72rem;padding:.25rem .6rem" onclick="deletePost('${p._id}')">Delete</button>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+async function deletePost(id) {
+  if (!confirm('Delete this scheduled post?')) return;
+  await api.delete(`/messaging/posts/${id}`);
+  showToast('Post deleted','success');
+  loadPosts();
+}
+
+/* ── CONVERSATIONS ── */
+async function loadConvos() {
+  const res = await api.get('/messaging/conversations');
+  const el = document.getElementById('convos-list');
+  if (!res?.conversations?.length) { el.innerHTML = '<div class="empty-sm"><div class="ei">💬</div>No conversations yet.</div>'; return; }
+  const platLabel = { instagram:'IG', facebook:'FB', whatsapp:'WA' };
+  el.innerHTML = '<div class="convo-list">' + res.conversations.map(c => {
+    const last = c.messages?.[c.messages.length-1];
+    const init = (c.senderName || c.senderId || '?').charAt(0).toUpperCase();
+    return `<div class="convo-item">
+      <div class="convo-avatar ${c.platform}">${init}</div>
+      <div class="convo-body">
+        <div class="convo-name">${esc(c.senderName || c.senderId)}</div>
+        <div class="convo-preview">${esc(last?.content?.slice(0,80) || 'No messages')}</div>
+      </div>
+      <div class="convo-meta">
+        <span class="convo-plat ${c.platform}">${platLabel[c.platform]||c.platform}</span>
+        <div class="convo-time">${timeAgo(c.lastMessageAt)}</div>
+      </div>
+    </div>`;
+  }).join('') + '</div>';
+}
+
+/* ── TABS ── */
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', ['ai','compose','convos','setup'][i]===tab));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`tab-${tab}`).classList.add('active');
+  if (tab==='convos') loadConvos();
+  if (tab==='compose') loadPosts();
+}
+
+/* ── HELPERS ── */
+function copyWebhook() {
+  const url = document.getElementById('webhook-url').textContent;
+  navigator.clipboard.writeText(url).then(() => showToast('Webhook URL copied!','success'));
+}
+function timeAgo(d) {
+  if (!d) return '';
+  const s = Math.floor((Date.now()-new Date(d))/1000);
+  if (s<60) return 'just now';
+  if (s<3600) return `${Math.floor(s/60)}m ago`;
+  if (s<86400) return `${Math.floor(s/3600)}h ago`;
+  return `${Math.floor(s/86400)}d ago`;
+}
+function fmtDate(d) { if (!d) return ''; return new Date(d).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// Extend api with DELETE
+api.delete = async function(path) {
+  const r = await fetch(`${API}${path}`, { method:'DELETE', headers:this.headers() });
+  if (r.status===401) { scheduleLogout(); return null; }
+  return r.json();
+};
+
+init();
+</script>
+</body>
+</html>
