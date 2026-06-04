@@ -117,7 +117,7 @@ const T = {
     'nav.dashboard':'Dashboard', 'nav.dna':'Business DNA', 'nav.package':'Launch Package', 'nav.chat':'AI Advisor', 'nav.tools':'All Tools', 'nav.image':'Image Generator',
     'nav.generator':'Business Generator', 'nav.market':'Market Research',
     'nav.marketing':'Marketing Builder', 'nav.prompt':'Prompt Writer',
-    'nav.competitor':'Competitor Tracker',
+    'nav.competitor':'Competitor Tracker', 'nav.messaging':'AI Messaging',
     'nav.vault':'Project Vault', 'nav.billing':'Billing & Plans', 'nav.settings':'Settings', 'nav.learn':'LEARN & GROW', 'nav.academy':'Business Academy', 'nav.community':'Community',
     // Common
     'btn.generate':'⚡ Generate', 'btn.generating':'Generating...', 'btn.copy':'Copy',
@@ -254,7 +254,7 @@ const T = {
     'nav.dashboard':'لوحة التحكم', 'nav.dna':'هويتي التجارية', 'nav.package':'حزمة الإطلاق', 'nav.chat':'المستشار الذكي', 'nav.tools':'كل الأدوات', 'nav.image':'مولّد الصور',
     'nav.generator':'مولّد الأعمال', 'nav.market':'أبحاث السوق',
     'nav.marketing':'بناء التسويق', 'nav.prompt':'كاتب البرومبت',
-    'nav.competitor':'متعقّب المنافسين',
+    'nav.competitor':'متعقّب المنافسين', 'nav.messaging':'ردود ذكية',
     'nav.vault':'خزنة المشاريع', 'nav.billing':'الفواتير والخطط', 'nav.settings':'الإعدادات', 'nav.learn':'تعلّم وانمُ', 'nav.academy':'أكاديمية الأعمال', 'nav.community':'المجتمع',
     // Common
     'btn.generate':'⚡ توليد', 'btn.generating':'جارٍ التوليد...', 'btn.copy':'نسخ',
@@ -525,6 +525,7 @@ function buildLayout(pageId) {
       { id:'tools', icon:'◫', labelKey:'nav.tools', href:'tools.html' },
       { id:'image', icon:'🎨', labelKey:'nav.image', href:'image.html' },
       { id:'competitor', icon:'⚔', labelKey:'nav.competitor', href:'competitor.html' },
+      { id:'messaging', icon:'💬', labelKey:'nav.messaging', href:'messaging.html' },
     ]},
     { group: t('nav.account'), items:[
       { id:'vault', icon:'▣', labelKey:'nav.vault', href:'vault.html' },
