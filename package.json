@@ -1,7 +1,0 @@
-{
-  "name": "galaxy-watch-landing",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "description": "Landing page mobile pour montres GALAXY avec commande envoyée vers Telegram."
-}
